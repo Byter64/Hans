@@ -1,0 +1,234 @@
+{
+  "version": "1.2",
+  "package": {
+    "name": "Steuerung",
+    "version": "",
+    "description": "",
+    "author": "",
+    "image": ""
+  },
+  "design": {
+    "board": "ulx3s-85f",
+    "graph": {
+      "blocks": [
+        {
+          "id": "1db36b48-c321-4849-bde1-e28f61fec522",
+          "type": "basic.output",
+          "data": {
+            "name": "RegiterSchreibBefehl",
+            "virtual": false,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ]
+          },
+          "position": {
+            "x": 1008,
+            "y": 152
+          }
+        },
+        {
+          "id": "80701733-2c21-4dd6-96ff-ede745745459",
+          "type": "basic.input",
+          "data": {
+            "name": "FloatBefehl",
+            "virtual": false,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ],
+            "clock": false
+          },
+          "position": {
+            "x": 688,
+            "y": 168
+          }
+        },
+        {
+          "id": "0b4a4a02-3ff6-44c3-b26e-703f1667aae9",
+          "type": "basic.input",
+          "data": {
+            "name": "LoadBefehl",
+            "virtual": false,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ],
+            "clock": false
+          },
+          "position": {
+            "x": 696,
+            "y": 248
+          }
+        },
+        {
+          "id": "9da12b58-a282-43a7-ac77-bc3d2490d94b",
+          "type": "basic.output",
+          "data": {
+            "name": "LoadBefehlSignal",
+            "virtual": false,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ]
+          },
+          "position": {
+            "x": 1016,
+            "y": 256
+          }
+        },
+        {
+          "id": "03069b59-0bc1-4662-96b6-a9dfc7c22b0f",
+          "type": "basic.input",
+          "data": {
+            "name": "StoreBefehl",
+            "virtual": false,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ],
+            "clock": false
+          },
+          "position": {
+            "x": 704,
+            "y": 320
+          }
+        },
+        {
+          "id": "6427d2c6-40cd-4423-8195-684d285df381",
+          "type": "basic.output",
+          "data": {
+            "name": "LoadDatenSignal",
+            "virtual": false,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ]
+          },
+          "position": {
+            "x": 1008,
+            "y": 344
+          }
+        },
+        {
+          "id": "1f7015d3-8902-465c-881e-593942403cdf",
+          "type": "basic.input",
+          "data": {
+            "name": "UnbedingterSprungBefehl",
+            "virtual": false,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ],
+            "clock": false
+          },
+          "position": {
+            "x": 688,
+            "y": 400
+          }
+        },
+        {
+          "id": "c1276045-a74b-455d-908a-edc85242ba90",
+          "type": "basic.output",
+          "data": {
+            "name": "StoreDatenSignal",
+            "virtual": false,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ]
+          },
+          "position": {
+            "x": 1016,
+            "y": 448
+          }
+        },
+        {
+          "id": "8967c841-23d3-4222-8105-c75fc5a893c8",
+          "type": "basic.input",
+          "data": {
+            "name": "BedingterSprungBefehl",
+            "virtual": false,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ],
+            "clock": false
+          },
+          "position": {
+            "x": 688,
+            "y": 504
+          }
+        },
+        {
+          "id": "5235af3b-edc5-46bf-8f5f-30990f32da81",
+          "type": "basic.output",
+          "data": {
+            "name": "PCSchreibSignal",
+            "virtual": false,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ]
+          },
+          "position": {
+            "x": 1024,
+            "y": 536
+          }
+        },
+        {
+          "id": "3773f6b8-a9b2-407e-a459-f27a07b3d59f",
+          "type": "basic.input",
+          "data": {
+            "name": "Bedingung",
+            "virtual": false,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ],
+            "clock": false
+          },
+          "position": {
+            "x": 688,
+            "y": 584
+          }
+        }
+      ],
+      "wires": []
+    }
+  },
+  "dependencies": {}
+}
