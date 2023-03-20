@@ -19,12 +19,11 @@ module main_tb
  parameter DURATION = 10;
  
  // Input/Output
- reg [31:0] RegisterDaten1;
- reg [31:0] RegisterDaten2;
- reg [15:0] KleinerImmediate;
- reg [25:0] GroßerImmediate;
- wire [31:0] Daten1;
- wire [31:0] Daten2;
+ reg [31:0] Daten1;
+ reg [31:0] Daten2;
+ reg [5:0] Funktionscode;
+ wire [31:0] Ergebnis;
+ 
  
  // Module instance
  main MAIN (
@@ -36,18 +35,19 @@ module main_tb
   .ve4871c(Daten2)
  );
  
+
  initial begin
   $dumpvars(0, main_tb);
  
   // TODO: initialize the registers here
   // e.g. value = 1;
   // e.g. #2 value = 0;
-  RegisterDaten1 = 0;
-  RegisterDaten2 = 0;
+  RegisterDaten1 = 32'b00010010000000110000010000001100;
+  RegisterDaten2 = 32'b00011001001100001110010110000100;
   KleinerImmediate = 0;
   GroßerImmediate = 0;
  
-  #(DURATION) $display("End of simulation");
+  $display("End of simulation");
   $finish;
  end
  

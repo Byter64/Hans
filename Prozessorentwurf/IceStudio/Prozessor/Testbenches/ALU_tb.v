@@ -21,6 +21,9 @@ module main_tb
  // Input/Output
  reg [31:0] Daten1;
  reg [31:0] Daten2;
+ reg [5:0] FunktionsCode;
+ reg Clock;
+ reg Reset;
  wire [31:0] Ergebnis;
  
  // Module instance
@@ -38,7 +41,7 @@ module main_tb
   // e.g. #2 value = 0;
   Daten1 = 0;
   Daten2 = 0;
- 
+
   #(DURATION) $display("End of simulation");
   $finish;
  end

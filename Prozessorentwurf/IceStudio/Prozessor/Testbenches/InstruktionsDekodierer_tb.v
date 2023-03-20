@@ -18,21 +18,27 @@ module main_tb
  // Simulation time: 100ns (10 * 10ns)
  parameter DURATION = 10;
  
- // Input/Output
+// Input/Output
  reg [31:0] Instruktion;
+ reg DekodierSignal;
+ reg Clock;
+ reg Reset;
  wire [5:0] QuellReg1;
  wire [5:0] QuellReg2;
  wire [5:0] ZielReg1;
  wire [25:0] IDaten;
- wire IAktiv;
- wire [4:0] FunktionsCode;
+ wire KleinerImmediateAktiv;
+ wire GroßerImmediateAktiv;
+ wire [5:0] FunktionsCode;
+ wire JALBefehl;
+ wire RelativerSprung;
  wire FloatBefehl;
  wire LoadBefehl;
  wire StoreBefehl;
- wire RelSprungBefehl;
  wire UnbedingterSprungBefehl;
  wire BedingterSprung;
- 
+ wire AbsoluterSprung;
+
  // Module instance
  main MAIN (
   .vd56645(Instruktion),

@@ -16,40 +16,8 @@
           "type": "basic.output",
           "data": {
             "name": "QuellReg1",
-            "virtual": false,
             "range": "[5:0]",
-            "pins": [
-              {
-                "index": "5",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "4",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "3",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "2",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "1",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "0",
-                "name": "NULL",
-                "value": "NULL"
-              }
-            ]
+            "size": 6
           },
           "position": {
             "x": 672,
@@ -61,164 +29,22 @@
           "type": "basic.input",
           "data": {
             "name": "Instruktion",
-            "virtual": false,
             "range": "[31:0]",
+            "clock": false,
+            "size": 32
+          },
+          "position": {
+            "x": 304,
+            "y": 40
+          }
+        },
+        {
+          "id": "a25f91cb-5ceb-473c-a646-15ee0036da29",
+          "type": "basic.input",
+          "data": {
+            "name": "DekodierSignal",
+            "virtual": true,
             "pins": [
-              {
-                "index": "31",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "30",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "29",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "28",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "27",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "26",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "25",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "24",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "23",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "22",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "21",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "20",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "19",
-                "name": "",
-                "value": ""
-              },
-              {
-                "index": "18",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "17",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "16",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "15",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "14",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "13",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "12",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "11",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "10",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "9",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "8",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "7",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "6",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "5",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "4",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "3",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "2",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "1",
-                "name": "NULL",
-                "value": "NULL"
-              },
               {
                 "index": "0",
                 "name": "NULL",
@@ -229,7 +55,7 @@
           },
           "position": {
             "x": 304,
-            "y": 40
+            "y": 248
           }
         },
         {
@@ -237,40 +63,8 @@
           "type": "basic.output",
           "data": {
             "name": "QuellReg2",
-            "virtual": false,
             "range": "[5:0]",
-            "pins": [
-              {
-                "index": "5",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "4",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "3",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "2",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "1",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "0",
-                "name": "NULL",
-                "value": "NULL"
-              }
-            ]
+            "size": 6
           },
           "position": {
             "x": 672,
@@ -278,44 +72,52 @@
           }
         },
         {
-          "id": "317354c3-5b79-4f8e-a5ca-64033ae5e585",
-          "type": "basic.output",
+          "id": "32cd02e6-22e8-4e91-a825-0019f89a7cec",
+          "type": "basic.input",
           "data": {
-            "name": "ZielReg1",
-            "virtual": false,
-            "range": "[5:0]",
+            "name": "Clock",
+            "virtual": true,
             "pins": [
-              {
-                "index": "5",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "4",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "3",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "2",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "1",
-                "name": "NULL",
-                "value": "NULL"
-              },
               {
                 "index": "0",
                 "name": "NULL",
                 "value": "NULL"
               }
-            ]
+            ],
+            "clock": false
+          },
+          "position": {
+            "x": 296,
+            "y": 376
+          }
+        },
+        {
+          "id": "2a236e27-5ec9-497d-8f55-9c76ce13e915",
+          "type": "basic.input",
+          "data": {
+            "name": "Reset",
+            "virtual": true,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ],
+            "clock": false
+          },
+          "position": {
+            "x": 288,
+            "y": 448
+          }
+        },
+        {
+          "id": "317354c3-5b79-4f8e-a5ca-64033ae5e585",
+          "type": "basic.output",
+          "data": {
+            "name": "ZielReg1",
+            "range": "[5:0]",
+            "size": 6
           },
           "position": {
             "x": 672,
@@ -327,134 +129,21 @@
           "type": "basic.output",
           "data": {
             "name": "IDaten",
-            "virtual": false,
             "range": "[25:0]",
+            "size": 26
+          },
+          "position": {
+            "x": 672,
+            "y": 728
+          }
+        },
+        {
+          "id": "dfa86c66-e8f8-4c43-b5b9-fa54c88e5589",
+          "type": "basic.output",
+          "data": {
+            "name": "KleinerImmediateAktiv",
+            "virtual": true,
             "pins": [
-              {
-                "index": "25",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "24",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "23",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "22",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "21",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "20",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "19",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "18",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "17",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "16",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "15",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "14",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "13",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "12",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "11",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "10",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "9",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "8",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "7",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "6",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "5",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "4",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "3",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "2",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "1",
-                "name": "NULL",
-                "value": "NULL"
-              },
               {
                 "index": "0",
                 "name": "NULL",
@@ -464,15 +153,15 @@
           },
           "position": {
             "x": 672,
-            "y": 728
+            "y": 1488
           }
         },
         {
           "id": "bcd9eec7-0240-45ca-98a9-db73e4229fae",
           "type": "basic.output",
           "data": {
-            "name": "IAktiv",
-            "virtual": false,
+            "name": "GroßerImmediateAktiv",
+            "virtual": true,
             "pins": [
               {
                 "index": "0",
@@ -487,13 +176,18 @@
           }
         },
         {
-          "id": "f50da0f1-385d-4e2d-9ad1-30c59482c509",
+          "id": "c9c248e9-c9d1-45c9-b678-09aa7d4d5a5f",
           "type": "basic.output",
           "data": {
             "name": "FunktionsCode",
-            "virtual": false,
-            "range": "[4:0]",
+            "virtual": true,
+            "range": "[5:0]",
             "pins": [
+              {
+                "index": "5",
+                "name": "NULL",
+                "value": "NULL"
+              },
               {
                 "index": "4",
                 "name": "NULL",
@@ -527,56 +221,48 @@
           }
         },
         {
+          "id": "a7924039-31ca-45c6-8a7b-a4434c8bd6d1",
+          "type": "basic.output",
+          "data": {
+            "name": "JALBefehl",
+            "virtual": true,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ]
+          },
+          "position": {
+            "x": 672,
+            "y": 1888
+          }
+        },
+        {
+          "id": "c39adb98-1725-4957-b5ab-b04dac737ffb",
+          "type": "basic.output",
+          "data": {
+            "name": "RelativerSprung",
+            "virtual": true,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ]
+          },
+          "position": {
+            "x": 672,
+            "y": 1952
+          }
+        },
+        {
           "id": "d0cf2d6f-6452-4308-8e29-0e365f5d5fd6",
           "type": "basic.output",
           "data": {
-            "name": "FloatBefehl",
-            "virtual": false,
-            "pins": [
-              {
-                "index": "0",
-                "name": "NULL",
-                "value": "NULL"
-              }
-            ]
-          },
-          "position": {
-            "x": 672,
-            "y": 1872
-          }
-        },
-        {
-          "id": "1b124991-cac3-4201-974f-691e1cc59c16",
-          "type": "basic.output",
-          "data": {
-            "name": "LoadBefehl",
-            "virtual": false,
-            "pins": [
-              {
-                "index": "0",
-                "name": "NULL",
-                "value": "NULL"
-              }
-            ]
-          },
-          "position": {
-            "x": 672,
-            "y": 1944
-          }
-        },
-        {
-          "id": "e2915c0c-a75c-49dc-8624-776b13331de7",
-          "type": "basic.output",
-          "data": {
-            "name": "StoreBefehl",
-            "virtual": false,
-            "pins": [
-              {
-                "index": "0",
-                "name": "NULL",
-                "value": "NULL"
-              }
-            ]
+            "name": "FloatBefehl"
           },
           "position": {
             "x": 672,
@@ -584,18 +270,10 @@
           }
         },
         {
-          "id": "a7924039-31ca-45c6-8a7b-a4434c8bd6d1",
+          "id": "1b124991-cac3-4201-974f-691e1cc59c16",
           "type": "basic.output",
           "data": {
-            "name": "RelSprungBefehl",
-            "virtual": false,
-            "pins": [
-              {
-                "index": "0",
-                "name": "NULL",
-                "value": "NULL"
-              }
-            ]
+            "name": "LoadBefehl"
           },
           "position": {
             "x": 672,
@@ -603,18 +281,10 @@
           }
         },
         {
-          "id": "1d97c60c-7bc2-4439-b9c5-35fcecda8278",
+          "id": "e2915c0c-a75c-49dc-8624-776b13331de7",
           "type": "basic.output",
           "data": {
-            "name": "UnbedingterSprungBefehl",
-            "virtual": false,
-            "pins": [
-              {
-                "index": "0",
-                "name": "NULL",
-                "value": "NULL"
-              }
-            ]
+            "name": "StoreBefehl"
           },
           "position": {
             "x": 672,
@@ -622,11 +292,33 @@
           }
         },
         {
+          "id": "1d97c60c-7bc2-4439-b9c5-35fcecda8278",
+          "type": "basic.output",
+          "data": {
+            "name": "UnbedingterSprungBefehl"
+          },
+          "position": {
+            "x": 672,
+            "y": 2224
+          }
+        },
+        {
           "id": "a8512379-fdf6-4ba5-a4c4-573450c25069",
           "type": "basic.output",
           "data": {
-            "name": "BedingterSprung",
-            "virtual": false,
+            "name": "BedingterSprung"
+          },
+          "position": {
+            "x": 672,
+            "y": 2296
+          }
+        },
+        {
+          "id": "51d1842d-e9d7-426f-b46f-45adefc55b91",
+          "type": "basic.output",
+          "data": {
+            "name": "AbsoluterSprung",
+            "virtual": true,
             "pins": [
               {
                 "index": "0",
@@ -637,7 +329,7 @@
           },
           "position": {
             "x": 672,
-            "y": 2232
+            "y": 2368
           }
         }
       ],

@@ -12,526 +12,13 @@
     "graph": {
       "blocks": [
         {
-          "id": "c82076a3-625f-4abd-b540-b218828a3c56",
-          "type": "basic.input",
-          "data": {
-            "name": "RegisterDaten1",
-            "virtual": false,
-            "range": "[31:0]",
-            "pins": [
-              {
-                "index": "31",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "30",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "29",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "28",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "27",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "26",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "25",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "24",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "23",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "22",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "21",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "20",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "19",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "18",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "17",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "16",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "15",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "14",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "13",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "12",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "11",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "10",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "9",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "8",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "7",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "6",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "5",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "4",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "3",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "2",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "1",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "0",
-                "name": "NULL",
-                "value": "NULL"
-              }
-            ],
-            "clock": false
-          },
-          "position": {
-            "x": 336,
-            "y": 32
-          }
-        },
-        {
-          "id": "d56fd7a2-4b60-40cb-9ef5-3d024c0cda2f",
-          "type": "basic.output",
-          "data": {
-            "name": "Daten1",
-            "virtual": false,
-            "range": "[31:0]",
-            "pins": [
-              {
-                "index": "31",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "30",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "29",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "28",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "27",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "26",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "25",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "24",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "23",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "22",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "21",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "20",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "19",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "18",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "17",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "16",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "15",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "14",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "13",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "12",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "11",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "10",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "9",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "8",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "7",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "6",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "5",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "4",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "3",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "2",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "1",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "0",
-                "name": "NULL",
-                "value": "NULL"
-              }
-            ]
-          },
-          "position": {
-            "x": 1784,
-            "y": 600
-          }
-        },
-        {
           "id": "3128ddd7-9d74-4768-aa0e-fc956aa0734d",
           "type": "basic.input",
           "data": {
             "name": "RegisterDaten2",
-            "virtual": false,
             "range": "[31:0]",
-            "pins": [
-              {
-                "index": "31",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "30",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "29",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "28",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "27",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "26",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "25",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "24",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "23",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "22",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "21",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "20",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "19",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "18",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "17",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "16",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "15",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "14",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "13",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "12",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "11",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "10",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "9",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "8",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "7",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "6",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "5",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "4",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "3",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "2",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "1",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "0",
-                "name": "NULL",
-                "value": "NULL"
-              }
-            ],
-            "clock": false
+            "clock": false,
+            "size": 32
           },
           "position": {
             "x": 336,
@@ -539,282 +26,11 @@
           }
         },
         {
-          "id": "7aa4c854-00a8-436d-9729-901eeb493bb7",
-          "type": "basic.output",
-          "data": {
-            "name": "Daten2",
-            "virtual": false,
-            "range": "[31:0]",
-            "pins": [
-              {
-                "index": "31",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "30",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "29",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "28",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "27",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "26",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "25",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "24",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "23",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "22",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "21",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "20",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "19",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "18",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "17",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "16",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "15",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "14",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "13",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "12",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "11",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "10",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "9",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "8",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "7",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "6",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "5",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "4",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "3",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "2",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "1",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "0",
-                "name": "NULL",
-                "value": "NULL"
-              }
-            ]
-          },
-          "position": {
-            "x": 1792,
-            "y": 1744
-          }
-        },
-        {
-          "id": "b750b503-e760-4979-aedd-8039e2d730ce",
-          "type": "basic.input",
-          "data": {
-            "name": "KleinerImmediate",
-            "virtual": false,
-            "range": "[15:0]",
-            "pins": [
-              {
-                "index": "15",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "14",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "13",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "12",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "11",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "10",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "9",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "8",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "7",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "6",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "5",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "4",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "3",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "2",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "1",
-                "name": "NULL",
-                "value": "NULL"
-              },
-              {
-                "index": "0",
-                "name": "NULL",
-                "value": "NULL"
-              }
-            ],
-            "clock": false
-          },
-          "position": {
-            "x": 320,
-            "y": 2256
-          }
-        },
-        {
           "id": "4affdb8c-60f5-4939-b220-fe675ab6c9f9",
           "type": "basic.input",
           "data": {
-            "name": "GroßerImmediate",
-            "virtual": false,
+            "name": "Immediate",
+            "virtual": true,
             "range": "[25:0]",
             "pins": [
               {
@@ -951,8 +167,61 @@
             "clock": false
           },
           "position": {
-            "x": 320,
-            "y": 2864
+            "x": 304,
+            "y": 1712
+          }
+        },
+        {
+          "id": "7aa4c854-00a8-436d-9729-901eeb493bb7",
+          "type": "basic.output",
+          "data": {
+            "name": "Daten2",
+            "range": "[31:0]",
+            "size": 32
+          },
+          "position": {
+            "x": 1792,
+            "y": 1744
+          }
+        },
+        {
+          "id": "8fd75eae-10da-4557-b9af-6dad340e913f",
+          "type": "basic.input",
+          "data": {
+            "name": "KleinerImmediateAktiv",
+            "virtual": true,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ],
+            "clock": false
+          },
+          "position": {
+            "x": 296,
+            "y": 1816
+          }
+        },
+        {
+          "id": "081e5dbe-2409-4488-9430-fc8ae8d66ee3",
+          "type": "basic.input",
+          "data": {
+            "name": "GroßerImmediateAktiv",
+            "virtual": true,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ],
+            "clock": false
+          },
+          "position": {
+            "x": 288,
+            "y": 1912
           }
         }
       ],
