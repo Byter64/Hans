@@ -11,7 +11,6 @@
             $display("ASSERTION FAILED in %m: signal != value"); \
             $finish; \
         end
-
 module main_tb
 ;
  
@@ -62,9 +61,8 @@ module main_tb
   // TODO: initialize the registers here
   // e.g. value = 1;
   // e.g. #2 value = 0;
-  Instruktion = 0;
- 
-  #(DURATION) $display("End of simulation");
+    Instruktion = 0;
+      #(DURATION) $display("End of simulation");
   $finish;
  end
  

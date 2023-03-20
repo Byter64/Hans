@@ -24,6 +24,8 @@ module main_tb
  reg [5:0] ZielReg;
  reg Schreibsignal;
  reg [31:0] ZielDaten;
+ reg clock;
+ reg reset;
  wire [31:0] QuellDaten1;
  wire [31:0] QuellDaten2;
  

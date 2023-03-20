@@ -936,7 +936,7 @@
           },
           "size": {
             "width": 96,
-            "height": 64
+            "height": 128
           }
         },
         {
@@ -948,7 +948,7 @@
           },
           "size": {
             "width": 96,
-            "height": 224
+            "height": 288
           }
         },
         {
@@ -960,7 +960,7 @@
           },
           "size": {
             "width": 96,
-            "height": 160
+            "height": 224
           }
         },
         {
@@ -2095,6 +2095,46 @@
               }
             },
             {
+              "id": "e3a5e03f-9d03-4db2-94fb-e74ec080c510",
+              "type": "basic.input",
+              "data": {
+                "name": "reset",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ],
+                "clock": false
+              },
+              "position": {
+                "x": 608,
+                "y": 224
+              }
+            },
+            {
+              "id": "17e637ef-d097-4a89-9612-670103f94aa3",
+              "type": "basic.input",
+              "data": {
+                "name": "clock",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ],
+                "clock": false
+              },
+              "position": {
+                "x": 608,
+                "y": 320
+              }
+            },
+            {
               "id": "1ff29fca-25ea-4fc8-a224-f4fe10a518bd",
               "type": "basic.input",
               "data": {
@@ -2309,6 +2349,46 @@
                 "x": 1024,
                 "y": 648
               }
+            },
+            {
+              "id": "0513efe1-17ca-4416-bfee-aa3859ce0f08",
+              "type": "basic.input",
+              "data": {
+                "name": "clock",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ],
+                "clock": false
+              },
+              "position": {
+                "x": 688,
+                "y": 688
+              }
+            },
+            {
+              "id": "b39cb169-c796-417c-9c48-7900b82b7065",
+              "type": "basic.input",
+              "data": {
+                "name": "reset",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ],
+                "clock": false
+              },
+              "position": {
+                "x": 688,
+                "y": 744
+              }
             }
           ],
           "wires": []
@@ -2405,7 +2485,7 @@
               },
               "position": {
                 "x": 544,
-                "y": 752
+                "y": 672
               }
             },
             {
@@ -2416,8 +2496,48 @@
                 "clock": false
               },
               "position": {
-                "x": 528,
-                "y": 1184
+                "x": 544,
+                "y": 784
+              }
+            },
+            {
+              "id": "a81bee85-0811-40bf-82a9-dbd224184b4c",
+              "type": "basic.input",
+              "data": {
+                "name": "clock",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ],
+                "clock": false
+              },
+              "position": {
+                "x": 544,
+                "y": 952
+              }
+            },
+            {
+              "id": "7f3a3db0-b1ee-4f1d-8463-ff80051a3d7d",
+              "type": "basic.input",
+              "data": {
+                "name": "reset",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ],
+                "clock": false
+              },
+              "position": {
+                "x": 544,
+                "y": 1032
               }
             }
           ],

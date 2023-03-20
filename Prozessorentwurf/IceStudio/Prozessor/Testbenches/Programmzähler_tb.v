@@ -21,6 +21,8 @@ module main_tb
  // Input/Output
  reg Schreibsignal;
  reg [25:0] NeuerPC_;
+ reg clock;
+ reg reset;
  wire [25:0] AktuellerPC_;
  wire [25:0] ErhöhterPC_;
  

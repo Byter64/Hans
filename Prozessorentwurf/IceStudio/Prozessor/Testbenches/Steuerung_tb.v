@@ -25,11 +25,16 @@ module main_tb
  reg UnbedingterSprungBefehl;
  reg BedingterSprungBefehl;
  reg Bedingung;
+ reg BefehlGeladen;
+ reg clock;
+ reg reset;
  wire RegiterSchreibBefehl;
  wire LoadBefehlSignal;
  wire LoadDatenSignal;
  wire StoreDatenSignal;
  wire PCSchreibSignal;
+ wire DekodierSignal;
+
  
  // Module instance
  main MAIN (
