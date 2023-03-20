@@ -6,10 +6,9 @@
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns
-`define assert(signal, value) \
+`define assert(signal, value, message) \
         if (signal !== value) begin \
-            $display("ASSERTION FAILED in %m: signal != value"); \
-            $finish; \
+            $display("Falscher Wert in %m: ", message); \
         end
 
 module main_tb
@@ -19,36 +18,54 @@ module main_tb
  parameter DURATION = 10;
  
  // Input/Output
- reg [31:0] Daten1;
- reg [31:0] Daten2;
- reg [5:0] Funktionscode;
- wire [31:0] Ergebnis;
+ reg [31:0] RegisterDaten2;
+ reg [25:0] Immediate;
+ reg KleinerImmediateAktiv;
+ reg GrosserImmediateAktiv;
+ wire [31:0] Daten2;
  
  
  // Module instance
  main MAIN (
-  .ve2ec93(RegisterDaten1),
+  .ve2ec93(RegisterDaten2),
   .v3b6447(RegisterDaten2),
   .v9bf9a1(KleinerImmediate),
   .vb90512(GroßerImmediate),
-  .vac4d0b(Daten1),
+  .vac4d0b(RegisterDaten2),
   .ve4871c(Daten2)
  );
  
 
- initial begin
-  $dumpvars(0, main_tb);
- 
-  // TODO: initialize the registers here
-  // e.g. value = 1;
-  // e.g. #2 value = 0;
-  RegisterDaten1 = 32'b00010010000000110000010000001100;
-  RegisterDaten2 = 32'b00011001001100001110010110000100;
-  KleinerImmediate = 0;
-  GroßerImmediate = 0;
- 
-  $display("End of simulation");
-  $finish;
- end
+    initial begin
+        $dumpvars(0, main_tb);
+        RegisterDaten2 = 32'b00010010000000110000010000001100;
+        Immediate = 26'b00011001001100001110010110;
+        KleinerImmediateAktiv = 0;
+        GrosserImmediateAktiv = 0;
+        #100
+        if(Daten2 != RegisterDaten2)
+            $display("Wert in Daten2 ist ungleich RegisterDaten2: \n Daten2: %d \n RegisterDaten2: %d", Daten2, RegisterDaten2);
+
+        #100
+        RegisterDaten2 = 32'b00010010000000110000010000001100;
+        Immediate = 26'b00011001001100001110010110;
+        KleinerImmediateAktiv = 0;
+        GrosserImmediateAktiv = 1;
+        #100 
+        if(Daten2 != 32'b00000000011001001100001110010110)
+            $display("Wert in Daten2 ist ungleich Immediate[25:0]: \n Immediate: %d \n RegisterDaten2: %d", Immediate, RegisterDaten2);
+
+        #100
+        RegisterDaten2 = 32'b00010010000000110000010000001100;
+        Immediate = 26'b00011001001100001110010110;
+        KleinerImmediateAktiv = 1;
+        GrosserImmediateAktiv = 0;
+        #100
+        if(Daten2 != 32'b00000000000000001100001110010110)
+            $display("Wert in Daten2 ist ungleich Immediate[15:0]: \n Immediate: %d \n RegisterDaten2: %d", Immediate, RegisterDaten2);
+
+        $display("End of simulation");
+        $finish;
+    end
  
 endmodule
