@@ -194,6 +194,46 @@
             "x": 616,
             "y": 528
           }
+        },
+        {
+          "id": "e3a5e03f-9d03-4db2-94fb-e74ec080c510",
+          "type": "basic.input",
+          "data": {
+            "name": "reset",
+            "virtual": true,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ],
+            "clock": false
+          },
+          "position": {
+            "x": 616,
+            "y": 632
+          }
+        },
+        {
+          "id": "17e637ef-d097-4a89-9612-670103f94aa3",
+          "type": "basic.input",
+          "data": {
+            "name": "clock",
+            "virtual": true,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ],
+            "clock": false
+          },
+          "position": {
+            "x": 616,
+            "y": 728
+          }
         }
       ],
       "wires": []
