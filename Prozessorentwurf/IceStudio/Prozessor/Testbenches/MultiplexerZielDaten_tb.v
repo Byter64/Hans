@@ -42,12 +42,19 @@ module main_tb
   // TODO: initialize the registers here
   // e.g. value = 1;
   // e.g. #2 value = 0;
-  ALUErgebnis = 0;
-  ErhöhterPC = 0;
-  LoadErgebnis = 0;
-  JALBefehl = 0;
-  LoadBefehl = 0;
- 
+  ALUErgebnis = 32'b00010010000000110000010000001100;
+  ErhöhterPC = 26'b00011001001100001110010110;
+  LoadErgebnis = 32'b00010010000100010000010110001001;
+  
+  #100 JALBefehl = 0; LoadBefehl = 0;
+  #100 assert(ZielDaten, ALUErgebnis);
+
+  #100 JALBefehl = 0; LoadBefehl = 1;
+  #100 assert(ZielDaten, LoadErgebnis);
+  
+  #100 JALBefehl = 1; LoadBefehl = 0;
+  #100 assert(ZielDaten, 26'b00000000011001001100001110010110);
+
   #(DURATION) $display("End of simulation");
   $finish;
  end

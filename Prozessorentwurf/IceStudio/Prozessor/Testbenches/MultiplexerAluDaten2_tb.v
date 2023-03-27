@@ -2,11 +2,15 @@
 // Mon, 20 Mar 2023 15:03:20 GMT
 
 // Testbench template
-
+`include "MultiplexerAluDaten2.v"
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns
-
+`define assert(signal, value) \
+        if (signal !== value) begin \
+            $display("ASSERTION FAILED in %m: signal != value"); \
+            $finish; \
+        end
 
 module main_tb
 ;
@@ -30,16 +34,20 @@ module main_tb
  
  initial begin
   // File were to store the simulation results
-  $dumpfile(`DUMPSTR(`VCD_OUTPUT));
   $dumpvars(0, main_tb);
  
   // TODO: initialize the registers here
   // e.g. value = 1;
   // e.g. #2 value = 0;
-  AktuellerPC = 0;
-  QuellDaten1 = 0;
-  RelativerSprungBefehl = 0;
- 
+  AktuellerPC = 26'b00011001001100001110010110;
+  QuellDaten1 = 32'b00010010000000110000010000001100;
+  
+  #100 RelativerSprungBefehl = 0;
+  #100 assert(Daten2, QuellDaten1);
+
+  #100 RelativerSprungBefehl = 1;
+  #100 assert(Daten2, 32'b00000000011001001100001110010110);
+
   #(DURATION) $display("End of simulation");
   $finish;
  end
