@@ -34,15 +34,22 @@ module main_tb
  
  initial begin
   $dumpvars(0, main_tb);
- 
-  // TODO: initialize the registers here
-  // e.g. value = 1;
-  // e.g. #2 value = 0;
-  RelativerPC = 0;
-  AbsoluterPC = 0;
+  RelativerPC = 32'b00001111001100100000111100110010000011110010;
+  AbsoluterPC = 32'b00110011000000100001100100100110001101110010;
   IstAbsolut = 0;
- 
-  #(DURATION) $display("End of simulation");
+
+  #100 
+  if(NeuerPC != RelativerPC[25:0])
+    $display("Der relative PC wurde nicht richtig übernommen.\n Relativer PC: %d \n NeuerPC: ", RelativerPC[25:0], NeuerPC);
+
+  #100
+  IstAbsolut = 1;
+
+  #100
+  if(NeuerPC != AbsoluterPC[25:0])
+    $display("Der absolute PC wurde nicht richtig übernommen.\n Absoluter PC: %d \n NeuerPC: ", AbsoluterPC[25:0], NeuerPC);
+
+  $display("End of simulation");
   $finish;
  end
  

@@ -6,11 +6,34 @@
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns
-`define assert(signal, value) \
-        if (signal !== value) begin \
-            $display("ASSERTION FAILED in %m: signal != value"); \
-            $finish; \
-        end
+`define Add 6'b000000
+`define Sub 6'b000001
+`define Mul 6'b000010
+`define Div 6'b000011
+`define Mod 6'b000100
+`define Sqrt 6'b000101
+`define Sl 6'b000111
+`define Sr 6'b001000
+`define Slc 6'b001001
+`define Src 6'b001010
+`define Ce 6'b010000
+`define Cne 6'b010001
+`define Cg 6'b010010
+`define Cge 6'b010011
+`define Cl 6'b010100
+`define Cle 6'b010101
+`define Not 6'b011000
+`define And 6'b011001
+`define Or 6'b011010
+`define Xor 6'b011011
+`define Xnor 6'b011100
+`define Adds 6'b100000
+`define Subs 6'b100001
+`define Muls 6'b100010
+`define Divs 6'b100011
+`define Mods 6'b100100
+`define Sqrts 6'b100101
+
 
 module main_tb
 ;
@@ -33,17 +56,349 @@ module main_tb
   .vea2f6e(Ergebnis)
  );
  
- initial begin
-  $dumpvars(0, main_tb);
- 
-  // TODO: initialize the registers here
-  // e.g. value = 1;
-  // e.g. #2 value = 0;
-  Daten1 = 0;
-  Daten2 = 0;
+reg clock;
 
-  #(DURATION) $display("End of simulation");
-  $finish;
- end
+initial begin
+    clock = 1'b0;
+end
+
+always begin
+   #100 clock = ~clock; 
+end
+
+var
+
+initial begin
+    $dumpvars(0, main_tb);
+ 
+    //Alles zurücksetzen
+    reset = 1;
+    #150
+    reset = 0;
+
+    //Add-Befehl testen
+    Daten1 = 32'b01010101010101010101010101010101;
+    Daten2 = 32'b00101010111010111010101010101010;
+    FunktionsCode = Add;
+    #200
+    if(Ergebnis != 32'b10000000010000001111111111111111)
+        $display("Addieren funktioniert nicht: \n Summand1: %d \n Summand2: %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b10000000010000001111111111111111);
+    
+    //Sub-Befehl testen
+    Daten1 = 32'b01010101010101010101010101010101;
+    Daten2 = 32'b00101010111010111010101010101010;
+    FunktionsCode = Sub;
+    #200
+    if(Ergebnis != 32'b00101010011010011010101010101011)
+        $display("Subtrahieren funktioniert nicht: \n Minuend:    %d \n Subtrahent: %d \n Ergebnis:   %d \n Erwartet:   %d\n", Daten1, Daten2, Ergebnis, 32'b00101010011010011010101010101011);
+
+    //Mul-Befehl testen
+    Daten1 = 32'b00000000000000010101010101010101;
+    Daten2 = 32'b00000000000000000010101010101010;
+    FunktionsCode = Mul;
+    #200
+    if(Ergebnis != 32'b00111000111000101001110001110010)
+        $display("Multiplizieren funktioniert nicht: \n Faktor1:  %d \n Faktor2:  %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00111000111000101001110001110010);
+    
+    //Div-Befehl testen
+    Daten1 = 32'b11000000000110010101010101010101;
+    Daten2 = 32'b00000000000000000010101010101010;
+    FunktionsCode = Div;
+    #200
+    if(Ergebnis != 32'b00000000000001001000000010101010)
+        $display("Dividieren funktioniert nicht: \n Divisor:  %d \n Dividend: %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000001001000000010101010);
+    
+    //Mod-Befehl testen
+    Daten1 = 32'b11000000000110010101010101010101;
+    Daten2 = 32'b00000000000000000010101010101010;
+    FunktionsCode = Mod;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000001110001)
+        $display("Modulo funktioniert nicht: \n Divisor:  %d \n Dividend: %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000001110001);
+    
+    //Sqrt-Befehl testen
+    Daten1 = 32'b11000000000110010101010101010101;
+    FunktionsCode = Sqrt;
+    #200
+    if(Ergebnis != 32'b00000000000000001101110111000010)
+        $display("Quadratwurzel funktioniert nicht: \n Radikand: %d Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000001101110111000010);
+    
+    //Sl-Befehl testen
+    Daten1 = 32'b11001000000110010101010101010101;
+    Daten2 = 32'b00000000000000000000000000000111;
+    FunktionsCode = Sl;
+    #200
+    if(Ergebnis != 32'b00001100101010101010101010000000)
+        $display("Links schieben funktioniert nicht: \n Zahl:    %d \n Stellen:  %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00001100101010101010101010000000);
+    
+    //Sr-Befehl testen
+    Daten1 = 32'b11001000000110010101010101010101;
+    Daten2 = 32'b00000000000000000000000000000111;
+    FunktionsCode = Sr;
+    #200
+    if(Ergebnis != 32'b00000001100100000011001010101010)
+        $display("Rechts schieben funktioniert nicht: \n Zahl:    %d \n Stellen:  %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000001100100000011001010101010);
+    
+    //Slc-Befehl testen
+    Daten1 = 32'b11001000000110010101010101010101;
+    Daten2 = 32'b00000000000000000000000000000111;
+    FunktionsCode = Slc;
+    #200
+    if(Ergebnis != 32'b00001100101010101010101011100100)
+        $display("Zyklisches links Schieben funktioniert nicht: \n Zahl:    %d \n Stellen:  %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00001100101010101010101011100100);
+    
+    //Src-Befehl testen
+    Daten1 = 32'b11001000000110010101010101010101;
+    Daten2 = 32'b00000000000000000000000000000111;
+    FunktionsCode = Src;
+    #200
+    if(Ergebnis != 32'b10101011100100000011001010101010)
+        $display("Zyklisches rechts Schieben funktioniert nicht: \n Zahl:    %d \n Stellen:  %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b10101011100100000011001010101010);
+    
+    //Ce-Befehl testen
+    Daten1 = 32'b11001000000110010101010101010101;
+    Daten2 = 32'b00000000000000000000000000000111;
+    FunktionsCode = Ce;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000000)
+        $display("Gleichheit funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
+    
+    Daten1 = 32'b11001000000110010101010101010101;
+    Daten2 = 32'b11001000000110010101010101010101;
+    FunktionsCode = Ce;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000001)
+        $display("Gleichheit funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
+    
+
+    //Cne-Befehl testen
+    Daten1 = 32'b11001000000110010101010101010101;
+    Daten2 = 32'b00000000000000000000000000000111;
+    FunktionsCode = Ce;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000001)
+        $display("Ungleichheit funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
+    
+    Daten1 = 32'b11001000000110010101010101010101;
+    Daten2 = 32'b11001000000110010101010101010101;
+    FunktionsCode = Ce;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000000)
+        $display("Ungleichheit funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
+    
+
+    //Cg-Befehl testen
+    Daten1 = 32'b01001000000110010101010101010101;
+    Daten2 = 32'b00000000000000000000000000000111;
+    FunktionsCode = Cg;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000001)
+        $display("Größer funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
+    
+    Daten1 = 32'b10000000000000000000000000000111;
+    Daten2 = 32'b01001000000110010101010101010101;
+    FunktionsCode = Cg;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000000)
+        $display("Größer funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
+    
+
+    Daten1 = 32'b11001000000110010101010101010101;
+    Daten2 = 32'b11001000000110010101010101010101;
+    FunktionsCode = Cg;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000000)
+        $display("Größer funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
+    
+
+    //Cge-Befehl testen
+    Daten1 = 32'b01001000000110010101010101010101;
+    Daten2 = 32'b00000000000000000000000000000111;
+    FunktionsCode = Cge;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000001)
+        $display("Größergleich funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
+    
+    Daten1 = 32'b10000000000000000000000000000111;
+    Daten2 = 32'b01001000000110010101010101010101;
+    FunktionsCode = Cge;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000000)
+        $display("Größergleich funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
+
+    Daten1 = 32'b11001000000110010101010101010101;
+    Daten2 = 32'b11001000000110010101010101010101;
+    FunktionsCode = Cge;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000001)
+        $display("Größergleich funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
+    
+
+    //Cl-Befehl testen
+    Daten1 = 32'b01001000000110010101010101010101;
+    Daten2 = 32'b00000000000000000000000000000111;
+    FunktionsCode = Cl;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000000)
+        $display("Kleiner funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
+    
+    Daten1 = 32'b10000000000000000000000000000111;
+    Daten2 = 32'b01001000000110010101010101010101;
+    FunktionsCode = Cl;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000001)
+        $display("Kleiner funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
+    
+
+    Daten1 = 32'b11001000000110010101010101010101;
+    Daten2 = 32'b11001000000110010101010101010101;
+    FunktionsCode = Cl;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000000)
+        $display("Kleiner funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
+    
+
+    //Cle-Befehl testen
+    Daten1 = 32'b01001000000110010101010101010101;
+    Daten2 = 32'b00000000000000000000000000000111;
+    FunktionsCode = Cle;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000000)
+        $display("Kleinergleich funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
+    
+    Daten1 = 32'b10000000000000000000000000000111;
+    Daten2 = 32'b01001000000110010101010101010101;
+    FunktionsCode = Cle;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000001)
+        $display("Kleinergleich funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
+    
+
+    Daten1 = 32'b11001000000110010101010101010101;
+    Daten2 = 32'b11001000000110010101010101010101;
+    FunktionsCode = Cle;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000001)
+        $display("Kleinergleich funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
+    
+
+    //Not-Befehl testen
+    Daten1 = 32'b01001000000110010101010101010101;
+    FunktionsCode = Not;
+    #200
+    if(Ergebnis != 32'b10110111111001101010101010101010)
+        $display("Not funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b10110111111001101010101010101010);
+    
+    Daten1 = 32'b11111100000000000000000000000111;
+    FunktionsCode = Not;
+    #200
+    if(Ergebnis != 32'b00000111111111111111111111111000)
+        $display("Not funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000111111111111111111111111000);
+    
+
+    //And-Befehl testen
+    Daten1 = 32'b01001000011110010101010101010101;
+    Daten2 = 32'b01101010100110010101010101010101;
+    FunktionsCode = And;
+    #200
+    if(Ergebnis != 32'b10110111111001101010101010101010)
+        $display("And funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b01001000000110010101010101010101);
+    
+    Daten1 = 32'b01101010100110010101010101010101;
+    FunktionsCode = And;
+    #200
+    if(Ergebnis != 32'b00000111111111111111111111111000)
+        $display("And funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b01101010100110010101010101010101);
+    
+
+    //Or-Befehl testen
+    Daten1 = 32'b01001000011110010101010101010101;
+    Daten2 = 32'b01101010100110010101010101010101;
+    FunktionsCode = Or;
+    #200
+    if(Ergebnis != 32'b10110111111001101010101010101010)
+        $display("Or funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b01101010111110010101010101010101);
+    
+    Daten1 = 32'b11111111111111111111111111111111;
+    FunktionsCode = Or;
+    #200
+    if(Ergebnis != 32'b00000111111111111111111111111000)
+        $display("Or funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b11111111111111111111111111111111);
+    
+
+    //Xor-Befehl testen
+    Daten1 = 32'b01001000011110010101010101010101;
+    Daten2 = 32'b01101010100110010101010101010101;
+    FunktionsCode = Xor;
+    #200
+    if(Ergebnis != 32'b00100010111000000000000000000000)
+        $display("Xor funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00100010111000000000000000000000);
+    
+    Daten1 = 32'b00000000000000000000000000000000;
+    FunktionsCode = Xor;
+    #200
+    if(Ergebnis != 32'b01101010100110010101010101010101)
+        $display("Xor funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b01101010100110010101010101010101);
+    
+
+    //Xnor-Befehl testen
+    Daten1 = 32'b01001000011110010101010101010101;
+    Daten2 = 32'b01101010100110010101010101010101;
+    FunktionsCode = Xnor;
+    #200
+    if(Ergebnis != 32'b00100010111000000000000000000000)
+        $display("Xnor funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00100010111000000000000000000000);
+    
+    Daten1 = 32'b00000000000000000000000000000000;
+    FunktionsCode = Xnor;
+    #200
+    if(Ergebnis != 32'b10010101011001101010101010101010)
+        $display("Xnor funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b10010101011001101010101010101010);
+    
+
+    //Internetseite zur Generierung der Bitstrings: https://www.h-schmidt.net/FloatConverter/IEEE754.html
+    //Add.s-Befehl testen
+    Daten1 = 32'b01000010001101011000000100000110;      // 45,376
+    Daten2 = 32'b01000010110011000000000000000000;      //102,000
+    FunktionsCode = Adds;
+    #200
+    if(Ergebnis != 32'b01000011000100110110000001000010)//147,376
+        $display("Floats addieren funktioniert nicht: \n Summand1: %d \n Summand2: %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b01000011000100110110000001000010);
+    
+    //Sub.s-Befehl testen
+    Daten1 = 32'b01000010001101011000000100000110;       // 45,376
+    Daten2 = 32'b01000010110011000000000000000000;       //102,000
+    FunktionsCode = Subs;
+    #200
+    if(Ergebnis != 32'b11000010011000101000100100110111)//-56,634
+        $display("Floats subtrahieren funktioniert nicht: \n Minuend:    %d \n Subtrahent: %d \n Ergebnis:   %d \n Erwartet:   %d\n", Daten1, Daten2, Ergebnis, 32'b11000010011000101000100100110111);
+
+    //Mul.s-Befehl testen
+    Daten1 = 32'b01000010001101011000000100000110;       // 45,376
+    Daten2 = 32'b01000010110011000000000000000000;       //102,000
+    FunktionsCode = Muls;
+    #200
+    if(Ergebnis != 32'b11000101100100001010001011010001)//4628,352
+        $display("Floats multiplizieren funktioniert nicht: \n Faktor1:  %d \n Faktor2:  %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b11000101100100001010001011010001);
+    
+    //Div.s-Befehl testen
+    Daten1 = 32'b01000010001101011000000100000110;      // 45,376
+    Daten2 = 32'b01000010110011000000000000000000;      //102,000
+    FunktionsCode = Divs;
+    #200
+    if(Ergebnis != 32'b00111110111000111100010100001101)  //0,44486274509803921568627450980392
+        $display("Floats dividieren funktioniert nicht: \n Divisor:  %d \n Dividend: %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00111110111000111100010100001101);
+    
+    //Sqrt.s-Befehl testen
+    Daten1 = 32'b01000000000110010101010101010101;        //2,39583325386   
+    FunktionsCode = Sqrts;
+    #200
+    if(Ergebnis != 32'b00111111110001100001111111100010)  //1,5478479427450230002776786742845
+        $display("Float Quadratwurzel funktioniert nicht: \n Radikand: %d Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00111111110001100001111111100010);
+    
+
+    #(DURATION) $display("End of simulation");
+    $finish;
+end
  
 endmodule

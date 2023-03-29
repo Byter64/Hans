@@ -24,22 +24,34 @@ module main_tb
  reg [5:0] ZielReg;
  reg Schreibsignal;
  reg [31:0] ZielDaten;
- reg clock;
- reg reset;
+ reg Reset;
  wire [31:0] QuellDaten1;
  wire [31:0] QuellDaten2;
  
+reg clock;
+
+
  // Module instance
- main MAIN (
-  .vaa5d49(QuellReg1),
-  .v102134(QuellReg2),
-  .v14eae6(ZielReg),
-  .v4434b8(Schreibsignal),
-  .v7d1d02(ZielDaten),
-  .vc46106(QuellDaten1),
-  .vfab6dd(QuellDaten2)
+ Register MAIN (
+  QuellReg1,
+  QuellReg2,
+  ZielDaten,
+  ZielReg,
+  Schreibsignal,
+  Reset,
+
+  QuellDaten1,
+  QuellDaten2
  );
  
+initial begin
+    clock = 1'b0;
+end
+
+always begin
+   #1000 clock = ~clock; 
+end
+
  initial begin
   $dumpvars(0, main_tb);
  
@@ -51,7 +63,58 @@ module main_tb
   ZielReg = 0;
   Schreibsignal = 0;
   ZielDaten = 0;
- 
+
+  //Reset testen
+  Reset = 1'b1;
+  #200
+  Reset = 1'b0;
+  #1700
+
+  //Speicher Daten in Int-register
+  ZielReg = 6'b000100;
+  ZielDaten = 32'b10101010101010101010101010101010;
+  Schreibsignal = 1'b1;
+  #2000
+  Schreibsignal = 1'b0;
+
+  //Lese Daten aus Int-register
+  QuellReg1 = 6'b000100;
+  #2000
+  if(QuellDaten1 != 32'b10101010101010101010101010101010)
+    $display("Deine Mamer ist fett. Und die gespeicherten Daten über QuellReg1 sind falsch ausgegeben. \n In R4 wurde 2863311530 gespeichert. \n Aus R4 wurd %d ausgegeben", QuellDaten1);
+  
+  //Speicher Daten in Float-register
+  ZielReg = 6'b101100;
+  ZielDaten = 32'b10101010101010101010101010101010;
+  Schreibsignal = 1'b1;
+  #2000
+  Schreibsignal = 1'b0;
+
+  //Lese Daten aus Float-register
+  QuellReg2 = 6'b101100;
+  #2000
+  if(QuellDaten2 != 32'b10101010101010101010101010101010)
+    $display("Deine Mamer ist fett. Und die gespeicherten Daten über QuellReg2 sind falsch ausgegeben. \n In R44 wurde 2863311530 gespeichert. \n Aus R44 wurd %d ausgegeben", QuellDaten2);
+  
+  //Lese 0 aus R0
+  QuellReg2 = 6'b000000;
+  #2000
+  if(QuellDaten2 != 32'b00000000000000000000000000000000)
+    $display("Deine Mamer ist fett... Und das Nullregister funktiontiert nicht. \n Aus R0 wurd %d ausgegeben anstatt 00000000000000000000000000000000", QuellDaten2);
+
+  //Speichern in R0
+  ZielReg = 6'b000000;
+  ZielDaten = 32'b10101010101010101010101010101010;
+  Schreibsignal = 1'b1;
+  #2000
+  Schreibsignal = 1'b0;
+
+  //0 Lesen aus R0
+  QuellReg2 = 6'b000000;
+  #2000
+  if(QuellDaten2 != 32'b00000000000000000000000000000000)
+    $display("Deine Mamer ist fett... Und das Nullregister seinen Wert nach Beschreibung verändert. \n Aus R0 wurd %d ausgegeben anstatt 00000000000000000000000000000000", QuellDaten2);
+
   #(DURATION) $display("End of simulation");
   $finish;
  end
