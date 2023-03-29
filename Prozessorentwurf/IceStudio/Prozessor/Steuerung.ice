@@ -1,7 +1,7 @@
 {
   "version": "1.2",
   "package": {
-    "name": "Steuerung",
+    "name": "",
     "version": "",
     "description": "",
     "author": "",
@@ -12,15 +12,49 @@
     "graph": {
       "blocks": [
         {
-          "id": "3773f6b8-a9b2-407e-a459-f27a07b3d59f",
+          "id": "528cacb6-c1be-45d7-adcf-916e31acc1d4",
           "type": "basic.input",
           "data": {
-            "name": "Bedingung",
+            "name": "Funktionscode",
+            "virtual": true,
+            "range": "[5:0]",
+            "pins": [
+              {
+                "index": "5",
+                "name": "NULL",
+                "value": "NULL"
+              },
+              {
+                "index": "4",
+                "name": "NULL",
+                "value": "NULL"
+              },
+              {
+                "index": "3",
+                "name": "NULL",
+                "value": "NULL"
+              },
+              {
+                "index": "2",
+                "name": "NULL",
+                "value": "NULL"
+              },
+              {
+                "index": "1",
+                "name": "NULL",
+                "value": "NULL"
+              },
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ],
             "clock": false
           },
           "position": {
-            "x": 680,
-            "y": 96
+            "x": 696,
+            "y": -16
           }
         },
         {
@@ -39,19 +73,26 @@
           },
           "position": {
             "x": 1008,
-            "y": 152
+            "y": 112
           }
         },
         {
-          "id": "80701733-2c21-4dd6-96ff-ede745745459",
-          "type": "basic.input",
+          "id": "0ab4bde9-8c23-4f45-8e04-653d9400b648",
+          "type": "basic.output",
           "data": {
-            "name": "FloatBefehl",
-            "clock": false
+            "name": "ALUSignal",
+            "virtual": true,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ]
           },
           "position": {
-            "x": 688,
-            "y": 168
+            "x": 1008,
+            "y": 176
           }
         },
         {
@@ -62,8 +103,8 @@
             "clock": false
           },
           "position": {
-            "x": 696,
-            "y": 248
+            "x": 688,
+            "y": 208
           }
         },
         {
@@ -85,8 +126,28 @@
             "clock": false
           },
           "position": {
-            "x": 704,
-            "y": 320
+            "x": 696,
+            "y": 280
+          }
+        },
+        {
+          "id": "80701733-2c21-4dd6-96ff-ede745745459",
+          "type": "basic.input",
+          "data": {
+            "name": "JALBefehl",
+            "virtual": true,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ],
+            "clock": false
+          },
+          "position": {
+            "x": 696,
+            "y": 344
           }
         },
         {
@@ -132,7 +193,19 @@
           },
           "position": {
             "x": 688,
-            "y": 504
+            "y": 456
+          }
+        },
+        {
+          "id": "3773f6b8-a9b2-407e-a459-f27a07b3d59f",
+          "type": "basic.input",
+          "data": {
+            "name": "Bedingung",
+            "clock": false
+          },
+          "position": {
+            "x": 688,
+            "y": 512
           }
         },
         {
@@ -142,8 +215,27 @@
             "name": "PCSchreibSignal"
           },
           "position": {
-            "x": 1024,
-            "y": 536
+            "x": 1016,
+            "y": 520
+          }
+        },
+        {
+          "id": "8cf34f50-cd18-4b79-b85e-acbb3bfc9078",
+          "type": "basic.output",
+          "data": {
+            "name": "PCSignal",
+            "virtual": true,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ]
+          },
+          "position": {
+            "x": 1032,
+            "y": 584
           }
         },
         {
@@ -163,7 +255,7 @@
           },
           "position": {
             "x": 688,
-            "y": 608
+            "y": 592
           }
         },
         {
@@ -186,10 +278,10 @@
           }
         },
         {
-          "id": "3cfde539-3bc4-4334-9d5a-7062b5f1a14a",
+          "id": "9ceb3b45-bdb4-4b49-97b8-2219d8485575",
           "type": "basic.input",
           "data": {
-            "name": "clock",
+            "name": "DatenGeladen",
             "virtual": true,
             "pins": [
               {
@@ -201,12 +293,32 @@
             "clock": false
           },
           "position": {
-            "x": 680,
-            "y": 696
+            "x": 688,
+            "y": 648
           }
         },
         {
-          "id": "f6007c27-40ab-4d35-ade1-2f75b1406ffa",
+          "id": "9a1a51a2-fa03-413f-8d49-5b9f7ab59e2e",
+          "type": "basic.input",
+          "data": {
+            "name": "DatenGespeichert",
+            "virtual": true,
+            "pins": [
+              {
+                "index": "0",
+                "name": "NULL",
+                "value": "NULL"
+              }
+            ],
+            "clock": false
+          },
+          "position": {
+            "x": 688,
+            "y": 712
+          }
+        },
+        {
+          "id": "b39cb169-c796-417c-9c48-7900b82b7065",
           "type": "basic.input",
           "data": {
             "name": "reset",
@@ -221,7 +333,7 @@
             "clock": false
           },
           "position": {
-            "x": 680,
+            "x": 688,
             "y": 768
           }
         }
