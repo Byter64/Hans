@@ -512,7 +512,7 @@
           "id": "30d56940-a6fb-482d-91f3-ac06f90d7ecb",
           "type": "basic.output",
           "data": {
-            "name": "LoadAdresse",
+            "name": "Adresse",
             "virtual": true,
             "range": "[31:0]",
             "pins": [
@@ -687,7 +687,7 @@
           "id": "adfda51a-2a0c-4bf4-9fa6-94f72e266410",
           "type": "basic.output",
           "data": {
-            "name": "StoreAdresse",
+            "name": "StoreDaten",
             "virtual": true,
             "range": "[31:0]",
             "pins": [
@@ -931,8 +931,8 @@
             "clock": false
           },
           "position": {
-            "x": 456,
-            "y": 824
+            "x": 464,
+            "y": 840
           }
         },
         {
@@ -951,8 +951,8 @@
             "clock": false
           },
           "position": {
-            "x": 456,
-            "y": 872
+            "x": 464,
+            "y": 888
           }
         },
         {
@@ -971,8 +971,8 @@
             "clock": false
           },
           "position": {
-            "x": 456,
-            "y": 920
+            "x": 464,
+            "y": 936
           }
         },
         {
@@ -1008,7 +1008,7 @@
           },
           "size": {
             "width": 96,
-            "height": 352
+            "height": 384
           }
         },
         {
@@ -1075,8 +1075,8 @@
           "id": "976035e9-d75d-477a-b245-cc03c7cc6329",
           "type": "433ce5316c1247a4e0a16f5007c3b5cf1c56a0e3",
           "position": {
-            "x": 1376,
-            "y": 592
+            "x": 1368,
+            "y": 584
           },
           "size": {
             "width": 96,
@@ -1172,7 +1172,7 @@
           },
           "vertices": [
             {
-              "x": 1568,
+              "x": 1552,
               "y": 320
             }
           ],
@@ -1633,8 +1633,8 @@
           },
           "vertices": [
             {
-              "x": 80,
-              "y": 808
+              "x": 48,
+              "y": 832
             }
           ]
         },
@@ -1702,8 +1702,8 @@
           },
           "vertices": [
             {
-              "x": 704,
-              "y": 864
+              "x": 712,
+              "y": 880
             }
           ]
         },
@@ -1754,8 +1754,8 @@
           },
           "vertices": [
             {
-              "x": 640,
-              "y": 696
+              "x": 648,
+              "y": 712
             }
           ]
         },
@@ -1854,7 +1854,7 @@
               "id": "a25f91cb-5ceb-473c-a646-15ee0036da29",
               "type": "basic.input",
               "data": {
-                "name": "Clock",
+                "name": "DekodierSignal",
                 "virtual": true,
                 "pins": [
                   {
@@ -2285,7 +2285,15 @@
               "id": "ef8e04d2-5d14-4cdb-8c52-beef5541c4c4",
               "type": "basic.input",
               "data": {
-                "name": "Schreibsignal",
+                "name": "SchreibSignal",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ],
                 "clock": false
               },
               "position": {
@@ -2297,7 +2305,7 @@
               "id": "17e637ef-d097-4a89-9612-670103f94aa3",
               "type": "basic.input",
               "data": {
-                "name": "Clock",
+                "name": "TaktSignal",
                 "virtual": true,
                 "pins": [
                   {
@@ -2656,6 +2664,26 @@
               }
             },
             {
+              "id": "151db1f8-9820-4afd-955f-90dbb16de40b",
+              "type": "basic.input",
+              "data": {
+                "name": "clock",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ],
+                "clock": false
+              },
+              "position": {
+                "x": 688,
+                "y": 768
+              }
+            },
+            {
               "id": "b39cb169-c796-417c-9c48-7900b82b7065",
               "type": "basic.input",
               "data": {
@@ -2672,7 +2700,7 @@
               },
               "position": {
                 "x": 688,
-                "y": 768
+                "y": 824
               }
             }
           ],
@@ -2777,7 +2805,7 @@
               "id": "a81bee85-0811-40bf-82a9-dbd224184b4c",
               "type": "basic.input",
               "data": {
-                "name": "Clock",
+                "name": "SchreibSignal",
                 "virtual": true,
                 "pins": [
                   {
@@ -2920,7 +2948,7 @@
               "id": "821416e3-f3d9-4ed9-8ad7-9f923ca5158a",
               "type": "basic.input",
               "data": {
-                "name": "Clock",
+                "name": "StartSignal",
                 "virtual": true,
                 "pins": [
                   {
@@ -3190,9 +3218,9 @@
     },
     "1215e7c917c45969312f4d1b2e4c239094400d4c": {
       "package": {
-        "name": "ErstesBit",
+        "name": "NOR",
         "version": "",
-        "description": "Gibt das erste (= niedrigste) Bit weiter",
+        "description": "Vornort alle Bits und gibt das Ergebnis aus",
         "author": "",
         "image": ""
       },
@@ -3217,7 +3245,15 @@
               "id": "b0cef370-f1b8-40aa-9372-37c6e08dc3dd",
               "type": "basic.output",
               "data": {
-                "name": "NiedrigstesBit"
+                "name": "Ergebnis",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ]
               },
               "position": {
                 "x": 1168,
