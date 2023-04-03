@@ -20,7 +20,7 @@ module main_tb
  
  // Input/Output
  reg [31:0] Eingang;
- wire NiedrigstesBit;
+ wire Ergebnis;
  
  // Module instance
  main MAIN (
@@ -32,13 +32,13 @@ module main_tb
   $dumpvars(0, main_tb);
 
   Eingang = 00000000000000000000000000000000;
-  #1 `assert(NiedrigstesBit, 0);
+  #1 `assert(Ergebnis, 1);
   Eingang = 00000000000001111000000000000001;
-  #1 `assert(NiedrigstesBit, 1);
+  #1 `assert(Ergebnis, 0);
   Eingang = 11111111111111111111111111111111;
-  #1 `assert(NiedrigstesBit, 1);
+  #1 `assert(Ergebnis, 0);
   Eingang = 11110111111111111111111111111110;
-  #1 `assert(NiedrigstesBit, 0);
+  #1 `assert(Ergebnis, 0);
 
   $display("End of simulation");
   $finish;
