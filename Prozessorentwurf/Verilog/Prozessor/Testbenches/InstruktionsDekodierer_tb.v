@@ -20,7 +20,6 @@ module main_tb
 // Input/Output
  reg [31:0] Instruktion;
  reg DekodierSignal;
- reg Clock;
  reg Reset;
  wire [5:0] QuellReg1;
  wire [5:0] QuellReg2;
@@ -190,7 +189,7 @@ reg[31] JMP =   32b'010000 00000000000000000000000010;
     Instruktion = STORE;
     #2000;
     $display("STORE");  
-    assertSignal(QuellReg1,001011,QuellReg2,000000,ZielReg1,011001,IDaten,00000000000000000000000000,KleinerImmediateAktiv,1,GroßerImmediateAktiv,0,FunktionsCode,000000,JALBefehl,0,RelativerSprung,0,FloatBefehl,0,LoadBefehl,0,StoreBefehl,1,UnbedingterSprungBefehl,0,BedingterSprung,0,AbsoluterSprung,0);
+    assertSignal(QuellReg1,001011,QuellReg2,011001,ZielReg1,000000,IDaten,00000000000000000000000000,KleinerImmediateAktiv,1,GroßerImmediateAktiv,0,FunktionsCode,000000,JALBefehl,0,RelativerSprung,0,FloatBefehl,0,LoadBefehl,0,StoreBefehl,1,UnbedingterSprungBefehl,0,BedingterSprung,0,AbsoluterSprung,0);
 
     Instruktion = JREG;
     #2000;
