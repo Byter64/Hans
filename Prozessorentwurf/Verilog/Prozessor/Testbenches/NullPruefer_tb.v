@@ -2,7 +2,7 @@
 // Fri, 17 Mar 2023 20:18:27 GMT
 
 // Testbench template
-`include "ErstesBit.v"
+`include "../NullPruefer.v"
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns
@@ -23,9 +23,9 @@ module main_tb
  wire Ergebnis;
  
  // Module instance
- main MAIN (
-  .ve0f1d2(Eingang),
-  .va34f84(NiedrigstesBit)
+ NullPruefer main (
+  .Eingang(Eingang),
+  .Ergebnis(Ergebnis)
  );
  
  initial begin
