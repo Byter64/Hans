@@ -1,4 +1,4 @@
-module Register (
+module Instruktionsdekodierer (
     output wire [5:0] QuellRegister1,
     output wire [5:0] QuellRegister2,
     output wire [5:0] ZielRegister,
@@ -31,13 +31,13 @@ always @(posedge DekodierSignal) begin
     AktuellerBefehl <= Instruktion;
 end
 
-assign QuellRegister1 =         (AktuellerBefehl[31:30]==2'b00 && AktuellerBefehl[5:4]!=2'b10) ? {1'b0, AktuellerBefehl[15:11]}:
-                                (AktuellerBefehl[31:30]==2'b00 && AktuellerBefehl[5:4]==2'b10) ? {1'b1, AktuellerBefehl[15:11]}:
+assign QuellRegister1 =         (AktuellerBefehl[31:30]==2'b00 && AktuellerBefehl[5:4]!=2'b10) ? {1'b0, AktuellerBefehl[20:16]}:
+                                (AktuellerBefehl[31:30]==2'b00 && AktuellerBefehl[5:4]==2'b10) ? {1'b1, AktuellerBefehl[20:16]}:
                                 (AktuellerBefehl[31:31]==1'b1) ? {1'b0, AktuellerBefehl[20:16]}:
                                 6'b0;
 
-assign QuellRegister2 =         (AktuellerBefehl[31:30]==2'b00 && AktuellerBefehl[5:4]!=2'b10) ? {1'b0, AktuellerBefehl[20:16]}:
-                                (AktuellerBefehl[31:30]==2'b00 && AktuellerBefehl[5:4]==2'b10) ? {1'b1, AktuellerBefehl[20:16]}:
+assign QuellRegister2 =         (AktuellerBefehl[31:30]==2'b00 && AktuellerBefehl[5:4]!=2'b10) ? {1'b0, AktuellerBefehl[15:11]}:
+                                (AktuellerBefehl[31:30]==2'b00 && AktuellerBefehl[5:4]==2'b10) ? {1'b1, AktuellerBefehl[15:11]}:
                                 (AktuellerBefehl[31:26]==6'b101100) ? {1'b0, AktuellerBefehl[25:21]}:
                                 6'b0;
 
