@@ -57,6 +57,9 @@ assign GrosserImmediateAktiv =  (AktuellerBefehl[31:30]==2'b01) ? 1'b1:
                                 1'b0;
                             
 //Hier Bitte Funktionscode einfügen
+assign FunktionsCode =          (AktuellerBefehl[31:30]==2b'00) ? AktuellerBefehl[5:0]:
+                                (AktuellerBefehl[31:30]==2b'01) ? 6'b0:
+                                {1'b0,AktuellerBefehl[30:26]};
 
 assign JALBefehl =              (AktuellerBefehl[31:26]==6'b101111) ? 1'b1:
                                 1'b0;
