@@ -33,13 +33,14 @@ module main_tb
  reg BefehlGeladen;
  reg DatenGeladen;
  reg DatenGespeichert;
- reg reset;
+ reg Reset;
+ reg Clock;
  wire RegisterSchreibSignal;
  wire ALUSignal;
  wire LoadBefehlSignal;
  wire LoadDatenSignal;
  wire StoreDatenSignal;
- wire PCSchreibSignal;
+ wire PCSprungSignal;
  wire PCSignal;
  wire DekodierSignal;
 
@@ -56,7 +57,7 @@ module main_tb
   .vd25d6a(LoadBefehlSignal),
   .vb561af(LoadDatenSignal),
   .vc9a715(StoreDatenSignal),
-  .v7af967(PCSchreibSignal)
+  .v7af967(PCSprungSignal)
  );
  
  initial begin
@@ -85,15 +86,15 @@ module main_tb
   UnbedingterSprungBefehl = 0;
   BedingterSprungBefehl = 0;
   Bedingung = 0;
-  #1 assert(PCSchreibSignal, 0);
+  #1 assert(PCSprungSignal, 0);
   BedingterSprungBefehl = 1;
-  #1 assert(PCSchreibSignal, 0);
+  #1 assert(PCSprungSignal, 0);
   Bedingung = 1;
-  #1 assert(PCSchreibSignal, 1);
+  #1 assert(PCSprungSignal, 1);
   BedingterSprungBefehl = 0;
   Bedingung = 0;
   UnbedingterSprungBefehl = 1;
-  #1 assert(PCSchreibSignal, 1);
+  #1 assert(PCSprungSignal, 1);
   #(DECODETIME-4)
 
   assert(DekodierSignal, 0);
