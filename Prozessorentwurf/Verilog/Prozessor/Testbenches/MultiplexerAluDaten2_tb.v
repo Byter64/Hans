@@ -2,7 +2,7 @@
 // Mon, 20 Mar 2023 15:03:20 GMT
 
 // Testbench template
-`include "MultiplexerAluDaten2.v"
+`include "../MultiplexerAluDaten2.v"
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns
@@ -25,11 +25,11 @@ module main_tb
  wire [31:0] Daten2;
  
  // Module instance
- main MAIN (
-  .v30c415(AktuellerPC),
-  .v5cb37b(QuellDaten1),
-  .vb74a8b(RelativerSprungBefehl),
-  .v2cf625(Daten2)
+ MultiplexerAluDaten2 multiplexerAluDaten2 (
+  .AktuellerPC(AktuellerPC),
+  .QuellDaten1(QuellDaten1),
+  .RelativerSprungBefehl(RelativerSprungBefehl),
+  .Daten2(Daten2)
  );
  
  initial begin
@@ -41,12 +41,18 @@ module main_tb
   // e.g. #2 value = 0;
   AktuellerPC = 26'b00011001001100001110010110;
   QuellDaten1 = 32'b00010010000000110000010000001100;
-  
-  #100 RelativerSprungBefehl = 0;
-  #100 assert(Daten2, QuellDaten1);
+  $display("Start of simulation");
+  #100
+  RelativerSprungBefehl = 0;
+  #100 
+  if(Daten2 != QuellDaten1)
+    $display("Wert in Daten2 ist ungleich QuellDaten1: \n Daten2: %d \n RegisterDaten2: %d", Daten2, QuellDaten1);
 
-  #100 RelativerSprungBefehl = 1;
-  #100 assert(Daten2, 32'b00000000011001001100001110010110);
+  #100 
+  RelativerSprungBefehl = 1;
+  #100 
+  if(Daten2 != 32'b00000000011001001100001110010110)
+    $display("Wert in Daten2 ist ungleich 00000000011001001100001110010110: \n Daten2: %d", Daten2);
 
   #(DURATION) $display("End of simulation");
   $finish;

@@ -2,7 +2,7 @@
 // Mon, 20 Mar 2023 15:09:35 GMT
 
 // Testbench template
-`include "MultiplexerZielDaten.v"
+`include "../MultiplexerZielDaten.v"
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns
@@ -20,20 +20,20 @@ module main_tb
  
  // Input/Output
  reg [31:0] ALUErgebnis;
- reg [25:0] ErhöhterPC;
+ reg [25:0] ErhohterPC;
  reg [31:0] LoadErgebnis;
  reg JALBefehl;
  reg LoadBefehl;
  wire [31:0] ZielDaten;
  
  // Module instance
- main MAIN (
-  .vcf12e3(ALUErgebnis),
-  .vbaf620(ErhöhterPC),
-  .v51b6bc(LoadErgebnis),
-  .v604d67(JALBefehl),
-  .va16ad8(LoadBefehl),
-  .va874ad(ZielDaten)
+ MultiplexerZielDaten multiplexerZielDaten (
+  .ALUErgebnis(ALUErgebnis),
+  .ErhohterPC(ErhohterPC),
+  .LoadErgebnis(LoadErgebnis),
+  .JALBefehl(JALBefehl),
+  .LoadBefehl(LoadBefehl),
+  .ZielDaten(ZielDaten)
  );
  
  initial begin
@@ -43,18 +43,26 @@ module main_tb
   // e.g. value = 1;
   // e.g. #2 value = 0;
   ALUErgebnis = 32'b00010010000000110000010000001100;
-  ErhöhterPC = 26'b00011001001100001110010110;
+  ErhohterPC = 26'b00011001001100001110010110;
   LoadErgebnis = 32'b00010010000100010000010110001001;
-  
+  $display("Start of simulation");
   #100 JALBefehl = 0; LoadBefehl = 0;
-  #100 assert(ZielDaten, ALUErgebnis);
-
-  #100 JALBefehl = 0; LoadBefehl = 1;
-  #100 assert(ZielDaten, LoadErgebnis);
-  
-  #100 JALBefehl = 1; LoadBefehl = 0;
-  #100 assert(ZielDaten, 26'b00000000011001001100001110010110);
-
+  #100   
+  if(ZielDaten != ALUErgebnis) begin
+    $display("ZielDaten: %d \n ALUErgebnis: ", ZielDaten, ALUErgebnis);
+  end
+  #100 
+  JALBefehl = 0; LoadBefehl = 1;
+  #100 
+  if(ZielDaten != LoadErgebnis) begin
+    $display("ZielDaten: %d \n LoadErgebnis: ", ZielDaten, LoadErgebnis);
+  end
+  #100 
+  JALBefehl = 1; LoadBefehl = 0;
+  #100 
+  if(ZielDaten != 32'b00000000011001001100001110010110) begin
+    $display("ZielDaten: %d \n Ergebnis: 00000000011001001100001110010110", ZielDaten);
+  end
   #(DURATION) $display("End of simulation");
   $finish;
  end

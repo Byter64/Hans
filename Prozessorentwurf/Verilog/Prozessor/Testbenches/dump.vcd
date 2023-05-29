@@ -1,0 +1,47 @@
+$date
+	Mon May 29 20:19:26 2023
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ns
+$end
+$scope module main_tb $end
+$var wire 32 ! Daten2 [31:0] $end
+$var parameter 32 " DURATION $end
+$var reg 26 # Immediate [25:0] $end
+$var reg 1 $ ImmediateAktiv $end
+$var reg 32 % RegisterDaten2 [31:0] $end
+$scope module multiplexerAluDaten $end
+$var wire 26 & Immediate [25:0] $end
+$var wire 1 $ ImmediateAktiv $end
+$var wire 32 ' RegisterDaten2 [31:0] $end
+$var wire 32 ( Daten2 [31:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+b1010 "
+$end
+#0
+$dumpvars
+b10010000000110000010000001100 (
+b10010000000110000010000001100 '
+b11001001100001110010110 &
+b10010000000110000010000001100 %
+0$
+b11001001100001110010110 #
+b10010000000110000010000001100 !
+$end
+#2000
+b11001001100001110010110 !
+b11001001100001110010110 (
+1$
+#4000
+b1100001110010110 !
+b1100001110010110 (
+b1100001110010110 #
+b1100001110010110 &
+#5000

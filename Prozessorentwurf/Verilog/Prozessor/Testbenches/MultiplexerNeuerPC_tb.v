@@ -2,7 +2,7 @@
 // Mon, 20 Mar 2023 15:06:52 GMT
 
 // Testbench template
-`include "MultiplexerNeuerPC.v"
+`include "../MultiplexerNeuerPC.v"
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns
@@ -25,19 +25,19 @@ module main_tb
  wire [25:0] NeuerPC;
  
  // Module instance
- main MAIN (
-  .v5a59b5(RelativerPC),
-  .vb6adaf(AbsoluterPC),
-  .vf95e96(IstAbsolut),
-  .vbda1cf(NeuerPC)
+ MultiplexerNeuerPC multiplexerNeuerPC (
+  .RelativerPC(RelativerPC),
+  .AbsoluterPC(AbsoluterPC),
+  .IstAbsolut(IstAbsolut),
+  .NeuerPC(NeuerPC)
  );
  
  initial begin
   $dumpvars(0, main_tb);
-  RelativerPC = 32'b00001111001100100000111100110010000011110010;
-  AbsoluterPC = 32'b00110011000000100001100100100110001101110010;
+  RelativerPC = 32'b00100000111100110010000011110010;
+  AbsoluterPC = 32'b00100001100100100110001101110010;
   IstAbsolut = 0;
-
+  $display("Start of simulation");
   #100 
   if(NeuerPC != RelativerPC[25:0])
     $display("Der relative PC wurde nicht richtig übernommen.\n Relativer PC: %d \n NeuerPC: ", RelativerPC[25:0], NeuerPC);
