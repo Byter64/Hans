@@ -2,7 +2,7 @@
 // Sat, 18 Mar 2023 19:02:29 GMT
 
 // Testbench template
-`include "Programmzähler.v"
+`include "../Programmzahler.v"
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns
@@ -24,14 +24,16 @@ module main_tb
  reg clock;
  reg reset;
  wire [25:0] AktuellerPC_;
- wire [25:0] ErhöhterPC_;
+ wire [25:0] ErhoehterPC_;
  
  // Module instance
- main MAIN (
-  .vb9f6e8(Schreibsignal),
-  .v64b2fc(NeuerPC_),
-  .v469cec(AktuellerPC_),
-  .ve305d5(ErhöhterPC_)
+ Programmzahler programmzahler (
+  .SchreibSignal(Schreibsignal),
+  .NeuerPC(NeuerPC_),
+  .TaktSignal(clock),
+  .AktuellerPC(AktuellerPC_),
+  .erhohterPC(ErhoehterPC_),
+  .Reset(reset)
  );
  
  always #1000 clock = ~clock;
@@ -42,29 +44,41 @@ module main_tb
   // TODO: initialize the registers here
   // e.g. value = 1;
   // e.g. #2 value = 0;
-  Schreibsignal = 0; NeuerPC_ = 0;
-  clock = 0;
-  
+  Schreibsignal = 1'b0; NeuerPC_ = 26'b0;
+  clock = 1'b0;
+  $display("Start of simulation");
   #900
-  Schreibsignal = 1; NeuerPC_ = 14;
+  Schreibsignal = 1'b1; NeuerPC_ = 26'b01110;
   #200
-  assert(AktuellerPC_, 14);
-  assert(ErhoehterPC_, 15);
+  assertSignal(AktuellerPC_, 26'b01110,ErhoehterPC_,26'b01111);
 
   #800
-  Schreibsignal = 0; NeuerPC_ = 4359;
+  Schreibsignal = 1'b0; NeuerPC_ = 26'b01000100000111;
   #200
-  assert(AktuellerPC_, 15);
-  assert(ErhoehterPC_, 16);
-
+  assertSignal(AktuellerPC_, 26'b01111,ErhoehterPC_,26'b010000);
   #800
-  Schreibsignal = 1; NeuerPC_ = 67108862;
+  Schreibsignal = 1'b1; NeuerPC_ = 26'b11111111111111111111111110;
   #200
-  assert(AktuellerPC_, 67108862);
-  assert(ErhoehterPC_, 67108863);
+  assertSignal(AktuellerPC_, 26'b11111111111111111111111110,ErhoehterPC_,26'b11111111111111111111111111);
 
   #(DURATION) $display("End of simulation");
   $finish;
  end
  
+ task assertSignal;
+  input  [25:0]assertaktuellerPC;
+  input  [25:0]shouldaktuellerPC;
+  input  [25:0]asserterhoterPC;
+  input  [25:0]shoulderhoterPC;
+  begin
+    if(assertaktuellerPC != shouldaktuellerPC) begin 
+      $display("AktuellerPC = %b, should be %b!",assertaktuellerPC,shouldaktuellerPC);
+    end
+    if(asserterhoterPC != shoulderhoterPC) begin
+      $display("ErhoeterPC =  %b, should be  %b!",asserterhoterPC,shoulderhoterPC);
+    end
+  end
+ endtask
+
+
 endmodule
