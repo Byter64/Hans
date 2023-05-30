@@ -5,7 +5,7 @@ module MultiplexerAluDaten (
     output [31:0] Daten2
 );
 
- assign Daten2 = (ImmediateAktiv==1'b1)? {6'b0,Immediate}:
+ assign Daten2 = (ImmediateAktiv==1'b1)? {{6{Immediate[25]}},Immediate}:
                     RegisterDaten2;
 
 endmodule

@@ -45,10 +45,10 @@ assign ZielRegister =           (AktuellerBefehl[31:30]==2'b00 && AktuellerBefeh
                                 (((AktuellerBefehl[31:30]==2'b00 && AktuellerBefehl[5:4]==2'b10)||AktuellerBefehl[31:26]==6'b101011) ? {1'b1, AktuellerBefehl[25:21]}:
                                 ((AktuellerBefehl[31:31]==1'b1) ? {1'b0, AktuellerBefehl[25:21]}:
                                 6'b0));
+assign IDaten =                 (AktuellerBefehl[31:30] == 2'b01) ? AktuellerBefehl[25:0] :
+                                (AktuellerBefehl[31:31] == 1'b1) ? {{10{AktuellerBefehl[15]}}, AktuellerBefehl[15:0]} :
+                                26'b0;
 
-assign IDaten =                 (AktuellerBefehl[31:30]==2'b01) ? AktuellerBefehl[25:0]:
-                                ((AktuellerBefehl[31:31]==1'b1) ? {10'b0, AktuellerBefehl[15:0]}:
-                                26'b0);
             
 assign KleinerImmediateAktiv =  (AktuellerBefehl[31:31]==1'b1);
 
