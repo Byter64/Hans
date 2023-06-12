@@ -1,5 +1,5 @@
-`include "../ALUModule/Goldschmidt_Integer_Divider_Parallel-main/source/Goldschmidt_Integer_Divider_Parallel.v"
-
+`include "ALUModule/Goldschmidt_Integer_Divider_Parallel-main/source/Goldschmidt_Integer_Divider_Parallel.v"
+`include "ALUModule/intsqrt.v"
 module ALU (
     input[31:0] Daten1,
     input[31:0] Daten2,
@@ -18,7 +18,7 @@ reg[31:0] ZyklischerSchieberErgebnis;
 reg[31:0] SubtraktionErgebnis;
 reg[31:0] SubtraktionErgebnis;
 reg[31:0] SubtraktionErgebnis;
-
+reg QuadratFertig;
 
 ZyklischerSchieber#(32, 5) Schieber (
     .Zahl(Daten1),
@@ -27,11 +27,11 @@ ZyklischerSchieber#(32, 5) Schieber (
     .SchiebRechts(Funktionscode[0])
 );
 
-  Goldschmidt_Integer_Divider_Parallel #(
+Goldschmidt_Integer_Divider_Parallel #(
     .P_GDIV_FACTORS_MSB(31), 
     .P_GDIV_FRAC_LENGTH(32),
     .P_GDIV_ROUND_LVL(3)
-  ) DivisionsModule (
+) DivisionsModule (
     // Component's clocks and resets
     .i_clk(Clock), // clock
     .i_rst(Reset), // reset
@@ -43,8 +43,15 @@ ZyklischerSchieber#(32, 5) Schieber (
     .o_wb4s_stall(o_wb4s_stall), // WB stall, not ready
     .o_wb4s_ack(o_wb4s_ack),     // WB write enable
     .o_wb4s_data(o_wb4s_data)    // WB data, result
-  );
+);
 
+Intsqrt QuadratModul(
+    .Clock(Clock),
+    .Reset(Reset),
+    .Num_in(Daten1),
+    .Done(QuadratFertig),
+    .Sq_root(WurzelErgebnis)
+);
 
 always @(StartSignal) begin
         if (Funktionscode[5] == 0) begin //Wenn Arithmetik- oder Logikbefehl

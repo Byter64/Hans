@@ -1,10 +1,12 @@
+
+//Taken from: https://verilogcodes.blogspot.com/2020/12/synthesizable-clocked-square-root.html
 //Synthesisable Design for Finding Square root of a number.
 module Intsqrt
     (   input Clock,  //Clock
-        input reset,  //Asynchronous active high reset.      
-        input [31:0] num_in,   //this is the number for which we want to find square root.
-        output reg done,     //This signal goes high when output is ready
-        output reg [31:0] sq_root  //square root of 'num_in'
+        input Reset,  //Asynchronous active high reset.      
+        input [31:0] Num_in,   //this is the number for which we want to find square root.
+        output reg Done,     //This signal goes high when output is ready
+        output reg [31:0] Sq_root  //square root of 'num_in'
     );
 
     reg [31:0] a;   //original input.
