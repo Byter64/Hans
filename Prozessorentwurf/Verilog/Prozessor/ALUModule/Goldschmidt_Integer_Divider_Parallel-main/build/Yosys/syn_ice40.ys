@@ -1,0 +1,7 @@
+read_verilog "../../source/Goldschmidt_Integer_Divider_Parallel.v"
+#prep -top Goldschmidt_Integer_Divider_Parallel
+#splitnets
+#write_json Goldschmidt_Integer_Divider_Parallel_syn.json
+#synth_anlogic -retime -top Goldschmidt_Integer_Divider_Parallel
+synth_ice40 -abc9 -dsp -json Goldschmidt_Integer_Divider_Parallel_syn.json -top Goldschmidt_Integer_Divider_Parallel
+#show -prefix Goldschmidt_Integer_Divider_Parallel -notitle -nobg -long -colors 2 -width -format dot 
