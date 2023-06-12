@@ -19,6 +19,8 @@ reg[31:0] SubtraktionErgebnis;
 reg[31:0] SubtraktionErgebnis;
 reg[31:0] SubtraktionErgebnis;
 reg QuadratFertig;
+reg DivisionFertig;
+reg DivisionNichtFertig;
 
 ZyklischerSchieber#(32, 5) Schieber (
     .Zahl(Daten1),
@@ -36,13 +38,13 @@ Goldschmidt_Integer_Divider_Parallel #(
     .i_clk(Clock), // clock
     .i_rst(Reset), // reset
     // Wishbone(Pipeline) Slave Interface
-    .i_wb4s_cyc(i_wb4s_cyc),     // WB stb, valid strobe
-    .i_wb4s_stb({Funktionscode[0], 0}),     // WB stb, valid strobe
-    .i_wb4s_data(i_wb4s_data),   // WB data 0
-    .i_wb4s_tgc({Daten1, Daten2}),     // WB data tag, 0=add 1=substract
-    .o_wb4s_stall(o_wb4s_stall), // WB stall, not ready
-    .o_wb4s_ack(o_wb4s_ack),     // WB write enable
-    .o_wb4s_data(o_wb4s_data)    // WB data, result
+    .i_wb4s_cyc(1),     // WB stb, valid strobe
+    .i_wb4s_tgc({Funktionscode[0], 0}),     // WB data tag, 0=add 1=substract
+    .i_wb4s_stb(1),     // WB stb, valid strobe
+    .i_wb4s_data({Daten1, Daten2}),   // WB data 0
+    .o_wb4s_stall(DivisionNichtFertig), // WB stall, not ready
+    .o_wb4s_ack(DivisionFertig),     // WB write enable
+    .o_wb4s_data(DivisionErgebnis)    // WB data, result
 );
 
 Intsqrt QuadratModul(
