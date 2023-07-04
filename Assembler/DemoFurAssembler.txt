@@ -1,0 +1,16 @@
+
+LoOP:
+LOOP:
+	   ADD R1, R2, R1				//Ziel, Quelle, Quelle
+		sub r1, R3, r0
+		mULi r1, r1, b-1000			//b == Binär, h == Hexadezimal, d == Dezimal
+		Div.s r2, r0, r1
+Cei r2, r1, 30				/* 		ß Ä ÖÜ 車		
+Dies ist ein mehrzeiliger Kommentar */
+	bez r1, ENDEはらきり
+
+ENDEはらきり:
+	jmp -1
+	
+	
+	//Notiz für mich: Aufschreiben, dass Immediate vorzeichenbehaftet ist
