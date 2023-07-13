@@ -1,34 +1,36 @@
-`include "ALUModule/Goldschmidt_Integer_Divider_Parallel-main/source/Goldschmidt_Integer_Divider_Parallel.v"
-`include "ALUModule/intsqrt.v"
+`include "../ALUModule/Goldschmidt_Integer_Divider_Parallel-main/source/Goldschmidt_Integer_Divider_Parallel.v"
+`include "../ALUModule/intsqrt.v"
+`include "../ALUModule/ZyklischerSchieber.v"
 module ALU (
     input[31:0] Daten1,
     input[31:0] Daten2,
-    input[5:0] Funktionscode,
+    input[5:0] FunktionsCode,
     input StartSignal,
     input Schreibsignal,
     input Reset,
     input Clock,
-    output[31:0] Ergebnis
+    output reg[31:0] Ergebnis
 );
 
 reg[31:0] EinfacheRechnungErgebnis;
-reg[31:0] DivisionErgebnis; //Div and Mod
-reg[31:0] WurzelErgebnis;
-reg[31:0] ZyklischerSchieberErgebnis;
-reg[31:0] SubtraktionErgebnis;
-reg[31:0] SubtraktionErgebnis;
-reg[31:0] SubtraktionErgebnis;
-reg QuadratFertig;
-reg DivisionFertig;
-reg DivisionNichtFertig;
+reg[31:0] Radikand; //Wurzel
+wire[31:0] DivisionErgebnis; //Div und Mod
+wire[31:0] WurzelErgebnis;
+wire[31:0] ZyklischerSchieberErgebnis;
+wire[31:0] FloatErgebnis;
+wire WurzelFertig;
+wire DivisionFertig;
+wire DivisionNichtFertig;
 
 ZyklischerSchieber#(32, 5) Schieber (
     .Zahl(Daten1),
     .Stellen(Daten2[4:0]),
     .Ergebnis(ZyklischerSchieberErgebnis),
-    .SchiebRechts(Funktionscode[0])
+    .SchiebRechts(FunktionsCode[0])
 );
 
+reg Test = 0;
+reg wb_STB_TEST = 0;
 Goldschmidt_Integer_Divider_Parallel #(
     .P_GDIV_FACTORS_MSB(31), 
     .P_GDIV_FRAC_LENGTH(32),
@@ -38,26 +40,26 @@ Goldschmidt_Integer_Divider_Parallel #(
     .i_clk(Clock), // clock
     .i_rst(Reset), // reset
     // Wishbone(Pipeline) Slave Interface
-    .i_wb4s_cyc(1),     // WB stb, valid strobe
-    .i_wb4s_tgc({Funktionscode[0], 0}),     // WB data tag, 0=add 1=substract
-    .i_wb4s_stb(1),     // WB stb, valid strobe
-    .i_wb4s_data({Daten1, Daten2}),   // WB data 0
+    .i_wb4s_cyc(Test),     // WB: If high, slave accepts new data, put low again, when finished
+    .i_wb4s_tgc({FunktionsCode[0], 1'b0}),     // WB data tag, 0=quotient, 1=remainder; 0=signed, 1=unsigned
+    .i_wb4s_stb(wb_STB_TEST),     // WB stb, valid strobe
+    .i_wb4s_data({Daten2, Daten1}),   // WB data 0
     .o_wb4s_stall(DivisionNichtFertig), // WB stall, not ready
-    .o_wb4s_ack(DivisionFertig),     // WB write enable
+    .o_wb4s_ack(DivisionFertig),     // WB: If this signal is up, the write cycle terminated
     .o_wb4s_data(DivisionErgebnis)    // WB data, result
 );
 
 Intsqrt QuadratModul(
     .Clock(Clock),
     .Reset(Reset),
-    .Num_in(Daten1),
-    .Done(QuadratFertig),
+    .Num_in(Radikand),
+    .Done(WurzelFertig),
     .Sq_root(WurzelErgebnis)
 );
-
-always @(StartSignal) begin
-        if (Funktionscode[5] == 0) begin //Wenn Arithmetik- oder Logikbefehl
-        case (Funktionscode[4:0])
+integer test_zahler;
+always @(posedge StartSignal) begin
+        if (FunktionsCode[5] == 0) begin //Wenn Arithmetik- oder Logikbefehl
+        case (FunktionsCode[4:0])
         //Integerarithmetik
         //Add
         5'b00000    : EinfacheRechnungErgebnis <= $signed(Daten1) + $signed(Daten2);
@@ -66,9 +68,12 @@ always @(StartSignal) begin
         //Mul
         5'b00010    : EinfacheRechnungErgebnis <= $signed(Daten1) * $signed(Daten2);
         //SQRT wird automatisch zugewiesen
-        
+        5'b00011    : Radikand <= Daten1;
         //Div wird automatisch zugewiesen
-        
+        5'b00100    : begin
+            Test = 1;
+            test_zahler = 1;
+        end
         //Mod wird automatisch zugewiesen
 
         //Schiebearithmetik
@@ -106,17 +111,29 @@ always @(StartSignal) begin
         5'b11011    : EinfacheRechnungErgebnis <= Daten1 ^ Daten2;
         //Gleich
         5'b11100    : EinfacheRechnungErgebnis <= Daten1 ~^ Daten2;
-
-            default: Ergebnis <= 32'b0;
         endcase
     end else begin                  //Wenn Floatbefehl
         
     end
 end
 
+always @(Test, posedge Clock) begin
+    if(test_zahler >= 0) begin
+        if(test_zahler == 0 && Test == 1) begin
+            Test = 0;
+            wb_STB_TEST = 1;
+            test_zahler = 1;
+        end
+        else if(test_zahler == 0 && wb_STB_TEST == 1) begin
+            wb_STB_TEST = 0;
+        end
+        test_zahler = test_zahler - 1;
+    end
+end
+
   always @(posedge Schreibsignal) begin
-    if (Funktionscode[5] == 0) begin //Wenn Arithmetik- oder Logikbefehl
-        case (Funktionscode[4:0])
+    if (FunktionsCode[5] == 0) begin //Wenn Arithmetik- oder Logikbefehl
+        case (FunktionsCode[4:0])
         //Integerarithmetik
         //Add
         5'b00000    : Ergebnis = EinfacheRechnungErgebnis;
@@ -137,9 +154,9 @@ end
         //Rechts Schieben
         5'b00111    : Ergebnis = EinfacheRechnungErgebnis;
         //Zyklisches links Schieben
-        5'b01000    : Ergebnis <= ZyklischerSchieberErgebnis;
+        5'b01000    : Ergebnis = ZyklischerSchieberErgebnis;
         //Zyklisches rechts Schieben
-        5'b01001    : Ergebnis <= ZyklischerSchieberErgebnis;
+        5'b01001    : Ergebnis = ZyklischerSchieberErgebnis;
 
         //Vergleiche
         //Gleichheit
@@ -167,7 +184,7 @@ end
         //Gleich
         5'b11100    : Ergebnis = EinfacheRechnungErgebnis;
 
-            default: Ergebnis <= 32'b0;
+            default: Ergebnis = 32'b0;
         endcase
     end else begin                  //Wenn Floatbefehl
         
