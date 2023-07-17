@@ -2,26 +2,22 @@
 // Sat, 18 Mar 2023 19:03:03 GMT
 
 // Testbench template
-`include "Steuerung.v"
+`include "../Steuerung.v"
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns
-`define assert(signal, value) \
-        if (signal !== value) begin \
-            $display("ASSERTION FAILED in %m: signal != value"); \
-            $finish; \
-        end
 
 module main_tb
 ;
  
  // Simulation time: 100ns (10 * 10ns)
- parameter DURATION = 10;
- parameter DECODETIME = 20;
- parameter REGISTERWRITETIME = 10;
- parameter ALUTIME = 20;
- parameter PCWRITETIME = 5;
- 
+ parameter CLOCKSTEP = 5;
+ parameter TIMESTEP = CLOCKSTEP * 2;
+ parameter DECODETIME = 4;
+ parameter REGISTERWRITETIME = 2;
+ parameter ALUTIME = 3;
+ parameter PCWRITETIME = 1;
+
  // Input/Output
  reg [5:0] Funktionscode;
  reg LoadBefehl;
@@ -36,30 +32,49 @@ module main_tb
  reg Reset;
  reg Clock;
  wire RegisterSchreibSignal;
- wire ALUSignal;
+ wire ALUStartSignal;
+ wire ALUSchreibSignal;
  wire LoadBefehlSignal;
  wire LoadDatenSignal;
  wire StoreDatenSignal;
  wire PCSprungSignal;
  wire PCSignal;
  wire DekodierSignal;
+ wire ResetSignal;
 
  
  // Module instance
- main MAIN (
-  .v54902b(FloatBefehl),
-  .v333e4c(LoadBefehl),
-  .v394d0e(StoreBefehl),
-  .v708034(UnbedingterSprungBefehl),
-  .v2d8bc3(BedingterSprungBefehl),
-  .vdf76b1(Bedingung),
-  .vc6aa74(RegisterSchreibSignal),
-  .vd25d6a(LoadBefehlSignal),
-  .vb561af(LoadDatenSignal),
-  .vc9a715(StoreDatenSignal),
-  .v7af967(PCSprungSignal)
+ Steuerung strg (
+    .Funktionscode(Funktionscode),
+    .LoadBefehl(LoadBefehl),
+    .StoreBefehl(StoreBefehl),
+    .JALBefehl(JALBefehl),
+    .UnbedingterSprungBefehl(UnbedingterSprungBefehl),
+    .BedingterSprungBefehl(BedingterSprungBefehl),
+    .Bedingung(Bedingung),
+    .BefehlGeladen(BefehlGeladen),
+    .DatenGeladen(DatenGeladen),
+    .DatenGespeichert(DatenGespeichert),
+    .Reset(Reset),
+    .Clock(Clock),
+
+    .RegisterSchreibSignal(RegisterSchreibSignal),
+    .ALUStartSignal(ALUStartSignal),
+    .ALUSchreibSignal(ALUSchreibSignal),
+    .LoadBefehlSignal(LoadBefehlSignal),
+    .LoadDatenSignal(LoadDatenSignal),
+    .StoreDatenSignal(StoreDatenSignal),
+    .PCSprungSignal(PCSprungSignal),
+    .PCSignal(PCSignal),
+    .DekodierSignal(DekodierSignal),
+    .ResetSignal(ResetSignal)
  );
  
+ always begin
+    #(CLOCKSTEP)
+    Clock = ~Clock;
+ end
+
  initial begin
   $dumpvars(0, main_tb);
  
@@ -67,15 +82,24 @@ module main_tb
   // e.g. value = 1;
   // e.g. #2 value = 0;
   
-  //Steuerung wird initialisiert und setzt intern Zustand 00
-  //Steuerung schickt LoadBefehlSignal
-  #1 //Wir simulieren einen geladenen Befehl nach 10 Zeiteinheiten
-  assert(LoadBefehlSignal, 1);
-  #9
+  //Steuerung wird initialisiert
+  Reset = 1;
+  assert(ResetSignal, 1, `__LINE__);
+  Reset = 0;
+  Clock = 0;
+  #(CLOCKSTEP + 1) //asserts sollen immer um eine Zeiteinheit geshiftet sein
+  #(TIMESTEP * 2)
+  assert(ResetSignal, 0, `__LINE__);
+
+  #(TIMESTEP)
+  //Steuerung in FETCH
+  assert(LoadBefehlSignal, 1, `__LINE__);
+  #6 //Wir simulieren einen geladenen Befehl nach 7 Zeiteinheiten
   BefehlGeladen = 1;
-  #1
-  assert(LoadBefehlSignal, 0);
-  assert(DekodierSignal, 1);
+  #(TIMESTEP - 6)
+  //Steuerung in DECODE
+  assert(LoadBefehlSignal, 0, `__LINE__);
+  assert(DekodierSignal, 1, `__LINE__);
   BefehlGeladen = 0;
   
   Funktionscode = 6'b000000;
@@ -86,36 +110,40 @@ module main_tb
   UnbedingterSprungBefehl = 0;
   BedingterSprungBefehl = 0;
   Bedingung = 0;
-  #1 assert(PCSprungSignal, 0);
+  #1 assert(PCSprungSignal, 0, `__LINE__);
   BedingterSprungBefehl = 1;
-  #1 assert(PCSprungSignal, 0);
+  #1 assert(PCSprungSignal, 0, `__LINE__);
   Bedingung = 1;
-  #1 assert(PCSprungSignal, 1);
+  #1 assert(PCSprungSignal, 1, `__LINE__);
   BedingterSprungBefehl = 0;
   Bedingung = 0;
   UnbedingterSprungBefehl = 1;
-  #1 assert(PCSprungSignal, 1);
-  #(DECODETIME-4)
+  #1 assert(PCSprungSignal, 1, `__LINE__);
+  #(DECODETIME * TIMESTEP - 4)
+  assert(DekodierSignal, 0, `__LINE__);
 
-  assert(DekodierSignal, 0);
-  assert(ALUSignal, 1); //ALU rechnet
-  assert(RegisterSchreibSignal, 1); //JALBefehl schreibt jetzt
-  #(ALUTIME)
-  assert(ALUSignal, 0);
-  assert(RegisterSchreibSignal, 0);
+  //Steuerung in ALU_1
+  //TODO alle ALU start und schreib hinzufügen
+  assert(ALUStartSignal, 1, `__LINE__); //ALU rechnet
+  assert(RegisterSchreibSignal, 1, `__LINE__); //JALBefehl schreibt jetzt
+  #(ALUTIME * TIMESTEP)
+  assert(ALUStartSignal, 0, `__LINE__);
+  assert(ALUSchreibSignal, 1, `__LINE__);
+  #(TIMESTEP)
+  assert(ALUSchreibSignal, 0, `__LINE__);
+  assert(RegisterSchreibSignal, 0, `__LINE__);
   
-  assert(PCSignal, 1);
-  #(PCWRITETIME)
-  assert(PCSignal, 0);
-  assert(RegisterSchreibSignal, 0);
+  assert(PCSignal, 1, `__LINE__);
+  #(PCWRITETIME * TIMESTEP)
+  assert(PCSignal, 0, `__LINE__);
 
   //Hier startet Test LoadBefehl
-  assert(LoadBefehlSignal, 1);
-  #9
+  assert(LoadBefehlSignal, 1, `__LINE__);
+  #6
   BefehlGeladen = 1;
-  #1
-  assert(LoadBefehlSignal, 0);
-  assert(DekodierSignal, 1);
+  #(TIMESTEP - 6)
+  assert(LoadBefehlSignal, 0, `__LINE__);
+  assert(DekodierSignal, 1, `__LINE__);
   BefehlGeladen = 0;
   
   Funktionscode = 6'b000001;
@@ -125,95 +153,116 @@ module main_tb
   UnbedingterSprungBefehl = 0;
   BedingterSprungBefehl = 0;
   Bedingung = 0;
-  #(DECODETIME)
-  assert(DekodierSignal, 0);
+  #(DECODETIME * TIMESTEP)
+  assert(DekodierSignal, 0, `__LINE__);
 
-  assert(ALUSignal, 1);
-  assert(RegisterSchreibSignal, 0);
-  #(ALUTIME)
-  assert(ALUSignal, 0);
-  assert(RegisterSchreibSignal, 0);
-  assert(PCSignal, 1);
+  assert(ALUStartSignal, 1, `__LINE__);
+  assert(RegisterSchreibSignal, 0, `__LINE__);
+  #(ALUTIME * TIMESTEP)
+  assert(ALUStartSignal, 0, `__LINE__);
+  assert(ALUSchreibSignal, 1, `__LINE__);
+  #(TIMESTEP)
+  assert(ALUSchreibSignal, 0, `__LINE__);
 
-  assert(LoadDatenSignal, 1);
-  #9
+  assert(PCSignal, 1, `__LINE__);
+  assert(LoadDatenSignal, 1, `__LINE__);
+  #(TIMESTEP + 6)
   DatenGeladen = 1;
-  #1
-  assert(RegisterSchreibSignal, 1);
+  #(TIMESTEP - 6)
+  assert(LoadDatenSignal, 0, `__LINE__);
+  assert(PCSignal, 1, `__LINE__);
+  assert(RegisterSchreibSignal, 1, `__LINE__);
   DatenGeladen = 0;
-  #(REGISTERWRITETIME)
-  assert(PCSignal, 0);
-  assert(LoadDatenSignal, 0);
-  assert(RegisterSchreibSignal, 0);
+  #(REGISTERWRITETIME * TIMESTEP)
+  assert(PCSignal, 0, `__LINE__);
+  assert(RegisterSchreibSignal, 0, `__LINE__);
 
   //Hier startet Test StoreBefehl
-  assert(LoadBefehlSignal, 1);
-  #9
+  assert(LoadBefehlSignal, 1, `__LINE__);
+  #6
   BefehlGeladen = 1;
-  #1
-  assert(LoadBefehlSignal, 0);
-  assert(DekodierSignal, 1);
+  #(TIMESTEP - 6)
+  assert(LoadBefehlSignal, 0, `__LINE__);
+  assert(DekodierSignal, 1, `__LINE__);
   BefehlGeladen = 0;
   
-  Funktionscode = 6'b000001;
+  Funktionscode = 6'b000010;
   LoadBefehl = 0;
   StoreBefehl = 1;
   JALBefehl = 0;
   UnbedingterSprungBefehl = 0;
   BedingterSprungBefehl = 0;
   Bedingung = 0;
-  #(DECODETIME)
-  assert(DekodierSignal, 0);
-
-  assert(ALUSignal, 1);
-  assert(RegisterSchreibSignal, 0);
-  #(ALUTIME)
-  assert(ALUSignal, 0);
-  assert(PCSignal, 1);
-
-  assert(StoreDatenSignal, 1);
-  #9
+  #(DECODETIME * TIMESTEP)
+  assert(DekodierSignal, 0, `__LINE__);
+  
+  assert(ALUStartSignal, 1, `__LINE__);
+  assert(RegisterSchreibSignal, 0, `__LINE__);
+  #(ALUTIME * TIMESTEP)
+  assert(ALUStartSignal, 0, `__LINE__);
+  assert(ALUSchreibSignal, 1, `__LINE__);
+  #(TIMESTEP)
+  assert(ALUSchreibSignal, 0, `__LINE__);
+  
+  assert(PCSignal, 1, `__LINE__);
+  assert(StoreDatenSignal, 1, `__LINE__);
+  #(TIMESTEP * 2 + 6)
   DatenGespeichert = 1;
-  #1
-  assert(PCSignal, 0);
-  assert(StoreDatenSignal, 0);
-  assert(RegisterSchreibSignal, 0);
+  #(TIMESTEP - 6)
+  assert(PCSignal, 0, `__LINE__);
+  assert(StoreDatenSignal, 0, `__LINE__);
+  assert(RegisterSchreibSignal, 0, `__LINE__);
+  DatenGespeichert = 0;
 
   //Hier startet Test Standard
-  assert(LoadBefehlSignal, 1);
-  DatenGespeichert = 0;
-  #9
+  assert(LoadBefehlSignal, 1, `__LINE__);
+  #6
   BefehlGeladen = 1;
-  #1
-  assert(LoadBefehlSignal, 0);
-  assert(DekodierSignal, 1);
+  #(TIMESTEP - 6)
+  assert(LoadBefehlSignal, 0, `__LINE__);
+  assert(DekodierSignal, 1, `__LINE__);
   BefehlGeladen = 0;
   
-  Funktionscode = 6'b000010;
+  Funktionscode = 6'b000011;
   LoadBefehl = 0;
   StoreBefehl = 0;
   JALBefehl = 0;
   UnbedingterSprungBefehl = 0;
   BedingterSprungBefehl = 0;
   Bedingung = 0;
-  #(DECODETIME)
+  #(DECODETIME * TIMESTEP)
+  assert(DekodierSignal, 0, `__LINE__);
 
-  assert(DekodierSignal, 0);
-  assert(ALUSignal, 1);
-  assert(RegisterSchreibSignal, 0);
-  #(ALUTIME)
+  assert(ALUStartSignal, 1, `__LINE__);
+  assert(RegisterSchreibSignal, 0, `__LINE__);
+  #(ALUTIME * TIMESTEP)
+  assert(ALUStartSignal, 0, `__LINE__);
+  assert(ALUSchreibSignal, 1, `__LINE__);
+  #(TIMESTEP)
+  assert(ALUSchreibSignal, 0, `__LINE__);
 
-  assert(ALUSignal, 0);
-  assert(RegisterSchreibSignal, 1);
-  assert(PCSignal, 1);
-  #(REGISTERWRITETIME)
+  assert(RegisterSchreibSignal, 1, `__LINE__);
+  assert(PCSignal, 1, `__LINE__);
+  #(REGISTERWRITETIME * TIMESTEP)
 
-  assert(PCSignal, 0);
-  assert(RegisterSchreibSignal, 0);
-  assert(LoadBefehlSignal, 1);
+  assert(PCSignal, 0, `__LINE__);
+  assert(RegisterSchreibSignal, 0, `__LINE__);
+  assert(LoadBefehlSignal, 1, `__LINE__);
 
-  #(DURATION) $display("End of simulation");
+  #(TIMESTEP) $display("End of simulation");
   $finish;
  end
  
+ task assert;
+    input assertValue;
+    input shouldValue;
+    input [7:0] line;
+    begin
+      if (assertValue != shouldValue) begin
+        $display("line %d: Value = %b, should be %b", line, assertValue, shouldValue);
+        $finish;
+      end
+    end
+ endtask
+
 endmodule
