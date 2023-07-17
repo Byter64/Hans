@@ -20,7 +20,10 @@ wire[31:0] ZyklischerSchieberErgebnis;
 wire[31:0] FloatErgebnis;
 wire WurzelFertig;
 wire DivisionFertig;
-wire DivisionNichtFertig;
+wire DivisionInArbeit;
+
+reg DivCyc = 0;
+reg DivStb = 0;
 
 ZyklischerSchieber#(32, 5) Schieber (
     .Zahl(Daten1),
@@ -29,8 +32,6 @@ ZyklischerSchieber#(32, 5) Schieber (
     .SchiebRechts(FunktionsCode[0])
 );
 
-reg Test = 0;
-reg wb_STB_TEST = 0;
 Goldschmidt_Integer_Divider_Parallel #(
     .P_GDIV_FACTORS_MSB(31), 
     .P_GDIV_FRAC_LENGTH(32),
@@ -40,12 +41,12 @@ Goldschmidt_Integer_Divider_Parallel #(
     .i_clk(Clock), // clock
     .i_rst(Reset), // reset
     // Wishbone(Pipeline) Slave Interface
-    .i_wb4s_cyc(Test),     // WB: If high, slave accepts new data, put low again, when finished
+    .i_wb4s_cyc(DivCyc),     // WB: If high, slave accepts new data, put low again, when finished
     .i_wb4s_tgc({FunktionsCode[0], 1'b0}),     // WB data tag, 0=quotient, 1=remainder; 0=signed, 1=unsigned
-    .i_wb4s_stb(wb_STB_TEST),     // WB stb, valid strobe
+    .i_wb4s_stb(DivStb),     // WB stb, valid strobe
     .i_wb4s_data({Daten2, Daten1}),   // WB data 0
-    .o_wb4s_stall(DivisionNichtFertig), // WB stall, not ready
-    .o_wb4s_ack(DivisionFertig),     // WB: If this signal is up, the write cycle terminated
+    .o_wb4s_stall(DivisionInArbeit), // if high, slave does not take inputs yet.
+    .o_wb4s_ack(DivisionFertig),     // WB: If this signal is up, the result is at o_wb4_data
     .o_wb4s_data(DivisionErgebnis)    // WB data, result
 );
 
@@ -56,7 +57,6 @@ Intsqrt QuadratModul(
     .Done(WurzelFertig),
     .Sq_root(WurzelErgebnis)
 );
-integer test_zahler;
 always @(posedge StartSignal) begin
         if (FunktionsCode[5] == 0) begin //Wenn Arithmetik- oder Logikbefehl
         case (FunktionsCode[4:0])
@@ -67,15 +67,19 @@ always @(posedge StartSignal) begin
         5'b00001    : EinfacheRechnungErgebnis <= $signed(Daten1) - $signed(Daten2);
         //Mul
         5'b00010    : EinfacheRechnungErgebnis <= $signed(Daten1) * $signed(Daten2);
-        //SQRT wird automatisch zugewiesen
+        //SQRT
         5'b00011    : Radikand <= Daten1;
-        //Div wird automatisch zugewiesen
+        //Div
         5'b00100    : begin
-            Test = 1;
-            test_zahler = 1;
+            DivCyc <= 1;
+            DivStb <= 1;
         end
-        //Mod wird automatisch zugewiesen
-
+        //Mod
+        5'b00101    : begin
+            DivCyc <= 1;
+            DivStb <= 1;
+        end
+        
         //Schiebearithmetik
         //Links Schieben
         5'b00110    : EinfacheRechnungErgebnis <= Daten1 << $signed(Daten2);
@@ -117,17 +121,12 @@ always @(posedge StartSignal) begin
     end
 end
 
-always @(Test, posedge Clock) begin
-    if(test_zahler >= 0) begin
-        if(test_zahler == 0 && Test == 1) begin
-            Test = 0;
-            wb_STB_TEST = 1;
-            test_zahler = 1;
-        end
-        else if(test_zahler == 0 && wb_STB_TEST == 1) begin
-            wb_STB_TEST = 0;
-        end
-        test_zahler = test_zahler - 1;
+always @(posedge Clock) begin
+    if (DivisionInArbeit == 0 && DivStb == 1)
+        DivStb = 0;
+
+    if(DivisionFertig == 1) begin
+        DivCyc = 0;
     end
 end
 
@@ -145,7 +144,7 @@ end
         5'b00011    : Ergebnis = WurzelErgebnis;
         //Div
         5'b00100    : Ergebnis = DivisionErgebnis;
-        //Div
+        //Mod
         5'b00101    : Ergebnis = DivisionErgebnis;
 
         //Schiebearithmetik
