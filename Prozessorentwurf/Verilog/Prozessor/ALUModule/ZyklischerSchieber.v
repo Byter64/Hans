@@ -1,4 +1,4 @@
-module ZyklischerSchieber #( //Erstmal nur ein zyklischer Linksschieber
+module ZyklischerSchieber #(
     parameter BREITE = 32,
     parameter LOG2BREITE = 5 //Das hier muss immer der Logarithmus zur Breite sein
 ) (

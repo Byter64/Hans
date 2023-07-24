@@ -34,10 +34,8 @@ reg[5:0] Xnor = 6'b011100;
 reg[5:0] Adds = 6'b100000;
 reg[5:0] Subs = 6'b100001;
 reg[5:0] Muls = 6'b100010;
-reg[5:0] Divs = 6'b100011;
-reg[5:0] Mods = 6'b100100;
-reg[5:0] Sqrts = 6'b100101;
-
+reg[5:0] Sqrts = 6'b100011;
+reg[5:0] Divs = 6'b100100;
 
  // Simulation time: 100ns (10 * 10ns)
  parameter DURATION = 10;
@@ -75,7 +73,7 @@ always begin
    #2 Schreibsignal = ~Schreibsignal;
 end
  
- 
+
 initial begin
     $dumpvars(0, main_tb);
  
@@ -438,56 +436,56 @@ initial begin
         $display("Xnor funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b10010101011001101010101010101010);
     
 
-    // //Internetseite zur Generierung der Bitstrings: https://www.h-schmidt.net/FloatConverter/IEEE754.html
-    // //Add.s-Befehl testen
-    // Daten1 = 32'b01000010001101011000000100000110;      // 45,376
-    // Daten2 = 32'b01000010110011000000000000000000;      //102,000
-    // FunktionsCode = Adds;
-    // StartSignal = 0;
-    // StartSignal = 1;
-    // #200
-    // if(Ergebnis != 32'b01000011000100110110000001000010)//147,376
-    //     $display("Floats addieren funktioniert nicht: \n Summand1: %d \n Summand2: %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b01000011000100110110000001000010);
-    
-    // //Sub.s-Befehl testen
-    // Daten1 = 32'b01000010001101011000000100000110;       // 45,376
-    // Daten2 = 32'b01000010110011000000000000000000;       //102,000
-    // FunktionsCode = Subs;
-    // StartSignal = 0;
-    // StartSignal = 1;
-    // #200
-    // if(Ergebnis != 32'b11000010011000101000100100110111)//-56,634
-    //     $display("Floats subtrahieren funktioniert nicht: \n Minuend:    %d \n Subtrahent: %d \n Ergebnis:   %d \n Erwartet:   %d\n", Daten1, Daten2, Ergebnis, 32'b11000010011000101000100100110111);
 
-    // //Mul.s-Befehl testen
-    // Daten1 = 32'b01000010001101011000000100000110;       // 45,376
-    // Daten2 = 32'b01000010110011000000000000000000;       //102,000
-    // FunktionsCode = Muls;
-    // StartSignal = 0;
-    // StartSignal = 1;
-    // #200
-    // if(Ergebnis != 32'b11000101100100001010001011010001)//4628,352
-    //     $display("Floats multiplizieren funktioniert nicht: \n Faktor1:  %d \n Faktor2:  %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b11000101100100001010001011010001);
+    //Internetseite zur Generierung der Bitstrings: https://www.h-schmidt.net/FloatConverter/IEEE754.html
+    //Add.s-Befehl testen
+    Daten1 = 32'b01000010001101011000000100000110;      // 45,376
+    Daten2 = 32'b01000010110011000000000000000000;      //102,000
+    FunktionsCode = Adds;
+    StartSignal = 0;
+    StartSignal = 1;
+    #1400
+    if(Ergebnis != 32'b01000011000100110110000001000010)//147,376
+        $display("Floats addieren funktioniert nicht: \n Summand1: %f \n Summand2: %f \n Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b01000011000100110110000001000010);
     
-    // //Div.s-Befehl testen
-    // Daten1 = 32'b01000010001101011000000100000110;      // 45,376
-    // Daten2 = 32'b01000010110011000000000000000000;      //102,000
-    // FunktionsCode = Divs;
-    // StartSignal = 0;
-    // StartSignal = 1;
-    // #200
-    // if(Ergebnis != 32'b00111110111000111100010100001101)  //0,44486274509803921568627450980392
-    //     $display("Floats dividieren funktioniert nicht: \n Divisor:  %d \n Dividend: %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00111110111000111100010100001101);
+    //Sub.s-Befehl testen
+    Daten1 = 32'b01000010001101011000000100000110;       // 45,376
+    Daten2 = 32'b01000010110011000000000000000000;       //102,000
+    FunktionsCode = Subs;
+    StartSignal = 0;
+    StartSignal = 1;
+    #1400
+    if(Ergebnis != 32'b11000010011000100111111011111010)//-56,624
+        $display("Floats subtrahieren funktioniert nicht: \n Minuend:    %f \n Subtrahent: %f \n Ergebnis:   %f \n Erwartet:   %f\n", Daten1, Daten2, Ergebnis, 32'b11000010011000100111111011111010);
+
+    //Mul.s-Befehl testen
+    Daten1 = 32'b01000010001101011000000100000110;       // 45,376
+    Daten2 = 32'b01000010110011000000000000000000;       //102,000
+    FunktionsCode = Muls;
+    StartSignal = 0;
+    StartSignal = 1;
+    #1800
+    if(Ergebnis != 32'b01000101100100001010001011010001)//4628,352
+        $display("Floats multiplizieren funktioniert nicht: \n Faktor1:  %f \n Faktor2:  %f \n Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b01000101100100001010001011010001);    
     
-    // //Sqrt.s-Befehl testen
-    // Daten1 = 32'b01000000000110010101010101010101;        //2,39583325386   
-    // FunktionsCode = Sqrts;
-    // StartSignal = 0;
-    // StartSignal = 1;
-    // #200
-    // if(Ergebnis != 32'b00111111110001100001111111100010)  //1,5478479427450230002776786742845
-    //     $display("Float Quadratwurzel funktioniert nicht: \n Radikand: %d Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00111111110001100001111111100010);
+    //Sqrt.s-Befehl testen
+    Daten1 = 32'b01000000000110010101010101010101;        //2,39583325386   
+    FunktionsCode = Sqrts;
+    StartSignal = 0;
+    StartSignal = 1;
+    #2000
+    if(Ergebnis != 32'b00111111110001100001111111100010)  //1,5478479427450230002776786742845
+        $display("Float Quadratwurzel funktioniert nicht: \n Radikand: %f Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b00111111110001100001111111100010);
     
+    //Div.s-Befehl testen
+    Daten1 = 32'b01000010001101011000000100000110;      // 45,376
+    Daten2 = 32'b01000010110011000000000000000000;      //102,000
+    FunktionsCode = Divs;
+    StartSignal = 0;
+    StartSignal = 1;
+    #7200
+    if(Ergebnis != 32'b00111110111000111100010100001101)  //0.4448627531528472900390625
+        $display("Floats dividieren funktioniert nicht: \n Divisor:  %b \n Dividend: %b \n Ergebnis: %b \n Erwartet: %b\n", Daten1, Daten2, Ergebnis, 32'b00111110111000111100010100001101);
 
     #200 $display("End of simulation");
     $finish;

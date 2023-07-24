@@ -1,6 +1,11 @@
 `include "../ALUModule/Goldschmidt_Integer_Divider_Parallel-main/source/Goldschmidt_Integer_Divider_Parallel.v"
 `include "../ALUModule/intsqrt.v"
 `include "../ALUModule/ZyklischerSchieber.v"
+`include "../ALUModule/verilog-math-master_FLOAT_/components/add.v"
+`include "../ALUModule/verilog-math-master_FLOAT_/components/mul.v"
+`include "../ALUModule/verilog-math-master_FLOAT_/components/sqrt.v"
+`include "../ALUModule/verilog-math-master_FLOAT_/components/div.v"
+
 module ALU (
     input[31:0] Daten1,
     input[31:0] Daten2,
@@ -14,16 +19,21 @@ module ALU (
 
 reg[31:0] EinfacheRechnungErgebnis;
 reg[31:0] Radikand; //Wurzel
+reg[31:0] FloatAdditionDaten2;
+reg DivCyc = 0;
+reg DivStb = 0;
 wire[31:0] DivisionErgebnis; //Div und Mod
 wire[31:0] WurzelErgebnis;
 wire[31:0] ZyklischerSchieberErgebnis;
-wire[31:0] FloatErgebnis;
+wire[31:0] AdditionFloatErgebnis;
+wire[31:0] MultiplikationFloatErgebnis;
+wire[31:0] WurzelFloatErgebnis;
+wire[31:0] DivisionFloatErgebnis;
+wire[31:0] ModuloFloatErgebnis;
 wire WurzelFertig;
 wire DivisionFertig;
 wire DivisionInArbeit;
 
-reg DivCyc = 0;
-reg DivStb = 0;
 
 ZyklischerSchieber#(32, 5) Schieber (
     .Zahl(Daten1),
@@ -57,6 +67,35 @@ Intsqrt QuadratModul(
     .Done(WurzelFertig),
     .Sq_root(WurzelErgebnis)
 );
+
+add FloatAddierer(
+    .clk(Clock),
+    .add_a(Daten1),
+    .add_b(FloatAdditionDaten2),
+    .add_z(AdditionFloatErgebnis)
+);
+
+mul FloatMultiplizierer(
+    .clk(Clock),
+    .mul_a(Daten1),
+    .mul_b(Daten2),
+    .mul_z(MultiplikationFloatErgebnis)
+);
+
+//Nur Quadratwurzeln!!
+sqrt FloatWurzeler(
+    .clk(Clock),
+    .sqrt_a(Daten1),
+    .sqrt_z(WurzelFloatErgebnis)
+);
+
+div FloatDividierer(
+    .clk(Clock),
+    .div_a(Daten1),
+    .div_b(Daten2),
+    .div_z(DivisionFloatErgebnis)
+);
+
 always @(posedge StartSignal) begin
         if (FunktionsCode[5] == 0) begin //Wenn Arithmetik- oder Logikbefehl
         case (FunktionsCode[4:0])
@@ -67,7 +106,7 @@ always @(posedge StartSignal) begin
         5'b00001    : EinfacheRechnungErgebnis <= $signed(Daten1) - $signed(Daten2);
         //Mul
         5'b00010    : EinfacheRechnungErgebnis <= $signed(Daten1) * $signed(Daten2);
-        //SQRT
+        //Sqrt
         5'b00011    : Radikand <= Daten1;
         //Div
         5'b00100    : begin
@@ -117,7 +156,31 @@ always @(posedge StartSignal) begin
         5'b11100    : EinfacheRechnungErgebnis <= Daten1 ~^ Daten2;
         endcase
     end else begin                  //Wenn Floatbefehl
-        
+        case (FunktionsCode[4:0])
+        //Add.s
+        5'b00000: FloatAdditionDaten2 <= Daten2;
+            //Calculation starts automatically
+        //Sub.s 
+        5'b00001: begin 
+            FloatAdditionDaten2[30:0] <= Daten2[30:0];
+            FloatAdditionDaten2[31] <= ~Daten2[31];
+        end
+            //Calculation starts automatically
+        //Mul.s
+            //Calculation starts automatically
+        //Sqrt.s
+        5'b00011    : Radikand <= Daten1;
+        //Div.s
+        5'b00100    : begin
+            DivCyc <= 1;
+            DivStb <= 1;
+        end
+        //Mod.s
+        5'b00101    : begin
+            DivCyc <= 1;
+            DivStb <= 1;
+        end
+        endcase
     end
 end
 
@@ -186,7 +249,20 @@ end
             default: Ergebnis = 32'b0;
         endcase
     end else begin                  //Wenn Floatbefehl
-        
+        case (FunktionsCode[4:0])
+        //Add.s
+        5'b00000    : Ergebnis = AdditionFloatErgebnis;
+        //Sub.s
+        5'b00001    : Ergebnis = AdditionFloatErgebnis;
+        //Mul.s
+        5'b00010    : Ergebnis = MultiplikationFloatErgebnis;
+        //SQRT.s
+        5'b00011    : Ergebnis = WurzelFloatErgebnis;
+        //Div.s
+        5'b00100    : Ergebnis = DivisionFloatErgebnis;
+        //Mod.s
+        5'b00101    : Ergebnis = ModuloFloatErgebnis;
+        endcase
     end
   end
 endmodule
