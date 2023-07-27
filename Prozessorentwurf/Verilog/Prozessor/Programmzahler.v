@@ -4,15 +4,13 @@ module Programmzahler (
     input TaktSignal,
     input Reset,
 
-    output [25:0] AktuellerPC,
-    output [25:0] erhohterPC
+    output [25:0] AktuellerPC
 );
 
 reg[25:0] programmzahler;
 
 
 assign AktuellerPC = programmzahler;
-assign erhohterPC = programmzahler + 1'b1;
 
 always @(posedge Reset) begin
     programmzahler <= 25'b0;
