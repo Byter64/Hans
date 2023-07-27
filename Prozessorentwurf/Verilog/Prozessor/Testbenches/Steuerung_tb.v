@@ -14,8 +14,7 @@ module main_tb
  parameter CLOCKSTEP = 5;
  parameter TIMESTEP = CLOCKSTEP * 2;
  parameter DECODETIME = 4;
- parameter REGISTERWRITETIME = 2;
- parameter ALUTIME = 3;
+ parameter REGISTERWRITETIME = 1;
  parameter PCWRITETIME = 1;
 
  // Input/Output
@@ -126,7 +125,7 @@ module main_tb
   //TODO alle ALU start und schreib hinzufügen
   assert(ALUStartSignal, 1, `__LINE__); //ALU rechnet
   assert(RegisterSchreibSignal, 1, `__LINE__); //JALBefehl schreibt jetzt
-  #(ALUTIME * TIMESTEP)
+  #(1 * TIMESTEP)
   assert(ALUStartSignal, 0, `__LINE__);
   assert(ALUSchreibSignal, 1, `__LINE__);
   #(TIMESTEP)
@@ -146,7 +145,7 @@ module main_tb
   assert(DekodierSignal, 1, `__LINE__);
   BefehlGeladen = 0;
   
-  Funktionscode = 6'b000001;
+  Funktionscode = 6'b000000;
   LoadBefehl = 1;
   StoreBefehl = 0;
   JALBefehl = 0;
@@ -158,7 +157,7 @@ module main_tb
 
   assert(ALUStartSignal, 1, `__LINE__);
   assert(RegisterSchreibSignal, 0, `__LINE__);
-  #(ALUTIME * TIMESTEP)
+  #(1 * TIMESTEP)
   assert(ALUStartSignal, 0, `__LINE__);
   assert(ALUSchreibSignal, 1, `__LINE__);
   #(TIMESTEP)
@@ -186,7 +185,7 @@ module main_tb
   assert(DekodierSignal, 1, `__LINE__);
   BefehlGeladen = 0;
   
-  Funktionscode = 6'b000010;
+  Funktionscode = 6'b000000;
   LoadBefehl = 0;
   StoreBefehl = 1;
   JALBefehl = 0;
@@ -198,7 +197,7 @@ module main_tb
   
   assert(ALUStartSignal, 1, `__LINE__);
   assert(RegisterSchreibSignal, 0, `__LINE__);
-  #(ALUTIME * TIMESTEP)
+  #(1 * TIMESTEP)
   assert(ALUStartSignal, 0, `__LINE__);
   assert(ALUSchreibSignal, 1, `__LINE__);
   #(TIMESTEP)
@@ -235,7 +234,7 @@ module main_tb
 
   assert(ALUStartSignal, 1, `__LINE__);
   assert(RegisterSchreibSignal, 0, `__LINE__);
-  #(ALUTIME * TIMESTEP)
+  #(16 * TIMESTEP)
   assert(ALUStartSignal, 0, `__LINE__);
   assert(ALUSchreibSignal, 1, `__LINE__);
   #(TIMESTEP)

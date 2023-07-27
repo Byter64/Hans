@@ -1,7 +1,6 @@
 module Steuerung #(
     parameter DECODETIME = 4,
-    parameter REGISTERWRITETIME = 2, //sollte die Register Schreib Zeit größer als die Alu Zeit sein, dann Blick in Dokumentation werfen
-    parameter ALUTIME = 3,
+    parameter REGISTERWRITETIME = 1, //sollte die Register Schreib Zeit größer als die Alu Zeit sein, dann Blick in Dokumentation werfen
     parameter PCWRITETIME = 1
 ) (
     input [5:0] Funktionscode,
@@ -39,11 +38,11 @@ localparam WRITEBACK_LOAD = 3'b110;
 localparam WRITEBACK_DEFAULT = 3'b111;
 
 reg [2:0] state;
-reg [3:0] tick;
+reg [32:0] tick;
 
 always @(posedge Reset) begin
     ResetSignal = 1;
-    tick = 4'b0001;
+    tick = 32'b00000000000000000000000000000001;
     tick = tick << 2;
 end
 
@@ -92,8 +91,25 @@ always @(posedge Clock) begin
                     ALUStartSignal <= 1;
                     if(JALBefehl)
                         RegisterSchreibSignal <= 1;
-                    //TODO Funktionscode Lookup Table
-                    tick <= tick << ALUTIME-1;
+                    
+                    //Setzt die Dauer der Aluberechnung anhand des Funktionscodes
+                    //Für Befehl Div.s 32
+                    if(Funktionscode == 6'b100100)
+                        tick <= tick << 32-1;
+                    //Für Befehl Sqrt 16
+                    else if(Funktionscode == 6'b000011)
+                        tick <= tick << 16-1;
+                    //Für Befehl Sqrt.s 10
+                    else if(Funktionscode == 6'b100011)
+                        tick <= tick << 10-1;
+                    //Für Befehle Mod, Mul.s 9
+                    else if(Funktionscode == 6'b000101 || Funktionscode == 6'b100010)
+                        tick <= tick << 9-1;
+                    //Für Befehle Div, Add.s, Sub.s 7
+                    else if(Funktionscode == 6'b000100 || Funktionscode == 6'b100000 || Funktionscode == 6'b100001)
+                        tick <= tick << 7-1;
+                    //Für alle anderen Befehle 1
+                    //keine Zuweisung nötig
                 end
 
             end
@@ -197,12 +213,5 @@ always @(posedge Clock) begin
 end
 
 assign PCSprungSignal = UnbedingterSprungBefehl || (BedingterSprungBefehl && Bedingung);
-
-//always @(UnbedingterSprungBefehl, BedingterSprungBefehl, Bedingung) begin
-//    if(UnbedingterSprungBefehl == 1 or (BedingterSprungBefehl == 1 and Bedingung == 1))
-//        PCSprungSignal <= 1;
-//    else
-//        PCSprungSignal <= 0;
-//end
 
 endmodule
