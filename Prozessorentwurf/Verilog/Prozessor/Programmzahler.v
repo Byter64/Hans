@@ -18,13 +18,11 @@ always @(posedge Reset) begin
     programmzahler <= 25'b0;
 end
 
-always @(posedge TaktSignal && !SchreibSignal) begin
-    programmzahler <= programmzahler + 1'b1;
+always @(posedge TaktSignal) begin
+    if(SchreibSignal)
+        programmzahler <= NeuerPC + 1'b1;
+    else
+        programmzahler <= programmzahler + 1'b1;
 end
-
-always @(posedge SchreibSignal) begin
-    programmzahler <= NeuerPC;
-end
-
 
 endmodule
