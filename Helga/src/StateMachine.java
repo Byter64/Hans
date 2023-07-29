@@ -66,7 +66,13 @@ public class StateMachine {
                 boolean found = false;
                 for(Label label: labels) {
                     if(label.name.equals(instruction.jumpsToLabel)) {
-                        instruction.replaceLabel(label, currentInstruction);
+                        try {
+                            instruction.replaceLabel(label, currentInstruction);
+                        } catch(AssemblerException e) {
+                            errors.add(new SyntaxError("Label is too far away to jump to", instruction.line));
+                            disableOutput = true;
+                        }
+                        
                         found = true;
                         break;
                     }

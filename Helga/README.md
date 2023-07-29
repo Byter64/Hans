@@ -11,3 +11,9 @@ Nähere Informationen zur Assembler Sprache, die Helga versteht, finden sich in 
 - Gibt mögliche Syntaxfehler mit Linienangabe und Grund aus.
 - Nach Fehlererkennung versucht Helga das Program weiter zu übersetzten um mögliche andere Syntaxfehler zu finden.
 - Bei erkanntem Syntaxfehler in einer Zeile wird der Rest der Zeile allerdings ignoriert.
+
+# Version 1.0.1
+
+- Jal Befehl kann jetzt auch zu Labels springen.
+- Es wird jetzt auch überprüft, ob der Sprung zum Label in den Immediate passt.
+- Hex-Zahlen können jetzt auch mit Präfix 0# und # erkannt werden.

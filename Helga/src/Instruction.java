@@ -41,8 +41,15 @@ public class Instruction {
         return reqi.destination || reqi.source1 || reqi.source2;
     }
 
-    public void replaceLabel(Label label, int jumpsFrom) {
-        source2 = label.getInstructionNumber() - jumpsFrom - 1;
+    public void replaceLabel(Label label, int jumpsFrom) throws AssemblerException {
+        int number = label.getInstructionNumber() - jumpsFrom - 1;
+        if(optype == OperationType.jump)
+                    if(!inBigImmediate(number))
+                        throw new AssemblerException("Jump too big");
+                else
+                    if(!inSmallImmediate(number))
+                        throw new AssemblerException("Jump too big");
+        source2 = number;
         needsLabelReplaced = false;
     }
 
@@ -169,7 +176,7 @@ public class Instruction {
         else if(reqi.source2)
             if(q2type != Source2Type.immediate)
                 return ExpectedInput.register;
-            else if(optype == OperationType.jump || (optype == OperationType.special && opcode == 4))
+            else if(optype == OperationType.jump || (optype == OperationType.special && (opcode == 4 || opcode == 5)))
                 return ExpectedInput.label;
             else
                 return ExpectedInput.immediate;
@@ -206,7 +213,7 @@ public class Instruction {
                 radix = 10;
                 input = input.substring(1);
                 break;
-            case 'x', 'X':
+            case 'x', 'X', '#':
                 radix = 16;
                 input = input.substring(1);
                 break;
