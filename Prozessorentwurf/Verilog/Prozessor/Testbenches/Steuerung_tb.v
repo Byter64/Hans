@@ -13,7 +13,7 @@ module main_tb
  // Simulation time: 100ns (10 * 10ns)
  parameter CLOCKSTEP = 5;
  parameter TIMESTEP = CLOCKSTEP * 2;
- parameter DECODETIME = 4;
+ parameter DECODETIME = 2;
  parameter REGISTERWRITETIME = 1;
  parameter PCWRITETIME = 1;
 

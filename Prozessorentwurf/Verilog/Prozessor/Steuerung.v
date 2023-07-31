@@ -1,8 +1,4 @@
-module Steuerung #(
-    parameter DECODETIME = 4,
-    parameter REGISTERWRITETIME = 1, //sollte die Register Schreib Zeit größer als die Alu Zeit sein, dann Blick in Dokumentation werfen
-    parameter PCWRITETIME = 1
-) (
+module Steuerung (
     input [5:0] Funktionscode,
     input LoadBefehl,
     input StoreBefehl,
@@ -38,7 +34,7 @@ localparam WRITEBACK_LOAD = 3'b110;
 localparam WRITEBACK_DEFAULT = 3'b111;
 
 reg [2:0] state;
-reg [32:0] tick;
+reg [31:0] tick;
 
 always @(posedge Reset) begin
     ResetSignal = 1;
@@ -75,7 +71,7 @@ always @(posedge Clock) begin
                     //Decode starten
                     state <= DECODE;
                     DekodierSignal <= 1;
-                    tick <= tick << DECODETIME-1;
+                    tick <= tick << 2 - 1; //DECODETIME = 2
                 end
 
             end
@@ -136,7 +132,6 @@ always @(posedge Clock) begin
                 if(UnbedingterSprungBefehl || BedingterSprungBefehl) begin
                     //Writeback starten
                     state <= WRITEBACK_JUMP;
-                    tick <= tick << PCWRITETIME-1;
                 end
                 else if(StoreBefehl == 1) begin
                     //Speichern und Writeback starten
@@ -152,22 +147,16 @@ always @(posedge Clock) begin
                     //Register Schreiben und Writeback starten
                     state <= WRITEBACK_DEFAULT;
                     RegisterSchreibSignal <= 1;
-                    tick <= tick << REGISTERWRITETIME-1;
                 end
                 PCSignal <= 1;
             
             end
             WRITEBACK_JUMP: begin
 
-                if (tick[0] != 1)
-                    tick <= tick >> 1;
-                else begin
-                    //Writeback beenden
-                    PCSignal <= 0;
-                    //Fetch starten
-                    state <= FETCH;
-                    LoadBefehlSignal <= 1;
-                end
+                PCSignal <= 0;
+                //Fetch starten
+                state <= FETCH;
+                LoadBefehlSignal <= 1;
 
             end
             WRITEBACK_STORE: begin
@@ -190,22 +179,17 @@ always @(posedge Clock) begin
                     //Register Schreiben starten
                     state <= WRITEBACK_DEFAULT;
                     RegisterSchreibSignal <= 1;
-                    tick <= tick << REGISTERWRITETIME-1;
                 end
 
             end
             WRITEBACK_DEFAULT: begin
 
-                if (tick[0] != 1)
-                    tick <= tick >> 1;
-                else begin
-                    //Register Schreiben und Writeback beenden
-                    PCSignal <= 0;
-                    RegisterSchreibSignal <= 0;
-                    //Fetch starten
-                    state <= FETCH;
-                    LoadBefehlSignal <= 1;
-                end
+                //Register Schreiben und Writeback beenden
+                PCSignal <= 0;
+                RegisterSchreibSignal <= 0;
+                //Fetch starten
+                state <= FETCH;
+                LoadBefehlSignal <= 1;
 
             end
         endcase
