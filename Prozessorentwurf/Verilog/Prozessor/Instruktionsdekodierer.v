@@ -1,24 +1,23 @@
 module Instruktionsdekodierer (
-    output wire [5:0] QuellRegister1,
-    output wire [5:0] QuellRegister2,
-    output wire [5:0] ZielRegister,
-    output wire [25:0] IDaten,
-    output wire KleinerImmediateAktiv,
-    output wire GrosserImmediateAktiv,
-    output wire [5:0] FunktionsCode,
-    output wire JALBefehl,
-    output wire RelativerSprung,
-    output wire FloatBefehl,
-    output wire LoadBefehl,
-    output wire StoreBefehl,
-    output wire UnbedingterSprungBefehl,
-    output wire BedingterSprungBefehl,
-    output wire AbsoluterSprung,
-    
-
-    input [31:0] Instruktion,
+    input[31:0] Instruktion,
     input DekodierSignal,
-    input Reset
+    input Reset,
+
+    output[5:0] QuellRegister1,
+    output[5:0] QuellRegister2,
+    output[5:0] ZielRegister,
+    output[25:0] IDaten,
+    output KleinerImmediateAktiv,
+    output GrosserImmediateAktiv,
+    output[5:0] FunktionsCode,
+    output JALBefehl,
+    output RelativerSprung,
+    output FloatBefehl,
+    output LoadBefehl,
+    output StoreBefehl,
+    output UnbedingterSprungBefehl,
+    output BedingterSprungBefehl,
+    output AbsoluterSprung
 );
 
 reg [31:0] AktuellerBefehl;

@@ -36,19 +36,8 @@ localparam WRITEBACK_DEFAULT = 3'b111;
 reg [2:0] state;
 reg [31:0] tick;
 
-always @(posedge Reset) begin
-    ResetSignal = 1;
-    tick = 32'b00000000000000000000000000000001;
-    tick = tick << 2;
-end
-
 always @(posedge Clock) begin
-    if (ResetSignal == 1) begin
-        if (tick[0] != 1)
-            tick <= tick >> 1;
-        else begin
-            ResetSignal <= 0;
-
+    if (Reset == 1) begin
             RegisterSchreibSignal <= 0;
             ALUStartSignal <= 0;
             ALUSchreibSignal <= 0;
@@ -58,9 +47,9 @@ always @(posedge Clock) begin
             DekodierSignal <= 0;
 
             state <= FETCH;
+            tick = 32'b00000000000000000000000000000001;
             LoadBefehlSignal <= 1;
         end
-    end
     else begin
         case (state)
             FETCH: begin
