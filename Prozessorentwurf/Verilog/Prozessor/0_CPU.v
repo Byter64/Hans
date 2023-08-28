@@ -54,54 +54,54 @@ wire AbsoluterSprung;
 //███████████████████████████████████████
 //████Signale von MultiplexerAluDaten████
 //███████████████████████████████████████
-wire[31:0] AluDaten2 = 32'b0;
+wire[31:0] AluDaten2;
 
 //████████████████████████████████████████
 //████Signale von MultiplexerZielDaten████
 //████████████████████████████████████████
-wire[31:0] ZielDaten = 32'b0;
+wire[31:0] ZielDaten;
 
 //██████████████████████████████████████
 //████Signale von MultiplexerNeuerPC████
 //██████████████████████████████████████
-wire[25:0] NeuerPC = 32'b0;
+wire[25:0] NeuerPC;
 
 //█████████████████████████████████████████
 //████Signale von MultiplexerAluPCDaten████
 //█████████████████████████████████████████
-wire[31:0] AluDaten1 = 32'b0;
+wire[31:0] AluDaten1;
 
 
 //████████████████████████████
 //████Signale von Register████
 //████████████████████████████
-wire[31:0] QuellDaten1 = 32'b0;
-wire[31:0] QuellDaten2 = 32'b0;
+wire[31:0] QuellDaten1;
+wire[31:0] QuellDaten2;
 
 //███████████████████████████████
 //████Signale von Nullpruefer████
 //███████████████████████████████
-wire Sprungbedingung = 0;
+wire Sprungbedingung;
 
 //█████████████████████████████
 //████Signale von Steuerung████
 //█████████████████████████████
-wire ALUStartSignal = 0;
-wire ALUSchreibSignal = 0;
+wire ALUStartSignal;
+wire ALUSchreibSignal;
 wire DekodierSignal;
-wire PCSprungSignal = 0;
-wire PCSignal = 0;
-wire RegisterSchreibsignal = 0;
+wire PCSprungSignal;
+wire PCSignal;
+wire RegisterSchreibsignal;
 
 //███████████████████████
 //████Signale von ALU████
 //███████████████████████
-wire[31:0] ALUErgebnis = 32'b0;
+wire[31:0] ALUErgebnis;
 
 //██████████████████████
 //████Signale von PC████
 //██████████████████████
-wire[25:0] AktuellerPC = 25'b0;
+wire[25:0] AktuellerPC;
 
 Instruktionsdekodierer Indek(
     .Instruktion(Instruktion),
@@ -138,7 +138,7 @@ Register Register(
 MultiplexerAluDaten MulAluDaten(
     .RegisterDaten2(QuellDaten2),
     .Immediate(IDaten),
-    .ImmediateAktiv(ImmediateAktiv),
+    .ImmediateAktiv(KleinerImmediateAktiv | GrosserImmediateAktiv),
     .Daten2(AluDaten2)
 );
 
