@@ -35,21 +35,21 @@ assign DatenAdresse = QuellDaten2;
 //██████████████████████████████████████████
 //████Signale von Instruktionsdekodierer████
 //██████████████████████████████████████████
-wire[5:0] QuellRegister1 = 6'b0; 
-wire[5:0] QuellRegister2 = 6'b0; 
-wire[5:0] ZielRegister = 6'b0;   
-wire[25:0] IDaten = 26'b0;       
-wire KleinerImmediateAktiv = 0;  
-wire GrosserImmediateAktiv = 0;  
-wire[5:0] FunktionsCode = 6'b0;  
-wire JALBefehl = 0;              
-wire RelativerSprung = 0;        
-wire FloatBefehl = 0;            
-wire LoadBefehl = 0;             
-wire StoreBefehl = 0;            
-wire UnbedingterSprungBefehl = 0;
-wire BedingterSprungBefehl = 0;  
-wire AbsoluterSprung = 0;
+wire[5:0] QuellRegister1; 
+wire[5:0] QuellRegister2; 
+wire[5:0] ZielRegister;   
+wire[25:0] IDaten;       
+wire KleinerImmediateAktiv;  
+wire GrosserImmediateAktiv;  
+wire[5:0] FunktionsCode;  
+wire JALBefehl;              
+wire RelativerSprungBefehl;        
+wire FloatBefehl;            
+wire LoadBefehl;             
+wire StoreBefehl;            
+wire UnbedingterSprungBefehl;
+wire BedingterSprungBefehl;  
+wire AbsoluterSprung;
 
 //███████████████████████████████████████
 //████Signale von MultiplexerAluDaten████
@@ -88,7 +88,7 @@ wire Sprungbedingung = 0;
 //█████████████████████████████
 wire ALUStartSignal = 0;
 wire ALUSchreibSignal = 0;
-wire DekodierSignal = 0;
+wire DekodierSignal;
 wire PCSprungSignal = 0;
 wire PCSignal = 0;
 wire RegisterSchreibsignal = 0;
