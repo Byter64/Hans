@@ -122,7 +122,7 @@ initial begin
     InstruktionRAMEingang = 32'b10111000000000111111111111111100; //Bez R3, -4
     #20
     InstruktionAdresse = 32'd6;
-    InstruktionRAMEingang = 32'b01000000000000000000000000000001; //jmp -1
+    InstruktionRAMEingang = 32'b01000011111111111111111111111111; //jmp -1
     #20
     BeschreibeInstruktionRAM = 0;
     InstruktionInitialisierung = 0;

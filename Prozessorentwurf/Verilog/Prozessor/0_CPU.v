@@ -115,7 +115,7 @@ Instruktionsdekodierer Indek(
     .GrosserImmediateAktiv(GrosserImmediateAktiv),
     .FunktionsCode(FunktionsCode),
     .JALBefehl(JALBefehl),
-    .RelativerSprung(RelativerSprung),
+    .RelativerSprung(RelativerSprungBefehl),
     .FloatBefehl(FloatBefehl),
     .LoadBefehl(LoadBefehl),
     .StoreBefehl(StoreBefehl),

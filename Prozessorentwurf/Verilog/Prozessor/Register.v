@@ -6,11 +6,14 @@ module Register (
     input Schreibsignal,
     input Reset,
 
-    output reg [31:0] QuellDaten1,
-    output reg [31:0] QuellDaten2
+    output [31:0] QuellDaten1,
+    output [31:0] QuellDaten2
 );
 
 reg [31:0] registers [63:0];
+
+assign QuellDaten1 = registers[QuellRegister1];
+assign QuellDaten2 = registers[QuellRegister2];
 
 always @(posedge Reset) begin
     for (integer i = 0; i < 64; i = i + 1) begin
@@ -18,10 +21,6 @@ always @(posedge Reset) begin
     end
 end
 
-always @(QuellRegister1, QuellRegister2) begin
-    QuellDaten1 <= registers[QuellRegister1];
-    QuellDaten2 <= registers[QuellRegister2];
-end
 
 always @(posedge Schreibsignal) begin
     if(ZielRegister != 0)
