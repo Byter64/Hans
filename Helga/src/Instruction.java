@@ -3,6 +3,7 @@ public class Instruction {
     OperationType optype;
     byte opcode;
     int destination, source1, source2;
+    boolean swapzq1;
     RequiredInputs reqi;
     //the String jumpsToLabel is usually empty for most instructions
     //it is required for jump operations to labels
@@ -27,7 +28,8 @@ public class Instruction {
         } else {
             q2type = Source2Type.intreg;
         }
-        
+
+        swapzq1 = false;
         tryAssignOperation(code);
 
         needsLabelReplaced = false;
@@ -100,6 +102,9 @@ public class Instruction {
                 opcode++;
             q2type = Source2Type.immediate;
 
+            if(opcode == 2)
+                swapzq1 = true;
+            
             if(opcode == 3)
                 reqi = new RequiredInputs(false, true, false);
             else if(opcode == 4)
@@ -232,10 +237,16 @@ public class Instruction {
 
     private void assignNextInput(int number) {
         if(reqi.destination) {
-            destination = number;
+            if(!swapzq1)
+                destination = number;
+            else
+                source1 = number;
             reqi.destination = false;
         } else if(reqi.source1) {
-            source1 = number;
+            if(!swapzq1)
+                source1 = number;
+            else
+                destination = number;
             reqi.source1 = false;
         } else if(reqi.source2) {
             source2 = number;
