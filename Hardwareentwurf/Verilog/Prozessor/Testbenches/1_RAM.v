@@ -16,6 +16,10 @@ module RAM#(
 
 reg[WORDSIZE - 1:0] Daten[WORDS - 1:0];
 
+initial begin
+    for (integer idx = 0; idx < WORDS; idx = idx + 1) Daten[idx] = 0;
+end
+
 always @(posedge Clock) begin
     
     if(DatenBereit) begin
