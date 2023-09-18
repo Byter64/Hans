@@ -1,13 +1,13 @@
-`include "../ALU.v"
-`include "../Instruktionsdekodierer.v"
-`include "../MultiplexerAluDaten.v"
-`include "../MultiplexerAluDaten2.v"
-`include "../MultiplexerNeuerPC.v"
-`include "../MultiplexerZielDaten.v"
-`include "../NullPruefer.v"
-`include "../Programmzahler.v"
-`include "../Register.v"
-`include "../Steuerung.v"
+`include "ALU.v"
+`include "Instruktionsdekodierer.v"
+`include "MultiplexerAluDaten.v"
+`include "MultiplexerAluDaten2.v"
+`include "MultiplexerNeuerPC.v"
+`include "MultiplexerZielDaten.v"
+`include "NullPruefer.v"
+`include "Programmzahler.v"
+`include "Register.v"
+`include "Steuerung.v"
 
 
 module CPU (

@@ -22,12 +22,12 @@ module Instruktionsdekodierer (
 
 reg [31:0] AktuellerBefehl;
 
-always @(posedge Reset) begin
-    AktuellerBefehl <= 32'b00000000000000000000000000000000; 
-end
-
-always @(posedge DekodierSignal) begin
-    AktuellerBefehl <= Instruktion;
+always @(posedge DekodierSignal or posedge Reset) begin
+    if(Reset)
+        AktuellerBefehl <= 32'b00000000000000000000000000000000;
+    else begin
+        AktuellerBefehl <= Instruktion;
+    end
 end
 
 assign QuellRegister1 =         (AktuellerBefehl[31:30]==2'b00 && AktuellerBefehl[5:4]!=2'b10) ? {1'b0, AktuellerBefehl[20:16]}:

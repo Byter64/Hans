@@ -1,10 +1,10 @@
-`include "../ALUModule/Goldschmidt_Integer_Divider_Parallel-main/source/Goldschmidt_Integer_Divider_Parallel.v"
-`include "../ALUModule/intsqrt.v"
-`include "../ALUModule/ZyklischerSchieber.v"
-`include "../ALUModule/verilog-math-master_FLOAT_/components/add.v"
-`include "../ALUModule/verilog-math-master_FLOAT_/components/mul.v"
-`include "../ALUModule/verilog-math-master_FLOAT_/components/sqrt.v"
-`include "../ALUModule/verilog-math-master_FLOAT_/components/div.v"
+`include "ALUModule/Goldschmidt_Integer_Divider_Parallel-main/source/Goldschmidt_Integer_Divider_Parallel.v"
+`include "ALUModule/intsqrt.v"
+`include "ALUModule/ZyklischerSchieber.v"
+`include "ALUModule/verilog-math-master_FLOAT_/components/add.v"
+`include "ALUModule/verilog-math-master_FLOAT_/components/mul.v"
+`include "ALUModule/verilog-math-master_FLOAT_/components/sqrt.v"
+`include "ALUModule/verilog-math-master_FLOAT_/components/div.v"
 
 module ALU (
     input[31:0] Daten1,
@@ -96,7 +96,15 @@ div FloatDividierer(
     .div_z(DivisionFloatErgebnis)
 );
 
-always @(posedge StartSignal) begin
+always @(posedge Reset or posedge Clock) begin
+        if(Reset) begin
+            EinfacheRechnungErgebnis = 0;
+            Radikand = 0;
+            FloatAdditionDaten2 = 0;
+            DivCyc = 0;
+            DivStb = 0;
+        end
+        else if(StartSignal) begin
         if (FunktionsCode[5] == 0) begin //Wenn Arithmetik- oder Logikbefehl
         case (FunktionsCode[4:0])
         //Integerarithmetik
@@ -171,30 +179,27 @@ always @(posedge StartSignal) begin
         //Sqrt.s
         5'b00011    : Radikand <= Daten1;
         //Div.s
-        5'b00100    : begin
-            DivCyc <= 1;
-            DivStb <= 1;
-        end
+            //Calculation starts automatically
         //Mod.s
-        5'b00101    : begin
-            DivCyc <= 1;
-            DivStb <= 1;
-        end
+            //NOT IMPLEMENTED
         endcase
     end
-end
+        end
+    else if(Clock) begin
+        if (DivisionInArbeit == 0 && DivStb == 1)
+            DivStb = 0;
 
-always @(posedge Clock) begin
-    if (DivisionInArbeit == 0 && DivStb == 1)
-        DivStb = 0;
-
-    if(DivisionFertig == 1) begin
-        DivCyc = 0;
+        if(DivisionFertig == 1) begin
+            DivCyc = 0;
+        end
     end
 end
 
   always @(posedge Schreibsignal) begin
-    if (FunktionsCode[5] == 0) begin //Wenn Arithmetik- oder Logikbefehl
+    if(Reset) begin
+        Ergebnis = 0;
+    end
+    else if (FunktionsCode[5] == 0) begin //Wenn Arithmetik- oder Logikbefehl
         case (FunktionsCode[4:0])
         //Integerarithmetik
         //Add

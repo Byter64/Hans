@@ -6,7 +6,7 @@ module RAM#(
     input LesenAn,
     input SchreibenAn,
     input[WORDSIZE - 1:0] DatenRein,
-    input[WORDSIZE - 1:0] Adresse,
+    input[$clog2(WORDS) - 1:0] Adresse,
     input Clock,
 
     output reg[WORDSIZE - 1:0] DatenRaus,
@@ -15,9 +15,11 @@ module RAM#(
 );
 
 reg[WORDSIZE - 1:0] Daten[WORDS - 1:0];
+integer idx;
 
 initial begin
-    for (integer idx = 0; idx < WORDS; idx = idx + 1) Daten[idx] = 0;
+    for (idx = 0; idx < WORDS; idx = idx + 1) 
+    Daten[idx] = 0;
 end
 
 always @(posedge Clock) begin
