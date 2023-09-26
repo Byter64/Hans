@@ -45,7 +45,7 @@ reg[31:0] Daten1;
 reg[31:0] Daten2;
 reg[5:0] FunktionsCode;
 reg StartSignal;
-reg Schreibsignal;
+wire HatFertigGerechnet;
 reg Reset;
 reg Clock;
 wire[31:0] Ergebnis;
@@ -56,7 +56,7 @@ wire[31:0] Ergebnis;
     .Daten2(Daten2),
     .FunktionsCode(FunktionsCode),
     .StartSignal(StartSignal),
-    .Schreibsignal(Schreibsignal),
+    .HatFertigGerechnet(HatFertigGerechnet),
     .Reset(Reset),
     .Clock(Clock),
     .Ergebnis(Ergebnis)
@@ -64,13 +64,11 @@ wire[31:0] Ergebnis;
 
 initial begin
     Clock = 1'b0;
-    Schreibsignal = 0;
     StartSignal = 0;
 end
 
 always begin
-   #98 Clock = ~Clock; 
-   #2 Schreibsignal = ~Schreibsignal;
+   #100 Clock = ~Clock; 
 end
  
 
@@ -129,18 +127,19 @@ initial begin
     StartSignal = 1;
     #200
     StartSignal = 0;
-    #1600
+    #1800
     if(Ergebnis != 32'd105)
         $display("Modulo funktioniert nicht: \n Divisor:  %d \n Dividend: %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'd105);
     #200
 
     //Sqrt-Befehl testen
-    Daten1 = 32'b11000000000110010101010101010101;
+    Daten1 = 32'b01000000000110010101010101010101;
     FunktionsCode = Sqrt;
-    StartSignal = 0;
     StartSignal = 1;
+    #200
+    StartSignal = 0;
     #3200
-    if(Ergebnis != 32'b00000000000000001101110111000010)
+    if(Ergebnis != 32'b00000000000000001000000000011001)
         $display("Quadratwurzel funktioniert nicht: \n Radikand: %d Ergebnis: %d \n Erwartet: %d\n", Daten1, Ergebnis, 32'b00000000000000001101110111000010);
     
     //Sl-Befehl testen
@@ -429,9 +428,9 @@ initial begin
     
     Daten1 = 32'b00000000000000000000000000000000;
     FunktionsCode = Xnor;
-    StartSignal = 0;
     StartSignal = 1;
     #200
+    StartSignal = 0;
     if(Ergebnis != 32'b10010101011001101010101010101010)
         $display("Xnor funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b10010101011001101010101010101010);
     
@@ -442,8 +441,9 @@ initial begin
     Daten1 = 32'b01000010001101011000000100000110;      // 45,376
     Daten2 = 32'b01000010110011000000000000000000;      //102,000
     FunktionsCode = Adds;
-    StartSignal = 0;
     StartSignal = 1;
+    #200
+    StartSignal = 0;
     #1400
     if(Ergebnis != 32'b01000011000100110110000001000010)//147,376
         $display("Floats addieren funktioniert nicht: \n Summand1: %f \n Summand2: %f \n Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b01000011000100110110000001000010);
@@ -452,8 +452,9 @@ initial begin
     Daten1 = 32'b01000010001101011000000100000110;       // 45,376
     Daten2 = 32'b01000010110011000000000000000000;       //102,000
     FunktionsCode = Subs;
-    StartSignal = 0;
     StartSignal = 1;
+    #200
+    StartSignal = 0;
     #1400
     if(Ergebnis != 32'b11000010011000100111111011111010)//-56,624
         $display("Floats subtrahieren funktioniert nicht: \n Minuend:    %f \n Subtrahent: %f \n Ergebnis:   %f \n Erwartet:   %f\n", Daten1, Daten2, Ergebnis, 32'b11000010011000100111111011111010);
