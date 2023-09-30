@@ -2,6 +2,7 @@ module Instruktionsdekodierer (
     input[31:0] Instruktion,
     input DekodierSignal,
     input Reset,
+    input Clock,
 
     output[5:0] QuellRegister1,
     output[5:0] QuellRegister2,
@@ -12,7 +13,6 @@ module Instruktionsdekodierer (
     output[5:0] FunktionsCode,
     output JALBefehl,
     output RelativerSprung,
-    output FloatBefehl,
     output LoadBefehl,
     output StoreBefehl,
     output UnbedingterSprungBefehl,
@@ -79,10 +79,10 @@ assign KleinerImmediate = AktuellerBefehl[15:0];
 assign GrosserImmediate = AktuellerBefehl[25:0];
 //
 
-always @(posedge DekodierSignal or posedge Reset) begin
+always @(posedge Clock) begin
     if(Reset)
         AktuellerBefehl <= 32'b00000000000000000000000000000000;
-    else begin
+    else if (DekodierSignal) begin
         AktuellerBefehl <= Instruktion;
     end
 end
@@ -119,8 +119,6 @@ assign JALBefehl =              (AktuellerBefehl[31:26] == JALCode);
 assign RelativerSprung =        (AktuellerBefehl[31:26] == JALCode || AktuellerBefehl[31:26] == JmpCode || AktuellerBefehl[31:26] == BezCode);
 
 assign AbsoluterSprung =        (AktuellerBefehl[31:26] == JregCode);                               
-
-assign FloatBefehl =            ((AktuellerBefehl[31:30] == RegisterFormat && AktuellerBefehl[5:4] == Gleitkomma) || AktuellerBefehl[31:26] == LoadSCode);
 
 assign LoadBefehl =             (AktuellerBefehl[31:26] == LoadCode || AktuellerBefehl[31:26] == LoadSCode);
 

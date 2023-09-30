@@ -43,8 +43,7 @@ wire KleinerImmediateAktiv;
 wire GrosserImmediateAktiv;  
 wire[5:0] FunktionsCode;  
 wire JALBefehl;              
-wire RelativerSprungBefehl;        
-wire FloatBefehl;            
+wire RelativerSprungBefehl;               
 wire LoadBefehl;             
 wire StoreBefehl;            
 wire UnbedingterSprungBefehl;
@@ -107,6 +106,7 @@ Instruktionsdekodierer Indek(
     .Instruktion(Instruktion),
     .DekodierSignal(DekodierSignal),
     .Reset(Reset),
+    .Clock(Clock),
     .QuellRegister1(QuellRegister1),
     .QuellRegister2(QuellRegister2),
     .ZielRegister(ZielRegister),
@@ -116,7 +116,6 @@ Instruktionsdekodierer Indek(
     .FunktionsCode(FunktionsCode),
     .JALBefehl(JALBefehl),
     .RelativerSprung(RelativerSprungBefehl),
-    .FloatBefehl(FloatBefehl),
     .LoadBefehl(LoadBefehl),
     .StoreBefehl(StoreBefehl),
     .UnbedingterSprungBefehl(UnbedingterSprungBefehl),
