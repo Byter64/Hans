@@ -99,10 +99,12 @@ RAM #(
 
 integer resetTimer = 10;
 always @(posedge Clock) begin
-    if(resetTimer > 0)
-    resetTimer = resetTimer - 1;
+    if(resetTimer > 0)begin
+        Reset = 1;
+        resetTimer = resetTimer - 1;
+    end
     else if(resetTimer == 0)
-    Reset = 0;
+        Reset = 0;
 end
 
 always @(posedge Clock) begin

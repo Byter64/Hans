@@ -129,6 +129,7 @@ Register Register(
     .ZielDaten(ZielDaten),
     .ZielRegister(ZielRegister),
     .Schreibsignal(RegisterSchreibsignal),
+    .Clock(Clock),
     .Reset(Reset),
     .QuellDaten1(QuellDaten1),
     .QuellDaten2(QuellDaten2)
