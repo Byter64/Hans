@@ -86,7 +86,6 @@ wire Sprungbedingung;
 //████Signale von Steuerung████
 //█████████████████████████████
 wire ALUStartSignal;
-wire ALUSchreibSignal;
 wire DekodierSignal;
 wire PCSprungSignal;
 wire PCSignal;
@@ -95,6 +94,7 @@ wire RegisterSchreibsignal;
 //███████████████████████
 //████Signale von ALU████
 //███████████████████████
+wire AluHatFertigGerechnet;
 wire[31:0] ALUErgebnis;
 
 //██████████████████████
@@ -170,7 +170,6 @@ NullPruefer NullPruefer(
 );
 
 Steuerung Steuerung(
-    .Funktionscode(FunktionsCode),
     .LoadBefehl(LoadBefehl),
     .StoreBefehl(StoreBefehl),
     .JALBefehl(JALBefehl),
@@ -180,12 +179,12 @@ Steuerung Steuerung(
     .BefehlGeladen(InstruktionGeladen),
     .DatenGeladen(DatenGeladen),
     .DatenGespeichert(DatenGespeichert),
+    .AluFertig(AluHatFertigGerechnet),
     .Reset(Reset),
     .Clock(Clock),
 
     .RegisterSchreibSignal(RegisterSchreibsignal),
     .ALUStartSignal(ALUStartSignal),
-    .ALUSchreibSignal(ALUSchreibSignal),
     .LoadBefehlSignal(LeseInstruktion),
     .LoadDatenSignal(LeseDaten),
     .StoreDatenSignal(SchreibeDaten),
@@ -199,9 +198,9 @@ ALU ALU(
     .Daten2(AluDaten2),
     .FunktionsCode(FunktionsCode),
     .StartSignal(ALUStartSignal),
-    .Schreibsignal(ALUSchreibSignal),
     .Reset(Reset),
     .Clock(Clock),
+    .HatFertigGerechnet(AluHatFertigGerechnet),
     .Ergebnis(ALUErgebnis)
 );
 

@@ -1,9 +1,6 @@
-// Testbench template
 `include "Verilog/0_CPU.v"
 `include "Verilog/Testbenches/1_RAM.v"
 `default_nettype none
-`define DUMPSTR(x) `"x.vcd`"
-`timescale 10 ns / 1 ns
 
 
 module Top
@@ -16,7 +13,7 @@ module Top
  // Input/Output
 reg[31:0] InstruktionAdresse;
 reg Reset;
-reg[7:0] ledReg = 0;
+reg[7:0] ledReg = 7'b0;
 wire Clock;
 assign Clock = clk_25mhz;
 assign led = ledReg;

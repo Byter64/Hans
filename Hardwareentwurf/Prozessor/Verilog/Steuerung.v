@@ -35,7 +35,7 @@ module Steuerung (
 
     //combinational portion
     
-    always @(BefehlGeladen, AluFertig, DatenGeladen, DatenGespeichert, current_state) begin
+    always @* begin
         case(current_state)
             FETCH: begin
                 if (BefehlGeladen)
@@ -94,7 +94,7 @@ module Steuerung (
 
     //sequential portion
 
-    always @(posedge Clock, posedge Reset) begin
+    always @(posedge Clock) begin
         if (Reset)
             current_state <= 0;
         else
