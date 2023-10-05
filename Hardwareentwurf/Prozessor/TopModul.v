@@ -1,7 +1,5 @@
 `include "Verilog/0_CPU.v"
 `include "Verilog/Testbenches/1_RAM.v"
-`default_nettype none
-
 
 module Top
 (
