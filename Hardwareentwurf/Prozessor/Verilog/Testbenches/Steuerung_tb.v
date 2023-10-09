@@ -79,11 +79,11 @@ module main_tb
   // e.g. #2 value = 0;
   
   //Steuerung wird initialisiert
+  Clock = 1;
+  #1
   Reset = 1;
   #(TIMESTEP)
   Reset = 0;
-  Clock = 0;
-  #1
 
   #(TIMESTEP)
   //Steuerung in FETCH

@@ -99,7 +99,7 @@ module Steuerung (
 
     always @(posedge Clock) begin
         if (Reset)
-            current_state <= 0;
+            current_state <= FETCH;
         else
             current_state <= next_state;
     end
