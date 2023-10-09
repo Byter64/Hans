@@ -1,13 +1,13 @@
-`include "../ALU.v"
-`include "../Instruktionsdekodierer.v"
-`include "../MultiplexerAluDaten.v"
-`include "../MultiplexerAluDaten2.v"
-`include "../MultiplexerNeuerPC.v"
-`include "../MultiplexerZielDaten.v"
-`include "../NullPruefer.v"
-`include "../Programmzahler.v"
-`include "../Register.v"
-`include "../Steuerung.v"
+`include "ALU.v"
+`include "Instruktionsdekodierer.v"
+`include "MultiplexerAluDaten.v"
+`include "MultiplexerAluDaten2.v"
+`include "MultiplexerNeuerPC.v"
+`include "MultiplexerZielDaten.v"
+`include "NullPruefer.v"
+`include "Programmzahler.v"
+`include "Register.v"
+`include "Steuerung.v"
 
 
 module CPU (
@@ -43,8 +43,7 @@ wire KleinerImmediateAktiv;
 wire GrosserImmediateAktiv;  
 wire[5:0] FunktionsCode;  
 wire JALBefehl;              
-wire RelativerSprungBefehl;        
-wire FloatBefehl;            
+wire RelativerSprungBefehl;               
 wire LoadBefehl;             
 wire StoreBefehl;            
 wire UnbedingterSprungBefehl;
@@ -87,7 +86,6 @@ wire Sprungbedingung;
 //████Signale von Steuerung████
 //█████████████████████████████
 wire ALUStartSignal;
-wire ALUSchreibSignal;
 wire DekodierSignal;
 wire PCSprungSignal;
 wire PCSignal;
@@ -96,6 +94,7 @@ wire RegisterSchreibsignal;
 //███████████████████████
 //████Signale von ALU████
 //███████████████████████
+wire AluHatFertigGerechnet;
 wire[31:0] ALUErgebnis;
 
 //██████████████████████
@@ -107,6 +106,7 @@ Instruktionsdekodierer Indek(
     .Instruktion(Instruktion),
     .DekodierSignal(DekodierSignal),
     .Reset(Reset),
+    .Clock(Clock),
     .QuellRegister1(QuellRegister1),
     .QuellRegister2(QuellRegister2),
     .ZielRegister(ZielRegister),
@@ -116,7 +116,6 @@ Instruktionsdekodierer Indek(
     .FunktionsCode(FunktionsCode),
     .JALBefehl(JALBefehl),
     .RelativerSprung(RelativerSprungBefehl),
-    .FloatBefehl(FloatBefehl),
     .LoadBefehl(LoadBefehl),
     .StoreBefehl(StoreBefehl),
     .UnbedingterSprungBefehl(UnbedingterSprungBefehl),
@@ -171,7 +170,6 @@ NullPruefer NullPruefer(
 );
 
 Steuerung Steuerung(
-    .Funktionscode(FunktionsCode),
     .LoadBefehl(LoadBefehl),
     .StoreBefehl(StoreBefehl),
     .JALBefehl(JALBefehl),
@@ -181,12 +179,12 @@ Steuerung Steuerung(
     .BefehlGeladen(InstruktionGeladen),
     .DatenGeladen(DatenGeladen),
     .DatenGespeichert(DatenGespeichert),
+    .AluFertig(AluHatFertigGerechnet),
     .Reset(Reset),
     .Clock(Clock),
 
     .RegisterSchreibSignal(RegisterSchreibsignal),
     .ALUStartSignal(ALUStartSignal),
-    .ALUSchreibSignal(ALUSchreibSignal),
     .LoadBefehlSignal(LeseInstruktion),
     .LoadDatenSignal(LeseDaten),
     .StoreDatenSignal(SchreibeDaten),
@@ -200,9 +198,9 @@ ALU ALU(
     .Daten2(AluDaten2),
     .FunktionsCode(FunktionsCode),
     .StartSignal(ALUStartSignal),
-    .Schreibsignal(ALUSchreibSignal),
     .Reset(Reset),
     .Clock(Clock),
+    .HatFertigGerechnet(AluHatFertigGerechnet),
     .Ergebnis(ALUErgebnis)
 );
 

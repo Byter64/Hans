@@ -1,190 +1,107 @@
 module Steuerung (
-    input [5:0] Funktionscode,
+    input BefehlGeladen,
     input LoadBefehl,
     input StoreBefehl,
     input JALBefehl,
     input UnbedingterSprungBefehl,
     input BedingterSprungBefehl,
     input Bedingung,
-    input BefehlGeladen,
+    input ALUFertig,
     input DatenGeladen,
     input DatenGespeichert,
     input Reset,
     input Clock,
 
-    output reg RegisterSchreibSignal,
-    output reg ALUStartSignal,
-    output reg ALUSchreibSignal,
-    output reg LoadBefehlSignal,
-    output reg LoadDatenSignal,
-    output reg StoreDatenSignal,
-    output PCSprungSignal,
-    output reg PCSignal,
-    output reg DekodierSignal,
-    output reg ResetSignal
+    output LoadBefehlSignal,
+    output DekodierSignal,
+    output ALUStartSignal,
+    output RegisterSchreibSignal,
+    output LoadDatenSignal,
+    output StoreDatenSignal,
+    output PCSignal,
+    output PCSprungSignal
 );
+    localparam FETCH = 9'b000000001;
+    localparam DECODE_1 = 9'b000000010;
+    localparam DECODE_2 = 9'b000000100;
+    localparam ALUSTART = 9'b000001000;
+    localparam ALU = 9'b000010000;
+    localparam WRITEBACK_JUMP = 9'b000100000;
+    localparam WRITEBACK_STORE = 9'b001000000;
+    localparam WRITEBACK_LOAD = 9'b010000000;
+    localparam WRITEBACK_DEFAULT = 9'b100000000;
 
-localparam FETCH = 3'b000;
-localparam DECODE = 3'b001;
-localparam ALU_1 = 3'b010;
-localparam ALU_2 = 3'b011;
-localparam WRITEBACK_JUMP = 3'b100;
-localparam WRITEBACK_STORE = 3'b101;
-localparam WRITEBACK_LOAD = 3'b110;
-localparam WRITEBACK_DEFAULT = 3'b111;
+    reg [8:0] current_state;
+    reg [8:0] next_state;
 
-reg [2:0] state;
-reg [31:0] tick;
-
-always @(posedge Clock) begin
-    if (Reset == 1) begin
-            RegisterSchreibSignal <= 0;
-            ALUStartSignal <= 0;
-            ALUSchreibSignal <= 0;
-            LoadDatenSignal <= 0;
-            StoreDatenSignal <= 0;
-            PCSignal <= 0;
-            DekodierSignal <= 0;
-
-            state <= FETCH;
-            tick = 32'b00000000000000000000000000000001;
-            LoadBefehlSignal <= 1;
-        end
-    else begin
-        case (state)
+    //combinational portion
+    
+    always @* begin
+        case(current_state)
             FETCH: begin
-
-                if (BefehlGeladen == 1) begin
-                    //Fetch beenden
-                    LoadBefehlSignal <= 0;
-                    //Decode starten
-                    state <= DECODE;
-                    DekodierSignal <= 1;
-                    tick <= tick << 2 - 1; //DECODETIME = 2
-                end
-
+                if (BefehlGeladen)
+                    next_state = DECODE_1;
+                else
+                    next_state = FETCH;
             end
-            DECODE: begin
-
-                if (tick[0] != 1)
-                    tick <= tick >> 1;
-                else begin
-                    //Decode beenden
-                    DekodierSignal <= 0;
-                    //ALU Berechnung starten
-                    state <= ALU_1;
-                    ALUStartSignal <= 1;
-                    if(JALBefehl)
-                        RegisterSchreibSignal <= 1;
-                    
-                    //Setzt die Dauer der Aluberechnung anhand des Funktionscodes
-                    //Für Befehl Div.s 32
-                    if(Funktionscode == 6'b100100)
-                        tick <= tick << 32-1;
-                    //Für Befehl Sqrt 16
-                    else if(Funktionscode == 6'b000011)
-                        tick <= tick << 16-1;
-                    //Für Befehl Sqrt.s 10
-                    else if(Funktionscode == 6'b100011)
-                        tick <= tick << 10-1;
-                    //Für Befehle Mod, Mul.s 9
-                    else if(Funktionscode == 6'b000101 || Funktionscode == 6'b100010)
-                        tick <= tick << 9-1;
-                    //Für Befehle Div, Add.s, Sub.s 7
-                    else if(Funktionscode == 6'b000100 || Funktionscode == 6'b100000 || Funktionscode == 6'b100001)
-                        tick <= tick << 7-1;
-                    //Für alle anderen Befehle 1
-                    //keine Zuweisung nötig
+            DECODE_1:
+                next_state = DECODE_2;
+            DECODE_2:
+                next_state = ALUSTART;
+            ALUSTART:
+                next_state = ALU;
+            ALU: begin
+                if (ALUFertig) begin
+                    if (UnbedingterSprungBefehl || BedingterSprungBefehl)
+                        next_state = WRITEBACK_JUMP;
+                    else if (StoreBefehl)
+                        next_state = WRITEBACK_STORE;
+                    else if (LoadBefehl)
+                        next_state = WRITEBACK_LOAD;
+                    else
+                        next_state = WRITEBACK_DEFAULT;
                 end
-
+                else
+                    next_state = ALU;
             end
-            ALU_1: begin
-
-                if (tick[0] != 1)
-                    tick <= tick >> 1;
-                else begin
-                    //ALU Berechnung beenden
-                    ALUStartSignal <= 0;
-                    //ALU Schreiben starten
-                    state <= ALU_2;
-                    ALUSchreibSignal <= 1;
-                end
-
-            end
-            ALU_2: begin
-
-                //ALU Schreiben beenden
-                ALUSchreibSignal <= 0;
-                //falls RegisterSchreibSignal 1 war
-                RegisterSchreibSignal <= 0;
-                
-                if(UnbedingterSprungBefehl || BedingterSprungBefehl) begin
-                    //Writeback starten
-                    state <= WRITEBACK_JUMP;
-                end
-                else if(StoreBefehl == 1) begin
-                    //Speichern und Writeback starten
-                    state <= WRITEBACK_STORE;
-                    StoreDatenSignal <= 1;
-                end
-                else if(LoadBefehl == 1) begin
-                    //Laden und Writeback starten
-                    state <= WRITEBACK_LOAD;
-                    LoadDatenSignal <= 1;
-                end
-                else begin
-                    //Register Schreiben und Writeback starten
-                    state <= WRITEBACK_DEFAULT;
-                    RegisterSchreibSignal <= 1;
-                end
-                PCSignal <= 1;
-            
-            end
-            WRITEBACK_JUMP: begin
-
-                PCSignal <= 0;
-                //Fetch starten
-                state <= FETCH;
-                LoadBefehlSignal <= 1;
-
-            end
+            WRITEBACK_JUMP:
+                next_state = FETCH;
             WRITEBACK_STORE: begin
-            
-                if(DatenGespeichert == 1) begin
-                    //Speichern und Writeback beenden
-                    PCSignal <= 0;
-                    StoreDatenSignal <= 0;
-                    //Fetch starten
-                    state <= FETCH;
-                    LoadBefehlSignal <= 1;
-                end
-
+                if (DatenGespeichert)
+                    next_state = FETCH;
+                else
+                    next_state = WRITEBACK_STORE;
             end
             WRITEBACK_LOAD: begin
-            
-                if(DatenGeladen == 1) begin
-                    //Laden beenden
-                    LoadDatenSignal <= 0;
-                    //Register Schreiben starten
-                    state <= WRITEBACK_DEFAULT;
-                    RegisterSchreibSignal <= 1;
-                end
-
+                if (DatenGeladen)
+                    next_state = WRITEBACK_DEFAULT;
+                else
+                    next_state = WRITEBACK_LOAD;
             end
-            WRITEBACK_DEFAULT: begin
-
-                //Register Schreiben und Writeback beenden
-                PCSignal <= 0;
-                RegisterSchreibSignal <= 0;
-                //Fetch starten
-                state <= FETCH;
-                LoadBefehlSignal <= 1;
-
-            end
+            WRITEBACK_DEFAULT:
+                next_state = FETCH;
+            default:
+                next_state = FETCH;
         endcase
     end
-end
+    
+    assign LoadBefehlSignal = current_state[0];
+    assign DekodierSignal = current_state[1] || current_state[2];
+    assign ALUStartSignal = current_state[3];
+    assign RegisterSchreibSignal = ((current_state[3] || current_state[4]) && JALBefehl) || current_state[8];
+    assign PCSignal = current_state[8:5] != 0;
+    assign StoreDatenSignal = current_state[6];
+    assign LoadDatenSignal = current_state[7];
 
-assign PCSprungSignal = UnbedingterSprungBefehl || (BedingterSprungBefehl && Bedingung);
+    assign PCSprungSignal = UnbedingterSprungBefehl || (BedingterSprungBefehl && Bedingung);
+
+    //sequential portion
+
+    always @(posedge Clock) begin
+        if (Reset)
+            current_state <= FETCH;
+        else
+            current_state <= next_state;
+    end
 
 endmodule

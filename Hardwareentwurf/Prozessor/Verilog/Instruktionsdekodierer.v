@@ -2,6 +2,7 @@ module Instruktionsdekodierer (
     input[31:0] Instruktion,
     input DekodierSignal,
     input Reset,
+    input Clock,
 
     output[5:0] QuellRegister1,
     output[5:0] QuellRegister2,
@@ -12,7 +13,6 @@ module Instruktionsdekodierer (
     output[5:0] FunktionsCode,
     output JALBefehl,
     output RelativerSprung,
-    output FloatBefehl,
     output LoadBefehl,
     output StoreBefehl,
     output UnbedingterSprungBefehl,
@@ -22,54 +22,109 @@ module Instruktionsdekodierer (
 
 reg [31:0] AktuellerBefehl;
 
-always @(posedge Reset) begin
-    AktuellerBefehl <= 32'b00000000000000000000000000000000; 
+//lesbarkeit
+wire[5:0] Opcode;
+
+wire[1:0] RegisterFormat;
+wire[1:0] JumpFormat;
+wire ImmediateFormat;
+
+wire[1:0] Arithmetik;
+wire[1:0] Vergleich;
+wire[1:0] Gleitkomma;
+wire[1:0] Vektor;
+
+wire[4:0] ZRegister;
+wire[4:0] Q1Register;
+wire[4:0] Q2Register;
+wire[5:0] Funktion;
+
+wire[5:0] FunktionAnfang;
+
+wire[15:0] KleinerImmediate;
+wire[25:0] GrosserImmediate;
+
+wire[5:0] StoreCode;
+wire[5:0] LoadSCode;
+wire[5:0] LoadCode;
+wire[5:0] JALCode;
+wire[5:0] JmpCode;
+wire[5:0] BezCode;
+wire[5:0] JregCode;
+
+assign Opcode = AktuellerBefehl[31:26];
+
+assign RegisterFormat = 2'b00;
+assign JumpFormat = 2'b01;
+assign ImmediateFormat = 1'b1;
+assign Arithmetik = 2'b00;
+assign Vergleich = 2'b01;
+assign Gleitkomma = 2'b10;
+assign Vektor = 2'b11;
+
+assign StoreCode = 6'b101100;
+assign LoadSCode = 6'b101011;
+assign LoadCode = 6'b101010;
+assign JALCode = 6'b101111;
+assign JmpCode = 6'b010000;
+assign BezCode = 6'b101110;
+assign JregCode = 6'b101101;
+
+assign ZRegister = AktuellerBefehl[25:21];
+assign Q1Register = AktuellerBefehl[20:16];
+assign Q2Register = AktuellerBefehl[15:11];
+assign Funktion = AktuellerBefehl[5:0];
+assign FunktionAnfang = AktuellerBefehl[30:26];
+assign KleinerImmediate = AktuellerBefehl[15:0];
+assign GrosserImmediate = AktuellerBefehl[25:0];
+//
+
+always @(posedge Clock) begin
+    if(Reset)
+        AktuellerBefehl <= 32'b00000000000000000000000000000000;
+    else if (DekodierSignal) begin
+        AktuellerBefehl <= Instruktion;
+    end
 end
 
-always @(posedge DekodierSignal) begin
-    AktuellerBefehl <= Instruktion;
-end
-
-assign QuellRegister1 =         (AktuellerBefehl[31:30]==2'b00 && AktuellerBefehl[5:4]!=2'b10) ? {1'b0, AktuellerBefehl[20:16]}:
-                                ((AktuellerBefehl[31:30]==2'b00 && AktuellerBefehl[5:4]==2'b10) ? {1'b1, AktuellerBefehl[20:16]}:
-                                ((AktuellerBefehl[31:31]==1'b1) ? {1'b0, AktuellerBefehl[20:16]}:
+assign QuellRegister1 =         (AktuellerBefehl[31:30] == RegisterFormat && AktuellerBefehl[5:4] != Gleitkomma) ? {1'b0, Q1Register}:
+                                ((AktuellerBefehl[31:30] == RegisterFormat && AktuellerBefehl[5:4] == Gleitkomma) ? {1'b1, Q1Register}:
+                                ((AktuellerBefehl[31:31] == ImmediateFormat) ? {1'b0, Q1Register}:
                                 6'b0));
 
-assign QuellRegister2 =         (AktuellerBefehl[31:30]==2'b00 && AktuellerBefehl[5:4]!=2'b10) ? {1'b0, AktuellerBefehl[15:11]}:
-                                ((AktuellerBefehl[31:30]==2'b00 && AktuellerBefehl[5:4]==2'b10) ? {1'b1, AktuellerBefehl[15:11]}:
-                                ((AktuellerBefehl[31:26]==6'b101100) ? {1'b0, AktuellerBefehl[25:21]}:
+assign QuellRegister2 =         (AktuellerBefehl[31:30] == RegisterFormat && AktuellerBefehl[5:4]!= Gleitkomma) ? {1'b0, Q2Register}:
+                                ((AktuellerBefehl[31:30] == RegisterFormat && AktuellerBefehl[5:4] == Gleitkomma) ? {1'b1, Q2Register}:
+                                ((AktuellerBefehl[31:26] == StoreCode) ? {1'b0, ZRegister}:
                                 6'b0));
 
-assign ZielRegister =           (AktuellerBefehl[31:30]==2'b00 && AktuellerBefehl[5:4]!=2'b10) ? {1'b0, AktuellerBefehl[25:21]}:
-                                (((AktuellerBefehl[31:30]==2'b00 && AktuellerBefehl[5:4]==2'b10)||AktuellerBefehl[31:26]==6'b101011) ? {1'b1, AktuellerBefehl[25:21]}:
-                                ((AktuellerBefehl[31:31]==1'b1) ? {1'b0, AktuellerBefehl[25:21]}:
+assign ZielRegister =           (AktuellerBefehl[31:30] == RegisterFormat && AktuellerBefehl[5:4]!= Gleitkomma) ? {1'b0, ZRegister}:
+                                (((AktuellerBefehl[31:30] == RegisterFormat && AktuellerBefehl[5:4] == Gleitkomma)||AktuellerBefehl[31:26]==LoadSCode) ? {1'b1, ZRegister}:
+                                ((AktuellerBefehl[31:31] == ImmediateFormat) ? {1'b0, ZRegister}:
                                 6'b0));
-assign IDaten =                 (AktuellerBefehl[31:30] == 2'b01) ? AktuellerBefehl[25:0] :
-                                (AktuellerBefehl[31:31] == 1'b1) ? {{10{AktuellerBefehl[15]}}, AktuellerBefehl[15:0]} :
+assign IDaten =                 (AktuellerBefehl[31:30] == JumpFormat) ? GrosserImmediate :
+                                (AktuellerBefehl[31:31] == ImmediateFormat) ? {{10{AktuellerBefehl[15]}}, KleinerImmediate} :
                                 26'b0;
 
             
-assign KleinerImmediateAktiv =  (AktuellerBefehl[31:31]==1'b1);
+assign KleinerImmediateAktiv =  (AktuellerBefehl[31:31] == ImmediateFormat);
 
-assign GrosserImmediateAktiv =  (AktuellerBefehl[31:30]==2'b01);
+assign GrosserImmediateAktiv =  (AktuellerBefehl[31:30] == JumpFormat);
                             
-assign FunktionsCode =          (AktuellerBefehl[31:30]==2'b00) ? AktuellerBefehl[5:0]:
-                                ((AktuellerBefehl[31:30]==2'b01||(AktuellerBefehl[31:26]>=6'b101010&&AktuellerBefehl[31:26]<=6'b101111)) ? 6'b0:
-                                {1'b0,AktuellerBefehl[30:26]});
+assign FunktionsCode =          (AktuellerBefehl[31:30] == RegisterFormat) ? Funktion:
+                                ((AktuellerBefehl[31:30] == JumpFormat||(AktuellerBefehl[31:26] >= LoadCode && AktuellerBefehl[31:26] <= JALCode)) ? 6'b0:
+                                {1'b0,FunktionAnfang});
 
-assign JALBefehl =              (AktuellerBefehl[31:26]==6'b101111);
+assign JALBefehl =              (AktuellerBefehl[31:26] == JALCode);
 
-assign RelativerSprung =        (AktuellerBefehl[31:26]==6'b101111 || AktuellerBefehl[31:26]==6'b010000 || AktuellerBefehl[31:26]==6'b101110);
+assign RelativerSprung =        (AktuellerBefehl[31:26] == JALCode || AktuellerBefehl[31:26] == JmpCode || AktuellerBefehl[31:26] == BezCode);
 
-assign AbsoluterSprung =        (AktuellerBefehl[31:26]==6'b101101);                               
+assign AbsoluterSprung =        (AktuellerBefehl[31:26] == JregCode);                               
 
-assign FloatBefehl =            ((AktuellerBefehl[31:30]==2'b00 && AktuellerBefehl[5:4]==2'b10)||AktuellerBefehl[31:26]==6'b101011);
+assign LoadBefehl =             (AktuellerBefehl[31:26] == LoadCode || AktuellerBefehl[31:26] == LoadSCode);
 
-assign LoadBefehl =             (AktuellerBefehl[31:27]==5'b10101);
+assign StoreBefehl =            (AktuellerBefehl[31:26] == StoreCode);
 
-assign StoreBefehl =            (AktuellerBefehl[31:26]==6'b101100);
+assign UnbedingterSprungBefehl =(AktuellerBefehl[31:26] == JregCode || AktuellerBefehl[31:26] == JALCode || AktuellerBefehl[31:26] == JmpCode);
 
-assign UnbedingterSprungBefehl =(AktuellerBefehl[31:26]==6'b101101 || AktuellerBefehl[31:26]==6'b101111 || AktuellerBefehl[31:26]==6'b010000);
-
-assign BedingterSprungBefehl =  (AktuellerBefehl[31:26]==6'b101110); 
+assign BedingterSprungBefehl =  (AktuellerBefehl[31:26] == BezCode); 
 endmodule

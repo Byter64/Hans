@@ -18,55 +18,52 @@ module main_tb
  parameter PCWRITETIME = 1;
 
  // Input/Output
- reg [5:0] Funktionscode;
- reg LoadBefehl;
- reg StoreBefehl;
- reg JALBefehl;
- reg UnbedingterSprungBefehl;
- reg BedingterSprungBefehl;
- reg Bedingung;
- reg BefehlGeladen;
- reg DatenGeladen;
- reg DatenGespeichert;
- reg Reset;
- reg Clock;
- wire RegisterSchreibSignal;
- wire ALUStartSignal;
- wire ALUSchreibSignal;
- wire LoadBefehlSignal;
- wire LoadDatenSignal;
- wire StoreDatenSignal;
- wire PCSprungSignal;
- wire PCSignal;
- wire DekodierSignal;
- wire ResetSignal;
+   reg BefehlGeladen;
+   reg LoadBefehl;
+   reg StoreBefehl;
+   reg JALBefehl;
+   reg UnbedingterSprungBefehl; //
+   reg BedingterSprungBefehl; //
+   reg Bedingung; //
+   reg ALUFertig;
+   reg DatenGeladen;
+   reg DatenGespeichert;
+   reg Reset;
+   reg Clock;
+
+   wire LoadBefehlSignal;
+   wire DekodierSignal;
+   wire ALUStartSignal;
+   wire RegisterSchreibSignal;
+   wire LoadDatenSignal;
+   wire StoreDatenSignal;
+   wire PCSignal;
+   wire PCSprungSignal;
 
  
  // Module instance
  Steuerung strg (
-    .Funktionscode(Funktionscode),
-    .LoadBefehl(LoadBefehl),
-    .StoreBefehl(StoreBefehl),
-    .JALBefehl(JALBefehl),
-    .UnbedingterSprungBefehl(UnbedingterSprungBefehl),
-    .BedingterSprungBefehl(BedingterSprungBefehl),
-    .Bedingung(Bedingung),
-    .BefehlGeladen(BefehlGeladen),
-    .DatenGeladen(DatenGeladen),
-    .DatenGespeichert(DatenGespeichert),
-    .Reset(Reset),
-    .Clock(Clock),
+   .BefehlGeladen(BefehlGeladen),
+   .LoadBefehl(LoadBefehl),
+   .StoreBefehl(StoreBefehl),
+   .JALBefehl(JALBefehl),
+   .UnbedingterSprungBefehl(UnbedingterSprungBefehl), //
+   .BedingterSprungBefehl(BedingterSprungBefehl), //
+   .Bedingung(Bedingung), //
+   .ALUFertig(ALUFertig),
+   .DatenGeladen(DatenGeladen),
+   .DatenGespeichert(DatenGespeichert),
+   .Reset(Reset),
+   .Clock(Clock),
 
-    .RegisterSchreibSignal(RegisterSchreibSignal),
-    .ALUStartSignal(ALUStartSignal),
-    .ALUSchreibSignal(ALUSchreibSignal),
-    .LoadBefehlSignal(LoadBefehlSignal),
-    .LoadDatenSignal(LoadDatenSignal),
-    .StoreDatenSignal(StoreDatenSignal),
-    .PCSprungSignal(PCSprungSignal),
-    .PCSignal(PCSignal),
-    .DekodierSignal(DekodierSignal),
-    .ResetSignal(ResetSignal)
+   .LoadBefehlSignal(LoadBefehlSignal),
+   .DekodierSignal(DekodierSignal),
+   .ALUStartSignal(ALUStartSignal),
+   .RegisterSchreibSignal(RegisterSchreibSignal),
+   .LoadDatenSignal(LoadDatenSignal),
+   .StoreDatenSignal(StoreDatenSignal),
+   .PCSignal(PCSignal),
+   .PCSprungSignal(PCSprungSignal)
  );
  
  always begin
@@ -82,13 +79,11 @@ module main_tb
   // e.g. #2 value = 0;
   
   //Steuerung wird initialisiert
+  Clock = 1;
+  #1
   Reset = 1;
-  assert(ResetSignal, 1, `__LINE__);
+  #(TIMESTEP)
   Reset = 0;
-  Clock = 0;
-  #(CLOCKSTEP + 1) //asserts sollen immer um eine Zeiteinheit geshiftet sein
-  #(TIMESTEP * 2)
-  assert(ResetSignal, 0, `__LINE__);
 
   #(TIMESTEP)
   //Steuerung in FETCH
@@ -101,7 +96,6 @@ module main_tb
   assert(DekodierSignal, 1, `__LINE__);
   BefehlGeladen = 0;
   
-  Funktionscode = 6'b000000;
   LoadBefehl = 0;
   StoreBefehl = 0;
   JALBefehl = 1;
@@ -121,16 +115,15 @@ module main_tb
   #(DECODETIME * TIMESTEP - 4)
   assert(DekodierSignal, 0, `__LINE__);
 
-  //Steuerung in ALU_1
-  //TODO alle ALU start und schreib hinzufügen
+  //Steuerung in ALU
   assert(ALUStartSignal, 1, `__LINE__); //ALU rechnet
   assert(RegisterSchreibSignal, 1, `__LINE__); //JALBefehl schreibt jetzt
-  #(1 * TIMESTEP)
+  #(TIMESTEP + 6)
+  ALUFertig = 1;
+  #(TIMESTEP - 6)
   assert(ALUStartSignal, 0, `__LINE__);
-  assert(ALUSchreibSignal, 1, `__LINE__);
-  #(TIMESTEP)
-  assert(ALUSchreibSignal, 0, `__LINE__);
   assert(RegisterSchreibSignal, 0, `__LINE__);
+  ALUFertig = 0;
   
   assert(PCSignal, 1, `__LINE__);
   #(PCWRITETIME * TIMESTEP)
@@ -145,7 +138,6 @@ module main_tb
   assert(DekodierSignal, 1, `__LINE__);
   BefehlGeladen = 0;
   
-  Funktionscode = 6'b000000;
   LoadBefehl = 1;
   StoreBefehl = 0;
   JALBefehl = 0;
@@ -157,11 +149,11 @@ module main_tb
 
   assert(ALUStartSignal, 1, `__LINE__);
   assert(RegisterSchreibSignal, 0, `__LINE__);
-  #(1 * TIMESTEP)
+  #(TIMESTEP + 6)
+  ALUFertig = 1;
+  #(TIMESTEP - 6)
   assert(ALUStartSignal, 0, `__LINE__);
-  assert(ALUSchreibSignal, 1, `__LINE__);
-  #(TIMESTEP)
-  assert(ALUSchreibSignal, 0, `__LINE__);
+  ALUFertig = 0;
 
   assert(PCSignal, 1, `__LINE__);
   assert(LoadDatenSignal, 1, `__LINE__);
@@ -185,7 +177,6 @@ module main_tb
   assert(DekodierSignal, 1, `__LINE__);
   BefehlGeladen = 0;
   
-  Funktionscode = 6'b000000;
   LoadBefehl = 0;
   StoreBefehl = 1;
   JALBefehl = 0;
@@ -197,11 +188,11 @@ module main_tb
   
   assert(ALUStartSignal, 1, `__LINE__);
   assert(RegisterSchreibSignal, 0, `__LINE__);
-  #(1 * TIMESTEP)
+  #(TIMESTEP + 6)
+  ALUFertig = 1;
+  #(TIMESTEP - 6)
   assert(ALUStartSignal, 0, `__LINE__);
-  assert(ALUSchreibSignal, 1, `__LINE__);
-  #(TIMESTEP)
-  assert(ALUSchreibSignal, 0, `__LINE__);
+  ALUFertig = 0;
   
   assert(PCSignal, 1, `__LINE__);
   assert(StoreDatenSignal, 1, `__LINE__);
@@ -222,7 +213,6 @@ module main_tb
   assert(DekodierSignal, 1, `__LINE__);
   BefehlGeladen = 0;
   
-  Funktionscode = 6'b000011;
   LoadBefehl = 0;
   StoreBefehl = 0;
   JALBefehl = 0;
@@ -234,11 +224,13 @@ module main_tb
 
   assert(ALUStartSignal, 1, `__LINE__);
   assert(RegisterSchreibSignal, 0, `__LINE__);
-  #(16 * TIMESTEP)
-  assert(ALUStartSignal, 0, `__LINE__);
-  assert(ALUSchreibSignal, 1, `__LINE__);
   #(TIMESTEP)
-  assert(ALUSchreibSignal, 0, `__LINE__);
+  assert(ALUStartSignal, 0, `__LINE__);
+  #(15 * TIMESTEP + 6)
+  ALUFertig = 1;
+  #(TIMESTEP - 6)
+  assert(ALUStartSignal, 0, `__LINE__);
+  ALUFertig = 0;
 
   assert(RegisterSchreibSignal, 1, `__LINE__);
   assert(PCSignal, 1, `__LINE__);

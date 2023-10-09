@@ -1032,7 +1032,7 @@
           },
           "size": {
             "width": 96,
-            "height": 160
+            "height": 224
           }
         },
         {
@@ -1172,7 +1172,7 @@
           },
           "vertices": [
             {
-              "x": 1552,
+              "x": 1520,
               "y": 320
             }
           ],
@@ -1542,7 +1542,12 @@
             "block": "0560a46c-d0ab-428a-bf30-0167bed59c70",
             "port": "d6c04894-ff4c-4827-b35d-7dbd31a34e4f"
           },
-          "vertices": [],
+          "vertices": [
+            {
+              "x": 1240,
+              "y": 96
+            }
+          ],
           "size": 32
         },
         {
@@ -1560,7 +1565,7 @@
               "y": 664
             },
             {
-              "x": 1856,
+              "x": 1744,
               "y": -24
             },
             {
@@ -1596,31 +1601,6 @@
               "y": 208
             }
           ]
-        },
-        {
-          "source": {
-            "block": "6a191ea9-892f-4c41-bd1d-ce710d24ea47",
-            "port": "152891e5-143e-4511-a4bf-ca49b6acb7f0"
-          },
-          "target": {
-            "block": "ad9ef40d-c49b-42a8-a7fa-5e7eea2266c2",
-            "port": "d91193b7-11e3-48ac-b2f5-08dd974d73e2"
-          },
-          "vertices": [
-            {
-              "x": 1936,
-              "y": 704
-            },
-            {
-              "x": 1864,
-              "y": -192
-            },
-            {
-              "x": 360,
-              "y": -96
-            }
-          ],
-          "size": 26
         },
         {
           "source": {
@@ -1807,6 +1787,47 @@
               "y": 456
             }
           ]
+        },
+        {
+          "source": {
+            "block": "6a191ea9-892f-4c41-bd1d-ce710d24ea47",
+            "port": "43b6acdf-97bc-41a1-93d0-21bc0f4c487c"
+          },
+          "target": {
+            "block": "ad9ef40d-c49b-42a8-a7fa-5e7eea2266c2",
+            "port": "d91193b7-11e3-48ac-b2f5-08dd974d73e2"
+          },
+          "vertices": [
+            {
+              "x": 1856,
+              "y": -184
+            },
+            {
+              "x": 368,
+              "y": -136
+            }
+          ],
+          "size": 26
+        },
+        {
+          "source": {
+            "block": "12c8688c-4aca-440a-8f1d-39a524ccd960",
+            "port": "b5173943-0cbd-4762-8385-48721e72fa73"
+          },
+          "target": {
+            "block": "31990c40-3215-480c-a1f5-e77be6861b41",
+            "port": "43c5ee29-57fb-413a-8a40-a1e6bf8526fe"
+          },
+          "vertices": [
+            {
+              "x": 1080,
+              "y": 440
+            },
+            {
+              "x": 1288,
+              "y": 400
+            }
+          ]
         }
       ]
     }
@@ -1881,6 +1902,46 @@
               "position": {
                 "x": 672,
                 "y": 272
+              }
+            },
+            {
+              "id": "8893ddf5-a3ac-43ba-87b5-0d01dbdcd8cd",
+              "type": "basic.input",
+              "data": {
+                "name": "Reset",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ],
+                "clock": false
+              },
+              "position": {
+                "x": 312,
+                "y": 344
+              }
+            },
+            {
+              "id": "d0785d98-1e50-423a-a70d-2d02911114c7",
+              "type": "basic.input",
+              "data": {
+                "name": "Clock",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ],
+                "clock": false
+              },
+              "position": {
+                "x": 312,
+                "y": 432
               }
             },
             {
@@ -2119,152 +2180,7 @@
               },
               "position": {
                 "x": 1408,
-                "y": -32
-              }
-            },
-            {
-              "id": "152891e5-143e-4511-a4bf-ca49b6acb7f0",
-              "type": "basic.output",
-              "data": {
-                "name": "ErhöhterPC",
-                "virtual": true,
-                "range": "[25:0]",
-                "pins": [
-                  {
-                    "index": "25",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "24",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "23",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "22",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "21",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "20",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "19",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "18",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "17",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "16",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "15",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "14",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "13",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "12",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "11",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "10",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "9",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "8",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "7",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "6",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "5",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "4",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "3",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "2",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "1",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "0",
-                    "name": "NULL",
-                    "value": "NULL"
-                  }
-                ]
-              },
-              "position": {
-                "x": 1408,
-                "y": 224
+                "y": 272
               }
             },
             {
@@ -2426,7 +2342,7 @@
               "id": "0ab4bde9-8c23-4f45-8e04-653d9400b648",
               "type": "basic.output",
               "data": {
-                "name": "ALUSignal",
+                "name": "ALUStartSignal",
                 "virtual": true,
                 "pins": [
                   {
@@ -2454,14 +2370,22 @@
               }
             },
             {
-              "id": "9da12b58-a282-43a7-ac77-bc3d2490d94b",
+              "id": "b5173943-0cbd-4762-8385-48721e72fa73",
               "type": "basic.output",
               "data": {
-                "name": "LoadBefehlSignal"
+                "name": "ALUSchreibSignal",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ]
               },
               "position": {
-                "x": 1016,
-                "y": 256
+                "x": 1008,
+                "y": 224
               }
             },
             {
@@ -2474,6 +2398,17 @@
               "position": {
                 "x": 696,
                 "y": 280
+              }
+            },
+            {
+              "id": "9da12b58-a282-43a7-ac77-bc3d2490d94b",
+              "type": "basic.output",
+              "data": {
+                "name": "LoadBefehlSignal"
+              },
+              "position": {
+                "x": 1008,
+                "y": 288
               }
             },
             {
@@ -2558,7 +2493,15 @@
               "id": "5235af3b-edc5-46bf-8f5f-30990f32da81",
               "type": "basic.output",
               "data": {
-                "name": "PCSchreibSignal"
+                "name": "PCSprungSignal",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ]
               },
               "position": {
                 "x": 1016,
@@ -2580,7 +2523,7 @@
                 ]
               },
               "position": {
-                "x": 1032,
+                "x": 1016,
                 "y": 584
               }
             },
@@ -2619,7 +2562,7 @@
                 ]
               },
               "position": {
-                "x": 1024,
+                "x": 1016,
                 "y": 648
               }
             },
@@ -2960,8 +2903,28 @@
                 "clock": false
               },
               "position": {
-                "x": 608,
-                "y": 872
+                "x": 616,
+                "y": 840
+              }
+            },
+            {
+              "id": "43c5ee29-57fb-413a-8a40-a1e6bf8526fe",
+              "type": "basic.input",
+              "data": {
+                "name": "SchreibSignal",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ],
+                "clock": false
+              },
+              "position": {
+                "x": 616,
+                "y": 896
               }
             },
             {
@@ -2983,6 +2946,26 @@
                 "x": 608,
                 "y": 960
               }
+            },
+            {
+              "id": "71842a6b-f88f-4e17-ad89-bcb5bbd0d523",
+              "type": "basic.input",
+              "data": {
+                "name": "Clock",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ],
+                "clock": false
+              },
+              "position": {
+                "x": 608,
+                "y": 1032
+              }
             }
           ],
           "wires": []
@@ -2991,7 +2974,7 @@
     },
     "aa9caf8ebcb7b0229e1a641e9bda55962d23528d": {
       "package": {
-        "name": "Multiplexer1",
+        "name": "MultiplexerZielDaten",
         "version": "",
         "description": "Multiplext Datan von der ALU, vom RAM und vom Immediate Operand",
         "author": "",
@@ -3031,7 +3014,7 @@
               "id": "d91193b7-11e3-48ac-b2f5-08dd974d73e2",
               "type": "basic.input",
               "data": {
-                "name": "ErhöhterPC",
+                "name": "AktuellePC",
                 "virtual": true,
                 "range": "[25:0]",
                 "pins": [
@@ -3267,7 +3250,7 @@
     },
     "ef4843571745ee7cf39510612ba7bd08ba00fb02": {
       "package": {
-        "name": "Multiplexer2",
+        "name": "MultiplexerAluDaten",
         "version": "",
         "description": "Multiplext die möglichen ALU Eingänge (Register, kleiner und großer Immediate)",
         "author": "",
@@ -3496,7 +3479,7 @@
     },
     "433ce5316c1247a4e0a16f5007c3b5cf1c56a0e3": {
       "package": {
-        "name": "Multiplexer3",
+        "name": "MultiplexerNeuerPc",
         "version": "",
         "description": "Multiplext relative und absolute neue PCs. Die Bits 31 bis 26 werden ignoriert",
         "author": "",
@@ -3573,7 +3556,7 @@
     },
     "26af9a43487ae90923261d1771fd552a03494500": {
       "package": {
-        "name": "Multiplexer4",
+        "name": "MultiplexerAluDaten2",
         "version": "",
         "description": "Multiplext den aktuellen PC mit den Quelldaten2",
         "author": "",
@@ -3600,9 +3583,171 @@
               "id": "fee8ac0d-c6f4-48ce-a75d-2a904ebd1296",
               "type": "basic.output",
               "data": {
-                "name": "Daten2",
+                "name": "Daten1",
+                "virtual": true,
                 "range": "[31:0]",
-                "size": 32
+                "pins": [
+                  {
+                    "index": "31",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "30",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "29",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "28",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "27",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "26",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "25",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "24",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "23",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "22",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "21",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "20",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "19",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "18",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "17",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "16",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "15",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "14",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "13",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "12",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "11",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "10",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "9",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "8",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "7",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "6",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "5",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "4",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "3",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "2",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "1",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ]
               },
               "position": {
                 "x": 1016,

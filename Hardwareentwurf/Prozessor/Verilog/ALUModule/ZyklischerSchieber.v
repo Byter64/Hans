@@ -10,18 +10,21 @@ module ZyklischerSchieber #(
     reg[BREITE - 1:0] hilfsRegister;
     
     assign Ergebnis = hilfsRegister;
-    
+    integer i;
     always @(*) begin
         if(SchiebRechts == 0) begin
             hilfsRegister = Zahl << Stellen;
-            for(integer i = 0; i < Stellen; i = i + 1)begin
-                hilfsRegister[i] = Zahl[BREITE - Stellen + i];
+            
+            for(i = 0; i < BREITE; i = i + 1)begin
+                if(i - Stellen <= -1)
+                hilfsRegister[i] <= Zahl[BREITE - Stellen + i];
             end 
         end
         else begin
             hilfsRegister = Zahl >> Stellen;
-            for(integer i = 0; i < Stellen; i = i + 1)begin
-                hilfsRegister[BREITE - Stellen + i] = Zahl[i];
+            for(i = 0; i < BREITE; i = i + 1)begin
+                if(i - Stellen <= -1)
+                hilfsRegister[BREITE - Stellen + i] <= Zahl[i];
             end 
         end
     end
