@@ -3,10 +3,10 @@ module Steuerung (
     input LoadBefehl,
     input StoreBefehl,
     input JALBefehl,
-    input UnbedingterSprungBefehl, //
-    input BedingterSprungBefehl, //
-    input Bedingung, //
-    input AluFertig,
+    input UnbedingterSprungBefehl,
+    input BedingterSprungBefehl,
+    input Bedingung,
+    input ALUFertig,
     input DatenGeladen,
     input DatenGespeichert,
     input Reset,
@@ -48,7 +48,7 @@ module Steuerung (
             DECODE_2:
                 next_state = ALU;
             ALU: begin
-                if (AluFertig) begin
+                if (ALUFertig) begin
                     if (UnbedingterSprungBefehl || BedingterSprungBefehl)
                         next_state = WRITEBACK_JUMP;
                     else if (StoreBefehl)

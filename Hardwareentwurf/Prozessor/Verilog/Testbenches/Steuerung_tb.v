@@ -25,7 +25,7 @@ module main_tb
    reg UnbedingterSprungBefehl; //
    reg BedingterSprungBefehl; //
    reg Bedingung; //
-   reg AluFertig;
+   reg ALUFertig;
    reg DatenGeladen;
    reg DatenGespeichert;
    reg Reset;
@@ -50,7 +50,7 @@ module main_tb
    .UnbedingterSprungBefehl(UnbedingterSprungBefehl), //
    .BedingterSprungBefehl(BedingterSprungBefehl), //
    .Bedingung(Bedingung), //
-   .AluFertig(AluFertig),
+   .ALUFertig(ALUFertig),
    .DatenGeladen(DatenGeladen),
    .DatenGespeichert(DatenGespeichert),
    .Reset(Reset),
@@ -119,11 +119,11 @@ module main_tb
   assert(ALUStartSignal, 1, `__LINE__); //ALU rechnet
   assert(RegisterSchreibSignal, 1, `__LINE__); //JALBefehl schreibt jetzt
   #(TIMESTEP + 6)
-  AluFertig = 1;
+  ALUFertig = 1;
   #(TIMESTEP - 6)
   assert(ALUStartSignal, 0, `__LINE__);
   assert(RegisterSchreibSignal, 0, `__LINE__);
-  AluFertig = 0;
+  ALUFertig = 0;
   
   assert(PCSignal, 1, `__LINE__);
   #(PCWRITETIME * TIMESTEP)
@@ -150,10 +150,10 @@ module main_tb
   assert(ALUStartSignal, 1, `__LINE__);
   assert(RegisterSchreibSignal, 0, `__LINE__);
   #(TIMESTEP + 6)
-  AluFertig = 1;
+  ALUFertig = 1;
   #(TIMESTEP - 6)
   assert(ALUStartSignal, 0, `__LINE__);
-  AluFertig = 0;
+  ALUFertig = 0;
 
   assert(PCSignal, 1, `__LINE__);
   assert(LoadDatenSignal, 1, `__LINE__);
@@ -189,10 +189,10 @@ module main_tb
   assert(ALUStartSignal, 1, `__LINE__);
   assert(RegisterSchreibSignal, 0, `__LINE__);
   #(TIMESTEP + 6)
-  AluFertig = 1;
+  ALUFertig = 1;
   #(TIMESTEP - 6)
   assert(ALUStartSignal, 0, `__LINE__);
-  AluFertig = 0;
+  ALUFertig = 0;
   
   assert(PCSignal, 1, `__LINE__);
   assert(StoreDatenSignal, 1, `__LINE__);
@@ -225,10 +225,10 @@ module main_tb
   assert(ALUStartSignal, 1, `__LINE__);
   assert(RegisterSchreibSignal, 0, `__LINE__);
   #(15 * TIMESTEP + 6)
-  AluFertig = 1;
+  ALUFertig = 1;
   #(TIMESTEP - 6)
   assert(ALUStartSignal, 0, `__LINE__);
-  AluFertig = 0;
+  ALUFertig = 0;
 
   assert(RegisterSchreibSignal, 1, `__LINE__);
   assert(PCSignal, 1, `__LINE__);
