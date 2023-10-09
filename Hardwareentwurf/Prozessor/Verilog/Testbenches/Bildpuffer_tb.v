@@ -14,6 +14,8 @@
 
 module main_tb
 ;
+ //FUNKTIONIERT GERADE NICHT
+
  
  // Simulation time: 100ns (10 * 10ns)
  // Parameter für die Testbench
