@@ -224,6 +224,8 @@ module main_tb
 
   assert(ALUStartSignal, 1, `__LINE__);
   assert(RegisterSchreibSignal, 0, `__LINE__);
+  #(TIMESTEP)
+  assert(ALUStartSignal, 0, `__LINE__);
   #(15 * TIMESTEP + 6)
   ALUFertig = 1;
   #(TIMESTEP - 6)

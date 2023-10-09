@@ -21,17 +21,18 @@ module Steuerung (
     output PCSignal,
     output PCSprungSignal
 );
-    localparam FETCH = 8'b00000001;
-    localparam DECODE_1 = 8'b00000010;
-    localparam DECODE_2 = 8'b00000100;
-    localparam ALU = 8'b00001000;
-    localparam WRITEBACK_JUMP = 8'b00010000;
-    localparam WRITEBACK_STORE = 8'b00100000;
-    localparam WRITEBACK_LOAD = 8'b01000000;
-    localparam WRITEBACK_DEFAULT = 8'b10000000;
+    localparam FETCH = 9'b000000001;
+    localparam DECODE_1 = 9'b000000010;
+    localparam DECODE_2 = 9'b000000100;
+    localparam ALUSTART = 9'b000001000;
+    localparam ALU = 9'b000010000;
+    localparam WRITEBACK_JUMP = 9'b000100000;
+    localparam WRITEBACK_STORE = 9'b001000000;
+    localparam WRITEBACK_LOAD = 9'b010000000;
+    localparam WRITEBACK_DEFAULT = 9'b100000000;
 
-    reg [7:0] current_state;
-    reg [7:0] next_state;
+    reg [8:0] current_state;
+    reg [8:0] next_state;
 
     //combinational portion
     
@@ -46,6 +47,8 @@ module Steuerung (
             DECODE_1:
                 next_state = DECODE_2;
             DECODE_2:
+                next_state = ALUSTART;
+            ALUSTART:
                 next_state = ALU;
             ALU: begin
                 if (ALUFertig) begin
@@ -85,10 +88,10 @@ module Steuerung (
     assign LoadBefehlSignal = current_state[0];
     assign DekodierSignal = current_state[1] || current_state[2];
     assign ALUStartSignal = current_state[3];
-    assign RegisterSchreibSignal = (current_state[3] && JALBefehl) || current_state[7];
-    assign PCSignal = current_state[7:4] != 0;
-    assign StoreDatenSignal = current_state[5];
-    assign LoadDatenSignal = current_state[6];
+    assign RegisterSchreibSignal = ((current_state[3] || current_state[4]) && JALBefehl) || current_state[8];
+    assign PCSignal = current_state[8:5] != 0;
+    assign StoreDatenSignal = current_state[6];
+    assign LoadDatenSignal = current_state[7];
 
     assign PCSprungSignal = UnbedingterSprungBefehl || (BedingterSprungBefehl && Bedingung);
 
