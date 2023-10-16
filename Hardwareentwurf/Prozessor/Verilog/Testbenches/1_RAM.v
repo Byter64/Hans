@@ -10,8 +10,8 @@ module RAM#(
     input Clock,
 
     output reg[WORDSIZE - 1:0] DatenRaus,
-    output reg DatenBereit,
-    output reg DatenGeschrieben
+    output reg DatenBereit = 0,
+    output reg DatenGeschrieben = 0
 );
 
 reg[WORDSIZE - 1:0] Daten[WORDS - 1:0];
@@ -24,23 +24,22 @@ end
 
 always @(posedge Clock) begin
     
-    if(DatenBereit) begin
-        DatenBereit = 0;
-    end
-
-    if(DatenGeschrieben) begin
-        DatenGeschrieben = 0;
-    end
-    
     if (LesenAn) begin
         DatenRaus = Daten[Adresse];
         DatenBereit = 1;
     end
+    else if(DatenBereit) begin
+        DatenBereit = 0;
+    end
+end
 
+always @(posedge Clock ) begin
     if(SchreibenAn) begin
         Daten[Adresse] = DatenRein;
         DatenGeschrieben = 1;
     end
+    else if(DatenGeschrieben) begin
+        DatenGeschrieben = 0;
+    end
 end
-
 endmodule

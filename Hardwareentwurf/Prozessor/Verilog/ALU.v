@@ -1,10 +1,9 @@
-`include "ALUModule/Goldschmidt_Integer_Divider_Parallel-main/source/Goldschmidt_Integer_Divider_Parallel.v"
-`include "ALUModule/intsqrt.v"
-`include "ALUModule/ZyklischerSchieber.v"
-`include "ALUModule/verilog-math-master_FLOAT_/components/add.v"
-`include "ALUModule/verilog-math-master_FLOAT_/components/mul.v"
-`include "ALUModule/verilog-math-master_FLOAT_/components/sqrt.v"
-`include "ALUModule/verilog-math-master_FLOAT_/components/div.v"
+`include "Verilog/ALUModule/Goldschmidt_Integer_Divider_Parallel-main/source/Goldschmidt_Integer_Divider_Parallel.v"
+`include "Verilog/ALUModule/intsqrt.v"
+`include "Verilog/ALUModule/verilog-math-master_FLOAT_/components/add.v"
+`include "Verilog/ALUModule/verilog-math-master_FLOAT_/components/mul.v"
+`include "Verilog/ALUModule/verilog-math-master_FLOAT_/components/sqrt.v"
+`include "Verilog/ALUModule/verilog-math-master_FLOAT_/components/div.v"
 
 module ALU (
     input[31:0] Daten1,
@@ -25,7 +24,6 @@ reg[7:0] TakteBisFertig = 0;
 wire[31:0] EinfacheRechnungErgebnis;
 wire[31:0] DivisionErgebnis; //Div und Mod
 wire[31:0] WurzelErgebnis;
-wire[31:0] ZyklischerSchieberErgebnis;
 wire[31:0] AdditionFloatErgebnis;
 wire[31:0] MultiplikationFloatErgebnis;
 wire[31:0] WurzelFloatErgebnis;
@@ -65,14 +63,6 @@ localparam Und =                6'b011001;
 localparam Oder =               6'b011010;
 localparam Ungleich =           6'b011011;
 localparam Gleich =             6'b011100;
-
-
-ZyklischerSchieber#(32, 5) Schieber (
-    .Zahl(Daten1),
-    .Stellen(Daten2[4:0]),
-    .Ergebnis(ZyklischerSchieberErgebnis),
-    .SchiebRechts(FunktionsCode[0])
-);
 
 Goldschmidt_Integer_Divider_Parallel #(
     .P_GDIV_FACTORS_MSB(31), 
