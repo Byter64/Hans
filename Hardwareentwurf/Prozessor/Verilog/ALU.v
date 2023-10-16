@@ -1,9 +1,9 @@
-`include "Verilog/ALUModule/Goldschmidt_Integer_Divider_Parallel-main/source/Goldschmidt_Integer_Divider_Parallel.v"
-`include "Verilog/ALUModule/intsqrt.v"
-`include "Verilog/ALUModule/verilog-math-master_FLOAT_/components/add.v"
-`include "Verilog/ALUModule/verilog-math-master_FLOAT_/components/mul.v"
-`include "Verilog/ALUModule/verilog-math-master_FLOAT_/components/sqrt.v"
-`include "Verilog/ALUModule/verilog-math-master_FLOAT_/components/div.v"
+`include "ALUModule/Goldschmidt_Integer_Divider_Parallel-main/source/Goldschmidt_Integer_Divider_Parallel.v"
+`include "ALUModule/intsqrt.v"
+`include "ALUModule/verilog-math-master_FLOAT_/components/add.v"
+`include "ALUModule/verilog-math-master_FLOAT_/components/mul.v"
+`include "ALUModule/verilog-math-master_FLOAT_/components/sqrt.v"
+`include "ALUModule/verilog-math-master_FLOAT_/components/div.v"
 
 module ALU (
     input[31:0] Daten1,

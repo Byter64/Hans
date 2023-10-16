@@ -1,13 +1,13 @@
-`include "Verilog/ALU.v"
-`include "Verilog/Instruktionsdekodierer.v"
-`include "Verilog/MultiplexerAluDaten.v"
-`include "Verilog/MultiplexerAluDaten2.v"
-`include "Verilog/MultiplexerNeuerPC.v"
-`include "Verilog/MultiplexerZielDaten.v"
-`include "Verilog/NullPruefer.v"
-`include "Verilog/Programmzahler.v"
-`include "Verilog/Register.v"
-`include "Verilog/Steuerung.v"
+`include "ALU.v"
+`include "Instruktionsdekodierer.v"
+`include "MultiplexerAluDaten.v"
+`include "MultiplexerAluDaten2.v"
+`include "MultiplexerNeuerPC.v"
+`include "MultiplexerZielDaten.v"
+`include "NullPruefer.v"
+`include "Programmzahler.v"
+`include "Register.v"
+`include "Steuerung.v"
 
 
 module CPU (
