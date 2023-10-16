@@ -52,8 +52,6 @@ localparam FloatModulo =          6'b100101;
 //Schieben
 localparam LinksSchieben =      6'b000110;
 localparam Rechtsschieben =     6'b000111;
-localparam ZyklischesRechtsschieben = 6'b001000;
-localparam ZyklischesLinksschieben = 6'b001001;
 //Vergleiche
 localparam Gleichheit =         6'b010000;
 localparam Ungleichheit =       6'b010001;
@@ -149,8 +147,6 @@ assign EinfacheRechnungErgebnis =   FunktionsCode[5:0] == IntAddition        ? $
 assign Ergebnis =   FunktionsCode[5:0] == IntQuadratwurzel ? WurzelErgebnis :
                     FunktionsCode[5:0] == IntDivision ? DivisionErgebnis :
                     FunktionsCode[5:0] == IntModulo ? DivisionErgebnis :
-                    FunktionsCode[5:0] == ZyklischesLinksschieben ? ZyklischerSchieberErgebnis :
-                    FunktionsCode[5:0] == ZyklischesRechtsschieben ? ZyklischerSchieberErgebnis :
                     FunktionsCode[5:0] == FloatAddition ? AdditionFloatErgebnis :
                     FunktionsCode[5:0] == FloatSubtraktion ? AdditionFloatErgebnis :
                     FunktionsCode[5:0] == FloatMultiplikation ? MultiplikationFloatErgebnis :
