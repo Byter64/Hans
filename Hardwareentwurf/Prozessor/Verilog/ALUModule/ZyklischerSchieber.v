@@ -11,7 +11,8 @@ module ZyklischerSchieber #(
     
     assign Ergebnis = hilfsRegister;
     integer i;
-    always @(*) begin
+
+    always @* begin
         if(SchiebRechts == 0) begin
             hilfsRegister = Zahl << Stellen;
             
@@ -22,8 +23,9 @@ module ZyklischerSchieber #(
         end
         else begin
             hilfsRegister = Zahl >> Stellen;
+            
             for(i = 0; i < BREITE; i = i + 1)begin
-                if(i - Stellen <= -1)
+                if(i - Stellen < 0)
                 hilfsRegister[BREITE - Stellen + i] <= Zahl[i];
             end 
         end

@@ -23,7 +23,7 @@ initial begin
     SchiebRechts = 1'b1;
     for(integer i = 0; i < 64; i = i + 1) begin
         #10
-        if(Ergebnis != 32'b0)
+        //if(Ergebnis != 32'b0)
         // begin
         //     $display("Beim Schieben ist was schiefgelaufen \n Zahl: %d \n Stellen: %d \n Ergebnis: %d \n Erwartet: %d \n", Zahl, Stellen, Ergebnis, 32'd0);
         // end
@@ -39,6 +39,9 @@ initial begin
         // end
         Stellen = i;
     end
+
+    $display("End of simulation");
+    $finish;
 end
 
 endmodule

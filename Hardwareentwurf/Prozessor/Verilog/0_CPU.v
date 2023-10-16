@@ -180,7 +180,7 @@ Steuerung Steuerung(
     .BefehlGeladen(InstruktionGeladen),
     .DatenGeladen(DatenGeladen),
     .DatenGespeichert(DatenGespeichert),
-    .AluFertig(AluHatFertigGerechnet),
+    .ALUFertig(AluHatFertigGerechnet),
     .Reset(Reset),
     .Clock(Clock),
 

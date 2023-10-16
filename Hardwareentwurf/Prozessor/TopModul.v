@@ -5,8 +5,7 @@ module Top
 (
     input clk_25mhz,
     output[7:0] led
-)
-;
+);
 
  // Input/Output
 reg[31:0] InstruktionAdresse;
@@ -109,7 +108,7 @@ end
 
 always @(posedge Clock) begin
     if(DatenAdresse[31] == 1 && SchreibeDaten == 1) begin
-        ledReg = DatenRaus[7:0];
+        ledReg = DatenRaus[7:0] | DatenRaus[15:8] | DatenRaus[23:16] | DatenRaus[31:24];
     end
 end
 

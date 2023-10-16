@@ -119,7 +119,7 @@ initial begin
     InstruktionRAMEingang = 32'b01000011111111111111111111111110;
     #20
     InstruktionAdresse = 32'd5;
-    InstruktionRAMEingang = 32'b10100000001000010000000000000001;
+    InstruktionRAMEingang = 32'b10011000001000010000000000000001;
     #20
     InstruktionAdresse = 32'd6;
     InstruktionRAMEingang = 32'b10110100000111110000000000000000;
