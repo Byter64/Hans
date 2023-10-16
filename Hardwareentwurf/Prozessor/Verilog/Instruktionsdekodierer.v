@@ -44,13 +44,13 @@ wire[5:0] FunktionAnfang;
 wire[15:0] KleinerImmediate;
 wire[25:0] GrosserImmediate;
 
-wire[5:0] StoreCode;
-wire[5:0] LoadSCode;
-wire[5:0] LoadCode;
-wire[5:0] JALCode;
-wire[5:0] JmpCode;
-wire[5:0] BezCode;
-wire[5:0] JregCode;
+localparam[5:0] StoreCode = 6'b101100;
+localparam[5:0] LoadSCode = 6'b101011;
+localparam[5:0] LoadCode  = 6'b101010;
+localparam[5:0] JALCode   = 6'b101111;
+localparam[5:0] JmpCode   = 6'b010000;
+localparam[5:0] BezCode   = 6'b101110;
+localparam[5:0] JregCode  = 6'b101101;
 
 assign Opcode = AktuellerBefehl[31:26];
 
@@ -61,14 +61,6 @@ assign Arithmetik = 2'b00;
 assign Vergleich = 2'b01;
 assign Gleitkomma = 2'b10;
 assign Vektor = 2'b11;
-
-assign StoreCode = 6'b101100;
-assign LoadSCode = 6'b101011;
-assign LoadCode = 6'b101010;
-assign JALCode = 6'b101111;
-assign JmpCode = 6'b010000;
-assign BezCode = 6'b101110;
-assign JregCode = 6'b101101;
 
 assign ZRegister = AktuellerBefehl[25:21];
 assign Q1Register = AktuellerBefehl[20:16];
