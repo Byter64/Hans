@@ -3,13 +3,24 @@ module Cache #(
     parameter BLOCKSIZEBITS = 5
     parameter NBITS = 0
 ) (
-    input [31:0] ProzessorAdresse,
     input ProzessorSchreiben,
+    input ProzessorLesen,
+    input [31:0] ProzessorAdresse,
     input [31:0] ProzessorSchreibDaten,
+
     input [31:0] RAMLesDaten,
+
+    input RAMDatenGelesen,
+    input RAMDatenGeladen,
+
     output reg [31:0] ProzessorLesDaten,
+
+    output wire ProzessorDatenGelesen,
+    output wire ProzessorDatenGeladen,
+
+    output wire RAMSchreiben,
+    output wire RAMLesen,
     output reg [31:0] RAMAdresse,
-    output reg RAMSchreiben,
     output reg [31:0] RAMSchreibDaten
 );
 
