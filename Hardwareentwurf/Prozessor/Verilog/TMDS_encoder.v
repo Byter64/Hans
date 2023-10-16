@@ -5,10 +5,13 @@ module HDMI_Schnittstelle(
 	/////////////////////////////////////https://www.fpga4fun.com/HDMI.html
 
   input clk_TMDS, //250MHz Clock
-  input [7:0] pixelDaten,
-  output[15:0] pixelX,
-  output[15:0] pixelY  
+  input [7:0] pixelData,
+  output[9:0] pixelX,
+  output[9:0] pixelY  
 );
+
+  localparam WIDTH = 160;
+  localparam HEIGHT = 120;
 ///////////////////////////////////////////////////////////////////////
 
   reg [9:0] CounterX=0, CounterY=0;
@@ -23,12 +26,12 @@ module HDMI_Schnittstelle(
 
 ////////////////
 
-  assign pixelX = (CounterX);
-  assign pixelY = (CounterY);
-  reg [7:0] red, green, blue;
-  always @(posedge pixclk) red <= (DrawArea)? {pixelDaten[7:5],{5{1'b0}}}:8'b0;
-  always @(posedge pixclk) green <= (DrawArea)? {pixelDaten[4:2],{5{1'b0}}}:8'b0;
-  always @(posedge pixclk) blue <= (DrawArea)? {pixelDaten[1:0],{6{1'b0}}}:8'b0;
+  assign pixelX = (CounterX>>2);
+  assign pixelY = (CounterY>>2);
+  wire [7:0] red, green, blue;
+  assign red = (DrawArea)? {pixelData[7:5],{5{1'b0}}}:8'b0;
+  assign green = (DrawArea)? {pixelData[4:2],{5{1'b0}}}:8'b0;
+  assign blue = (DrawArea)? {pixelData[1:0],{6{1'b0}}}:8'b0;
 
 //////////////////////////////////////////////////////////////////////// Hier oben hinzufügen, dass die Pixel aus dem Framebuffer genommen werden
   wire [9:0] TMDS_red, TMDS_green, TMDS_blue;
@@ -89,5 +92,5 @@ module OBUFDS (
   output wire OB 
   );
   assign O = I;
-  assign OB = -I;
+  assign OB = ~I;
 endmodule

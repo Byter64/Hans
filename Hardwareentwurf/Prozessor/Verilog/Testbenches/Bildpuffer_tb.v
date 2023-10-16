@@ -20,11 +20,15 @@ module main_tb
   // Eingangssignale
   reg clk;
   reg rst;
-  reg [15:0] x;
-  reg [15:0] y;
+  reg [7:0] x;
+  reg [7:0] y;
   reg [7:0] color;
   reg write;
-  wire [7:0] pixel;
+
+  reg [9:0] x_data;
+  reg [9:0] y_data;
+
+  wire [7:0] pixelData;
 
  // Module instance
   Bildpuffer bildpuffer (
@@ -34,7 +38,9 @@ module main_tb
     .y(y),
     .color(color),
     .write(write),
-    .pixel(pixel)
+    .x_data(x_data),
+    .y_data(y_data),
+    .pixelData(pixelData)
   );
  initial begin
     clk = 1'b0;
@@ -49,45 +55,55 @@ end
         #100
         rst = 0;
         #200
-        x = 16'b0000000000001100;
-        y = 16'b0000000000000110;
+        x_data = 10'b0000001100;
+        y_data = 10'b0000000110;
+        x = 8'b00001100;
+        y = 8'b00000110;
         color = 8'b00001111;
         write = 1'b1;
         $display("Start of simulation");
         #100
-        if(pixel != color)
+        if(pixelData != color)
             $display("1Wert in Pixel Farbe: %d x: %d und y: %d ist ungleich Color:%d",color, x, y, color);
         #100
                 
-        x = 16'b0000000001101100;
-        y = 16'b0000000001110110;
+        x = 8'b01101100;
+        y = 8'b01110110;
+        x_data = 10'b0001101100;
+        y_data = 10'b0001110110;
         color = 8'b00000111;
         #100
-        if(pixel != color)
+        if(pixelData != color)
             $display("2Wert in Pixel Farbe: %d x: %d und y: %d ist ungleich Color:%d",color, x, y, color);
         #100
                 
-        x = 16'b0000000000001100;
-        y = 16'b0000000000010110;
+        x = 8'b00001100;
+        y = 8'b00010110;
+        x_data = 10'b0000001100;
+        y_data = 10'b0000010110;
         color = 8'b00000011;
         #100
-        if(pixel != color)
+        if(pixelData != color)
             $display("3Wert in Pixel Farbe: %d x: %d und y: %d ist ungleich Color:%d",color, x, y, color);
         #100
            
-        x = 16'b0000000011001100;
-        y = 16'b0000000001010110;
+        x = 8'b11001100;
+        y = 8'b01010110;
+        x_data = 10'b0011001100;
+        y_data = 10'b0001010110;
         color = 8'b00000001;
         #100
-        if(pixel != color)
+        if(pixelData != color)
             $display("4Wert in Pixel Farbe: %d x: %d und y: %d ist ungleich Color:%d",color, x, y, color);
         write = 1'b0;   
         #100
                 
-        x = 16'b0000000000001100;
-        y = 16'b0000000000000110;
+        x = 8'b00001100;
+        y = 8'b00000110;
+        x_data = 10'b0000001100;
+        y_data = 10'b0000000110;
         #100
-        if(pixel != 8'b00001111)
+        if(pixelData != 8'b00001111)
             $display("5Wert in Pixel Farbe: %d x: %d und y: %d ist ungleich Color:%d",color, x, y, color);
 
         #100

@@ -24,13 +24,13 @@ module main_tb
   reg clk10;
 
   reg rst;
-  reg [15:0] x;
-  reg [15:0] y;
+  reg [7:0] x;
+  reg [7:0] y;
   reg [7:0] color;
   reg write;
 
-  wire [15:0] bildX;
-  wire [15:0] bildY;
+  wire [9:0] bildX;
+  wire [9:0] bildY;
   wire [7:0] pixelData;
 
     //Signale 	TMD
@@ -57,12 +57,13 @@ module main_tb
     .TMDSp(TMDSp), //nach außen
     .TMDSn(TMDSn), //nach außen
     .clk_TMDS(clk10), //von außen
-    .pixelDaten(pixelData), //von Bildpuffer .
+    .pixelData(pixelData), //von Bildpuffer .
     .pixelX(bildX), //an Bildpuffer .
     .pixelY(bildY)  //an Bildpuffer .
   );
 
   integer i;
+  integer j;
 
 initial begin
     clk = 1'b0;
@@ -84,15 +85,20 @@ end
         #200
         $display("Start of simulation");
         
-        for(i = 0; i<2000;i++) 
+        for(i = 0; i < 800;i++) 
         begin
-            #2000
-            x <=i%800;
-            y <=i%525;
-            color <= i%128;
+            for(j = 0; j < 525; j++)
+            begin
+              #2000
+              x <=i;
+              y <=j;
+              color <= i%128;
+            end
         end
-
-        #100
+        write = 0;
+        #100000
+        write = 1;
+        
         $display("End of simulation");
         $finish;
     end
