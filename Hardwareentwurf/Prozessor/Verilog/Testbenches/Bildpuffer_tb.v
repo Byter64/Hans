@@ -52,6 +52,11 @@ end
     initial begin
         $dumpvars(0, main_tb);
         rst = 1;
+        x_data = 0;
+        y_data = 0;
+        x = 0;
+        y = 0;
+        color = 0;
         #100
         rst = 0;
         #200
@@ -62,49 +67,56 @@ end
         color = 8'b00001111;
         write = 1'b1;
         $display("Start of simulation");
-        #100
+        #200
         if(pixelData != color)
-            $display("1Wert in Pixel Farbe: %d x: %d und y: %d ist ungleich Color:%d",color, x, y, color);
-        #100
+            $display("1 Wert in Pixel Farbe: %d x: %d und y: %d ist ungleich Color:%d",color, x, y, color);
+        write = 0;
+        #200
                 
         x = 8'b01101100;
         y = 8'b01110110;
         x_data = 10'b0001101100;
         y_data = 10'b0001110110;
         color = 8'b00000111;
-        #100
+        #200
+        write = 1;
+        #200
         if(pixelData != color)
-            $display("2Wert in Pixel Farbe: %d x: %d und y: %d ist ungleich Color:%d",color, x, y, color);
-        #100
+            $display("2 Wert in Pixel Farbe: %d x: %d und y: %d ist ungleich Color:%d",color, x, y, color);
+        write = 0;
+        #200
                 
         x = 8'b00001100;
         y = 8'b00010110;
         x_data = 10'b0000001100;
         y_data = 10'b0000010110;
         color = 8'b00000011;
-        #100
+        #200
+        write = 1;
+        #200
         if(pixelData != color)
-            $display("3Wert in Pixel Farbe: %d x: %d und y: %d ist ungleich Color:%d",color, x, y, color);
-        #100
-           
+            $display("3 Wert in Pixel Farbe: %d x: %d und y: %d ist ungleich Color:%d",color, x, y, color);
+        write = 0;
         x = 8'b11001100;
         y = 8'b01010110;
         x_data = 10'b0011001100;
         y_data = 10'b0001010110;
         color = 8'b00000001;
-        #100
+        #200
+        write = 1;
+        #200
         if(pixelData != color)
-            $display("4Wert in Pixel Farbe: %d x: %d und y: %d ist ungleich Color:%d",color, x, y, color);
+            $display("4 Wert in Pixel Farbe: %d x: %d und y: %d ist ungleich Color:%d",color, x, y, color);
         write = 1'b0;   
-        #100
+        #200
                 
         x = 8'b00001100;
         y = 8'b00000110;
         x_data = 10'b0000001100;
         y_data = 10'b0000000110;
-        #100
+        #200
         if(pixelData != 8'b00001111)
-            $display("5Wert in Pixel Farbe: %d x: %d und y: %d ist ungleich Color:%d",color, x, y, color);
+            $display("5 Wert in Pixel Farbe: %d x: %d und y: %d ist ungleich Color:%d",color, x, y, color);
 
         #100
         $display("End of simulation");
