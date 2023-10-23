@@ -7,8 +7,8 @@ module Bildpuffer (
   input [BITSPERPIXEL-1:0] color,
   input write,
 
-  input [9:0] x_data,
-  input [9:0] y_data,
+  input [7:0] x_data,
+  input [7:0] y_data,
 
   output [BITSPERPIXEL-1:0] pixelData
 );

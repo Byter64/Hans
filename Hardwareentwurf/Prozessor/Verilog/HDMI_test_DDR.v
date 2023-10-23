@@ -1,21 +1,49 @@
+// Started from: https://www.fpga4fun.com/HDMI.html (c) fpga4fun.com & KNJN LLC 2013
+//   Added comments, adapted to ECP5 / ULX3S, made small changes here and there
+//
+// - Introduced some ideas from Lawrie's code here: https://github.com/lawrie/ulx3s_examples/blob/master/hdmi/
+//   See also https://github.com/sylefeb/Silice/tree/master/projects/hdmi_test (also based on Lawrie's code).
+// - I'm not using Lawrie's "fake differential" but instead I'm using LVCMOS33D mode for the HDMI pins in ulx3S.lpf,
+//  that automatically generates the negative signal from the positive one.
+//   See: https://www.gitmemory.com/issue/YosysHQ/nextpnr/544/751511265
+//   See also LATTICE ECP5 and ECP5-5G sysI/O Usage Guide / Technical note
+// - In Lawrie's "fake differential", there is the ODRX1F trick that makes it possible to operate at half the
+//   frequency for the bit clock, may be interesting/necessary to use for res higher than 640x480.
+// - I've seen also some ECP5 primitives: OLVDS (A->Z,ZN) and OBCO (I->OT,OC) 
+//   that I tried to use with the standard LVCMOS33 mode, without success.
 
-module hdmivideo
-(
-   input pixclk,                           // 25MHz
-
+module HDMI_test_DDR(
+   input pclk,
    input [7:0] pixelData,
-   
    output [9:0] x,
    output [9:0] y,
+   output [3:0] gpdi_dp
+   // Note: gpdi_dn[3:0] is generated automatically by LVCMOS33D mode in ulx3s.lpf
+);
 
+HDMI_gen hdmi_gen(
+   .pixclk(pclk),
+   .TMDS_rgb_p(gpdi_dp[2:0]),
+   .pixelData(pixelData),
+   .x(x),
+   .y(y),
+   .TMDS_clock_p(gpdi_dp[3])
+);
+
+endmodule
+
+/*********************************************************************************/
+module HDMI_gen(
+   input pixclk,                           // 25MHz
+   input [7:0] pixelData,
    output [2:0] TMDS_rgb_p,   TMDS_rgb_n,  // HDMI pins: RGB
-   output       TMDS_clock_p, TMDS_clock_n // HDMI pins: clock
-
+   output       TMDS_clock_p, TMDS_clock_n, // HDMI pins: clock
+   output [7:0] x,y
 );
 
 /******** Video generation *******************************************************/
 // This part is just like a VGA generator
-reg [9:0] CounterX = 0, CounterY = 0;
+reg [9:0] CounterX, CounterY;
 reg hSync, vSync, DrawArea;
 always @(posedge pixclk) DrawArea <= (CounterX<640) && (CounterY<480);
 
@@ -29,12 +57,13 @@ always @(posedge pixclk) vSync <= (CounterY>=490) && (CounterY<492);
 // Generate 8-bits red,green,blue signals from X and Y coordinates (the "shader")
 assign x = CounterX>>2;
 assign y = CounterY>>2;
+
 reg [7:0] red, green, blue;
 
 always @(posedge pixclk) begin
-   red   <= {pixelData[7:5],5'b0};
-   green <= {pixelData[4:2],5'b0};
-   blue  <= {pixelData[1:0],6'b0};
+   red   <= pixelData;
+   green <= pixelData;
+   blue  <= pixelData;
 end
 
 /******** RGB TMDS encoding ***************************************************/
@@ -75,8 +104,6 @@ ODDRX1F ddr_blue (.D0(TMDS_shift_blue[0]),  .D1(TMDS_shift_blue[1]),  .Q(TMDS_rg
    
 // The pixel clock, still the same as before.
 assign TMDS_clock_p = pixclk;
-assign TMDS_clock_n = ~pixclk;
-assign TMDS_rgb_n = ~TMDS_rgb_p;
 
 // Note (again): gpdi_dn[3:0] is generated automatically by LVCMOS33D mode in ulx3s.lpf
 
