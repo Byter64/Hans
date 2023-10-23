@@ -19,7 +19,9 @@ integer i;
 
 always @(posedge Clock) begin
     if(Reset) begin
-        registers[0] = 32'b0;
+        for (i = 0; i < 64; i = i + 1) begin
+            registers[i] <= 32'b00000000000000000000000000000000; 
+        end
     end
     else if(Schreibsignal) begin 
         if(ZielRegister != 0)

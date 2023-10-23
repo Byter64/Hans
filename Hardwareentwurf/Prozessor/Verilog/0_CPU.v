@@ -29,8 +29,8 @@ module CPU (
 
 
 assign InstruktionAdresse = {6'b0, AktuellerPC};
-assign DatenRaus = ALUErgebnis;
-assign DatenAdresse = QuellDaten2;
+assign DatenRaus = QuellDaten2;
+assign DatenAdresse = ALUErgebnis;
 
 //██████████████████████████████████████████
 //████Signale von Instruktionsdekodierer████
@@ -129,6 +129,7 @@ Register Register(
     .ZielDaten(ZielDaten),
     .ZielRegister(ZielRegister),
     .Schreibsignal(RegisterSchreibsignal),
+    .Clock(Clock),
     .Reset(Reset),
     .QuellDaten1(QuellDaten1),
     .QuellDaten2(QuellDaten2)
@@ -179,7 +180,7 @@ Steuerung Steuerung(
     .BefehlGeladen(InstruktionGeladen),
     .DatenGeladen(DatenGeladen),
     .DatenGespeichert(DatenGespeichert),
-    .AluFertig(AluHatFertigGerechnet),
+    .ALUFertig(AluHatFertigGerechnet),
     .Reset(Reset),
     .Clock(Clock),
 

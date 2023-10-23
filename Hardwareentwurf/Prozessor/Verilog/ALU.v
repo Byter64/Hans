@@ -1,6 +1,5 @@
 `include "ALUModule/Goldschmidt_Integer_Divider_Parallel-main/source/Goldschmidt_Integer_Divider_Parallel.v"
 `include "ALUModule/intsqrt.v"
-`include "ALUModule/ZyklischerSchieber.v"
 `include "ALUModule/verilog-math-master_FLOAT_/components/add.v"
 `include "ALUModule/verilog-math-master_FLOAT_/components/mul.v"
 `include "ALUModule/verilog-math-master_FLOAT_/components/sqrt.v"
@@ -25,7 +24,6 @@ reg[7:0] TakteBisFertig = 0;
 wire[31:0] EinfacheRechnungErgebnis;
 wire[31:0] DivisionErgebnis; //Div und Mod
 wire[31:0] WurzelErgebnis;
-wire[31:0] ZyklischerSchieberErgebnis;
 wire[31:0] AdditionFloatErgebnis;
 wire[31:0] MultiplikationFloatErgebnis;
 wire[31:0] WurzelFloatErgebnis;
@@ -52,8 +50,6 @@ localparam FloatModulo =          6'b100101;
 //Schieben
 localparam LinksSchieben =      6'b000110;
 localparam Rechtsschieben =     6'b000111;
-localparam ZyklischesRechtsschieben = 6'b001000;
-localparam ZyklischesLinksschieben = 6'b001001;
 //Vergleiche
 localparam Gleichheit =         6'b010000;
 localparam Ungleichheit =       6'b010001;
@@ -67,14 +63,6 @@ localparam Und =                6'b011001;
 localparam Oder =               6'b011010;
 localparam Ungleich =           6'b011011;
 localparam Gleich =             6'b011100;
-
-
-ZyklischerSchieber#(32, 5) Schieber (
-    .Zahl(Daten1),
-    .Stellen(Daten2[4:0]),
-    .Ergebnis(ZyklischerSchieberErgebnis),
-    .SchiebRechts(FunktionsCode[0])
-);
 
 Goldschmidt_Integer_Divider_Parallel #(
     .P_GDIV_FACTORS_MSB(31), 
@@ -149,8 +137,6 @@ assign EinfacheRechnungErgebnis =   FunktionsCode[5:0] == IntAddition        ? $
 assign Ergebnis =   FunktionsCode[5:0] == IntQuadratwurzel ? WurzelErgebnis :
                     FunktionsCode[5:0] == IntDivision ? DivisionErgebnis :
                     FunktionsCode[5:0] == IntModulo ? DivisionErgebnis :
-                    FunktionsCode[5:0] == ZyklischesLinksschieben ? ZyklischerSchieberErgebnis :
-                    FunktionsCode[5:0] == ZyklischesRechtsschieben ? ZyklischerSchieberErgebnis :
                     FunktionsCode[5:0] == FloatAddition ? AdditionFloatErgebnis :
                     FunktionsCode[5:0] == FloatSubtraktion ? AdditionFloatErgebnis :
                     FunktionsCode[5:0] == FloatMultiplikation ? MultiplikationFloatErgebnis :
