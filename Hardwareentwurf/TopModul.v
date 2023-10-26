@@ -1,5 +1,5 @@
-`include "Prozessor/Verilog/0_CPU.v"
-`include "Prozessor/Verilog/Testbenches/1_RAM.v"
+`include "Prozessor/0_CPU.v"
+`include "Prozessor/Testbenches/1_RAM.v"
 `include "ecp5pll/hdl/sv/ecp5pll.sv"
 
 module Top

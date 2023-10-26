@@ -1,7 +1,7 @@
-`include "../Prozessor/Verilog/HDMI_test_DDR.v"
-`include "../Prozessor/Verilog/TMDS_encoder.v"
-`include "../Prozessor/Verilog/HDMI_clock.v"
-`include "../Prozessor/Verilog/Bildpuffer.v"
+`include "../Prozessor/HDMI_test_DDR.v"
+`include "../Prozessor/TMDS_encoder.v"
+`include "../Prozessor/HDMI_clock.v"
+`include "../Prozessor/Bildpuffer.v"
 
 module Top
 (
