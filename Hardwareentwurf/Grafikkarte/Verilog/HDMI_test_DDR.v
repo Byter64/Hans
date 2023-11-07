@@ -61,9 +61,9 @@ assign y = CounterY>>2;
 reg [7:0] red, green, blue;
 
 always @(posedge pixclk) begin
-   red   <= pixelData;
-   green <= pixelData;
-   blue  <= pixelData;
+   red   <= {pixelData[7:5],5'b0};
+   green <= {pixelData[4:2],5'b0};
+   blue  <= {pixelData[1:0],6'b0};
 end
 
 /******** RGB TMDS encoding ***************************************************/
