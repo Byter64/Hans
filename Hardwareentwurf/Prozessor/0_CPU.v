@@ -39,8 +39,7 @@ wire[5:0] QuellRegister1;
 wire[5:0] QuellRegister2; 
 wire[5:0] ZielRegister;   
 wire[25:0] IDaten;       
-wire KleinerImmediateAktiv;  
-wire GrosserImmediateAktiv;  
+wire ImmediateAktiv;   
 wire[5:0] FunktionsCode;  
 wire JALBefehl;              
 wire RelativerSprungBefehl;               
@@ -49,6 +48,7 @@ wire StoreBefehl;
 wire UnbedingterSprungBefehl;
 wire BedingterSprungBefehl;  
 wire AbsoluterSprung;
+wire BranchEquals;
 
 //███████████████████████████████████████
 //████Signale von MultiplexerAluDaten████
@@ -111,8 +111,7 @@ Instruktionsdekodierer Indek(
     .QuellRegister2(QuellRegister2),
     .ZielRegister(ZielRegister),
     .IDaten(IDaten),
-    .KleinerImmediateAktiv(KleinerImmediateAktiv),
-    .GrosserImmediateAktiv(GrosserImmediateAktiv),
+    .ImmediateAktiv(ImmediateAktiv),
     .FunktionsCode(FunktionsCode),
     .JALBefehl(JALBefehl),
     .RelativerSprung(RelativerSprungBefehl),
@@ -120,7 +119,8 @@ Instruktionsdekodierer Indek(
     .StoreBefehl(StoreBefehl),
     .UnbedingterSprungBefehl(UnbedingterSprungBefehl),
     .BedingterSprungBefehl(BedingterSprungBefehl),
-    .AbsoluterSprung(AbsoluterSprung)
+    .AbsoluterSprung(AbsoluterSprung),
+    .BranchEquals(BranchEquals)
 );
 
 Register Register(
@@ -138,7 +138,7 @@ Register Register(
 MultiplexerAluDaten MulAluDaten(
     .RegisterDaten2(QuellDaten2),
     .Immediate(IDaten),
-    .ImmediateAktiv(KleinerImmediateAktiv | GrosserImmediateAktiv),
+    .ImmediateAktiv(ImmediateAktiv),
     .Daten2(AluDaten2)
 );
 
