@@ -17,7 +17,7 @@ module Instruktionsdekodierer (
     output UnbedingterSprungBefehl,
     output BedingterSprungBefehl,
     output AbsoluterSprung,
-    output BranchEquals
+    output Sprungbedingung
 );
 
 //Aktuell gespeicherte Befehl
@@ -113,6 +113,6 @@ assign UnbedingterSprungBefehl =(Opcode == JregCode || Opcode == JALCode || Opco
 
 assign BedingterSprungBefehl =  (Opcode == BezCode || Opcode == BNezCode); 
 
-assign BranchEquals =           (Opcode == BezCode);
+assign Sprungbedingung =           (Opcode == BezCode);
 
 endmodule

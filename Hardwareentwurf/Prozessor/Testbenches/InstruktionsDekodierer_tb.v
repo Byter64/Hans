@@ -36,7 +36,7 @@ module main_tb
  wire UnbedingterSprungBefehl;
  wire BedingterSprung;
  wire AbsoluterSprung;
- wire BranchEquals;
+ wire Sprungbedingung;
 
 localparam[4:0] q1  = 5'b00001;
 localparam[4:0] q2  = 5'b00010;
@@ -118,7 +118,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
   .Reset(Reset),
   .DekodierSignal(DekodierSignal),
   .JALBefehl(JALBefehl),
-  .BranchEquals(BranchEquals)
+  .Sprungbedingung(Sprungbedingung)
  );
  
  
@@ -154,7 +154,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(UnbedingterSprungBefehl, 1'b0);
     `assert(BedingterSprung, 1'b0);
     `assert(AbsoluterSprung, 1'b0);
-    `assert(BranchEquals, 1'b0);
+    `assert(Sprungbedingung, 1'b0);
 
     Instruktion = MUL;
     #2000
@@ -172,7 +172,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(UnbedingterSprungBefehl, 0);
     `assert(BedingterSprung, 0);
     `assert(AbsoluterSprung, 0);
-    `assert(BranchEquals, 0);
+    `assert(Sprungbedingung, 0);
 
     Instruktion = CGE;
     #2000
@@ -190,7 +190,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(UnbedingterSprungBefehl, 0);
     `assert(BedingterSprung, 0);
     `assert(AbsoluterSprung, 0);
-    `assert(BranchEquals, 0);
+    `assert(Sprungbedingung, 0);
 
     Instruktion = MULS;
     #2000
@@ -208,7 +208,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(UnbedingterSprungBefehl, 0);
     `assert(BedingterSprung, 0);
     `assert(AbsoluterSprung, 0);
-    `assert(BranchEquals, 0);
+    `assert(Sprungbedingung, 0);
 
     Instruktion = CGES;
     #2000
@@ -226,7 +226,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(UnbedingterSprungBefehl, 0);
     `assert(BedingterSprung, 0);
     `assert(AbsoluterSprung, 0);
-    `assert(BranchEquals, 0);
+    `assert(Sprungbedingung, 0);
 
     Instruktion = MULI;
     #2000
@@ -244,7 +244,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(UnbedingterSprungBefehl, 0);
     `assert(BedingterSprung, 0);
     `assert(AbsoluterSprung, 0);
-    `assert(BranchEquals, 0);
+    `assert(Sprungbedingung, 0);
 
     Instruktion = SLLI;
     #2000
@@ -262,7 +262,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(UnbedingterSprungBefehl, 0);
     `assert(BedingterSprung, 0);
     `assert(AbsoluterSprung, 0);
-    `assert(BranchEquals, 0);
+    `assert(Sprungbedingung, 0);
 
     Instruktion = LOAD;
     #2000
@@ -280,7 +280,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(UnbedingterSprungBefehl, 0);
     `assert(BedingterSprung, 0);
     `assert(AbsoluterSprung, 0);
-    `assert(BranchEquals, 0);
+    `assert(Sprungbedingung, 0);
 
     Instruktion = LOADS;
     #2000
@@ -298,7 +298,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(UnbedingterSprungBefehl, 0);
     `assert(BedingterSprung, 0);
     `assert(AbsoluterSprung, 0);
-    `assert(BranchEquals, 0);
+    `assert(Sprungbedingung, 0);
 
     Instruktion = STORE;
     #2000
@@ -316,7 +316,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(UnbedingterSprungBefehl, 0);
     `assert(BedingterSprung, 0);
     `assert(AbsoluterSprung, 0);
-    `assert(BranchEquals, 0);
+    `assert(Sprungbedingung, 0);
 
     Instruktion = STORES;
     #2000
@@ -334,7 +334,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(UnbedingterSprungBefehl, 0);
     `assert(BedingterSprung, 0);
     `assert(AbsoluterSprung, 0);
-    `assert(BranchEquals, 0);
+    `assert(Sprungbedingung, 0);
 
     Instruktion = JREG;
     #2000
@@ -352,7 +352,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(UnbedingterSprungBefehl, 1);
     `assert(BedingterSprung, 0);
     `assert(AbsoluterSprung, 1);
-    `assert(BranchEquals, 0);
+    `assert(Sprungbedingung, 0);
 
     Instruktion = BEZ;
     #2000
@@ -370,7 +370,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(UnbedingterSprungBefehl, 0);
     `assert(BedingterSprung, 1);
     `assert(AbsoluterSprung, 0);
-    `assert(BranchEquals, 1);
+    `assert(Sprungbedingung, 1);
 
     Instruktion = BNEZ;
     #2000
@@ -388,7 +388,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(UnbedingterSprungBefehl, 0);
     `assert(BedingterSprung, 1);
     `assert(AbsoluterSprung, 0);
-    `assert(BranchEquals, 0);
+    `assert(Sprungbedingung, 0);
 
     Instruktion = JAL;
     #2000
@@ -406,7 +406,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(UnbedingterSprungBefehl, 1);
     `assert(BedingterSprung, 0);
     `assert(AbsoluterSprung, 0);
-    `assert(BranchEquals, 0);
+    `assert(Sprungbedingung, 0);
 
     Instruktion = JMP;
     #2000
@@ -424,7 +424,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(UnbedingterSprungBefehl, 1);
     `assert(BedingterSprung, 0);
     `assert(AbsoluterSprung, 0);
-    `assert(BranchEquals, 0);
+    `assert(Sprungbedingung, 0);
       
    #1000
 

@@ -48,7 +48,7 @@ wire StoreBefehl;
 wire UnbedingterSprungBefehl;
 wire BedingterSprungBefehl;  
 wire AbsoluterSprung;
-wire BranchEquals;
+wire Sprungbedingung;
 
 //███████████████████████████████████████
 //████Signale von MultiplexerAluDaten████
@@ -120,7 +120,7 @@ Instruktionsdekodierer Indek(
     .UnbedingterSprungBefehl(UnbedingterSprungBefehl),
     .BedingterSprungBefehl(BedingterSprungBefehl),
     .AbsoluterSprung(AbsoluterSprung),
-    .BranchEquals(BranchEquals)
+    .Sprungbedingung(Sprungbedingung)
 );
 
 Register Register(
