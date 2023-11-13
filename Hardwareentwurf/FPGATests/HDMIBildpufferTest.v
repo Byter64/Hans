@@ -3,6 +3,7 @@
 `include "../Grafikkarte/Verilog/HDMI_clock.v"
 `include "../Grafikkarte/Verilog/Bildpuffer.v" ///home/timo/Hans/Hardwareentwurf/Grafikkarte/Verilog
 
+
 module Top
 (
     input clk_25mhz,
@@ -28,7 +29,11 @@ HDMI_test_DDR HDMIVideo
 );
 
 initial begin
-    $readmemb(picture.txt, ram)
+    $readmemb("picture.mem", ram);
+end
+
+always @(posedge clk_25mhz) begin
+    pixelData = ram[y*160+x];
 end
 
 /*
@@ -37,7 +42,6 @@ reg [7:0] color = 8'b0;
 reg write = 1;
 
 reg [7:0] x_data = 8'b0, y_data = 8'b0;
-
 
 
 
@@ -55,6 +59,6 @@ Bildpuffer Bpuffer
 );
 */
 
-assign pixelData = ram[y*160+x];
+
 
 endmodule

@@ -12,7 +12,8 @@ public class Main {
     public static void main(String[] args) {
         try {
             // Load the input image
-            Path homeuser = Path.of(System.getProperty("user.dir")).getParent();
+            Path homeuser = Path.of(System.getProperty("user.dir"));
+            System.out.println(homeuser);
             BufferedImage inputImage = ImageIO.read(new File(homeuser.toString()+"/picture.png")); // Replace with your image path
             PrintWriter writer = new PrintWriter(homeuser+"/picture.mem", StandardCharsets.UTF_8);
             if(inputImage.getHeight()<Height||inputImage.getWidth()<Width){
@@ -31,7 +32,8 @@ public class Main {
             writer.close();
             // Save the output image
 
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
