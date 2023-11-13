@@ -22,12 +22,12 @@ module main_tb
  reg DekodierSignal;
  reg Reset;
  reg Clock;
+
  wire [5:0] QuellReg1;
  wire [5:0] QuellReg2;
  wire [5:0] ZielReg1;
  wire [25:0] IDaten;
- wire KleinerImmediateAktiv;
- wire GrosserImmediateAktiv;
+ wire ImmediateAktiv;
  wire [5:0] FunktionsCode;
  wire JALBefehl;
  wire RelativerSprung;
@@ -36,34 +36,68 @@ module main_tb
  wire UnbedingterSprungBefehl;
  wire BedingterSprung;
  wire AbsoluterSprung;
+ wire BranchEquals;
+
+localparam[4:0] q1  = 5'b00001;
+localparam[4:0] q2  = 5'b00010;
+localparam[4:0] q3  = 5'b00011;
+localparam[4:0] q4  = 5'b00100;
+localparam[5:0] iq1  = 6'b000001;
+localparam[5:0] iq2  = 6'b000010;
+localparam[5:0] iq3  = 6'b000011;
+localparam[5:0] iq4  = 6'b000100;
+localparam[5:0] sq1  = 6'b100001;
+localparam[5:0] sq2  = 6'b100010;
+localparam[5:0] sq3  = 6'b100011;
+localparam[5:0] sq4  = 6'b100100;
+
+localparam[5:0] rformat = 6'b0;
+localparam iformat = 1'b1;
+localparam[5:0] jformat = 6'b010000;
+
+localparam[5:0] ADDFunktion  = 6'b0;
+localparam[5:0] MULFunktion  = 6'b000010;
+localparam[5:0] CGEFunktion = 6'b001011;
+localparam[5:0] MULSFunktion = 6'b100010;
+localparam[5:0] CGESFunktion = 6'b101011;
+
+localparam[4:0] MULIFunktion  = 5'b00010;
+localparam[4:0] SLLIFunktion = 5'b10110;
+
+localparam[5:0] LoadCode   = 6'b101000;
+localparam[5:0] LoadSCode  = 6'b101001;
+localparam[5:0] StoreCode  = 6'b101010;
+localparam[5:0] StoreSCode = 6'b101011;
+localparam[5:0] JregCode   = 6'b101100;
+localparam[5:0] BezCode    = 6'b101101;
+localparam[5:0] BNezCode   = 6'b101110;
+localparam[5:0] JALCode    = 6'b101111;
+localparam[5:0] JmpCode    = 6'b010000;
 
 
+localparam[15:0] Immediate10 = 16'b0000000000001010;
+localparam[15:0] Immediate20 = 16'b0000000000010100;
+localparam[25:0] ImmediateGross10 = 26'b00000000000000000000001010;
+localparam[25:0] ImmediateGross20 = 26'b00000000000000000000010100;
 
 
 //Instruktion
-reg[31:0] NUL =   32'b00000000000000000000000000000000;
-reg[31:0] ADD =   32'b00000010101001001010100000000000;
-reg[31:0] MUL =   32'b00000001010110110101000000000010;
-reg[31:0] DIV =   32'b00000011000110001100000000000011;
-reg[31:0] SQRT =  32'b00000000111001110000000000000101;
-reg[31:0] SL =    32'b00000001101100100000000000000111;
-reg[31:0] CNE =   32'b00000001100100111001000000010001;
-reg[31:0] CL =    32'b00000001011101101101000000010100;
-reg[31:0] AND =   32'b00000010100111111111000000011001;
-reg[31:0] ADDS =  32'b00000000010010111000000000100000;
-reg[31:0] MULS =  32'b00000001100101010101100000100010;
-reg[31:0] DIVS =  32'b00000010011010101010100000100011;
-reg[31:0] SQRTS = 32'b00000011000101010000000000100101;
-reg[31:0] ADDI =  32'b10000001110100011000000000000001;
-reg[31:0] MODI =  32'b10010010100111000000000000000010;
-reg[31:0] SLCI =  32'b10100000100001110000000000000100;
-reg[31:0] STORE = 32'b10110011001010110000000000000000;
-reg[31:0] JREG =  32'b10110100000111000000000000000000;
-reg[31:0] BEZ =   32'b10111000000110100000000000000000;
-reg[31:0] JAL =   32'b10111111000000000000000000000001;
-reg[31:0] LOAD =  32'b10101011100001110000000000000000;
-reg[31:0] LOADS = 32'b10101100011110000000000000000000;
-reg[31:0] JMP =   32'b01000000000000000000000000000010;
+reg[31:0] ADD =     {rformat,q2,q3,q1,5'b0,ADDFunktion}; 
+reg[31:0] MUL =     {rformat,q1,q2,q3,5'b0,MULFunktion}; 
+reg[31:0] CGE =     {rformat,q3,q2,q1,5'b0,CGEFunktion}; 
+reg[31:0] MULS =    {rformat,q1,q4,q2,5'b0,MULSFunktion}; 
+reg[31:0] CGES =    {rformat,q2,q1,q2,5'b0,CGESFunktion}; 
+reg[31:0] MULI =    {iformat,MULIFunktion,q3,q1,Immediate20}; 
+reg[31:0] SLLI =    {iformat,SLLIFunktion,q2,q4,Immediate10}; 
+reg[31:0] LOAD =    {LoadCode,q4,q1,Immediate20};
+reg[31:0] LOADS =   {LoadSCode,q1,q2,Immediate10};
+reg[31:0] STORE =   {StoreCode,q2,q3,Immediate20};
+reg[31:0] STORES =  {StoreSCode,q3,q4,Immediate10};
+reg[31:0] JREG =    {JregCode,q4,q1,Immediate20};
+reg[31:0] BEZ =     {BezCode,q1,q2,Immediate10};
+reg[31:0] BNEZ =    {BNezCode,q2,q3,Immediate20};
+reg[31:0] JAL =     {JALCode,q3,q4,Immediate10};
+reg[31:0] JMP =     {JmpCode,ImmediateGross20};
 
  // Module instance
  Instruktionsdekodierer idec (
@@ -73,7 +107,7 @@ reg[31:0] JMP =   32'b01000000000000000000000000000010;
   .QuellRegister2(QuellReg2),
   .ZielRegister(ZielReg1),
   .IDaten(IDaten),
-  .KleinerImmediateAktiv(KleinerImmediateAktiv),
+  .ImmediateAktiv(ImmediateAktiv),
   .FunktionsCode(FunktionsCode),
   .LoadBefehl(LoadBefehl),
   .StoreBefehl(StoreBefehl),
@@ -83,8 +117,8 @@ reg[31:0] JMP =   32'b01000000000000000000000000000010;
   .AbsoluterSprung(AbsoluterSprung),
   .Reset(Reset),
   .DekodierSignal(DekodierSignal),
-  .GrosserImmediateAktiv(GrosserImmediateAktiv),
-  .JALBefehl(JALBefehl)
+  .JALBefehl(JALBefehl),
+  .BranchEquals(BranchEquals)
  );
  
  
@@ -100,178 +134,298 @@ reg[31:0] JMP =   32'b01000000000000000000000000000010;
     Clock = 0;
     #1000
     DekodierSignal = 1'b1;
-    Instruktion = NUL;
+    Instruktion = 32'b0;
     Reset = 1'b1;
     #2000
-
-    $display("Reset");
- 
-
-    assertSignal(QuellReg1,6'b000000,QuellReg2,6'b000000,ZielReg1,6'b000000,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b0,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b0,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-
-    Instruktion = NUL;
     Reset = 1'b0;
-    #2000
-
-    $display("NUL");  
-
-    assertSignal(QuellReg1,6'b000000,QuellReg2,6'b000000,ZielReg1,6'b000000,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b0,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b0,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-
     Instruktion = ADD;
     #2000
-
-    $display("ADD");  
-
-    assertSignal(QuellReg1,6'b000100,QuellReg2,6'b010101,ZielReg1,6'b010101,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b0,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b0,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
+    $display("ADD");
+    `assert(QuellReg1, iq3);
+    `assert(QuellReg2, iq1);
+    `assert(ZielReg1, iq2);
+    `assert(IDaten, 26'b0);
+    `assert(ImmediateAktiv, 1'b0);
+    `assert(FunktionsCode, ADDFunktion);
+    `assert(JALBefehl, 1'b0);
+    `assert(RelativerSprung, 1'b0);
+    `assert(LoadBefehl, 1'b0);
+    `assert(StoreBefehl, 1'b0);
+    `assert(UnbedingterSprungBefehl, 1'b0);
+    `assert(BedingterSprung, 1'b0);
+    `assert(AbsoluterSprung, 1'b0);
+    `assert(BranchEquals, 1'b0);
 
     Instruktion = MUL;
     #2000
+    $display("MUL");
+    `assert(QuellReg1, iq2);
+    `assert(QuellReg2, iq3);
+    `assert(ZielReg1, iq1);
+    `assert(IDaten, 26'b0);
+    `assert(ImmediateAktiv, 0);
+    `assert(FunktionsCode, MULFunktion);
+    `assert(JALBefehl, 0);
+    `assert(RelativerSprung, 0);
+    `assert(LoadBefehl, 0);
+    `assert(StoreBefehl, 0);
+    `assert(UnbedingterSprungBefehl, 0);
+    `assert(BedingterSprung, 0);
+    `assert(AbsoluterSprung, 0);
+    `assert(BranchEquals, 0);
 
-    $display("MUL");  
-
-    assertSignal(QuellReg1,6'b011011,QuellReg2,6'b001010,ZielReg1,6'b001010,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b0,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b000010,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-
-    Instruktion = DIV;
+    Instruktion = CGE;
     #2000
-
-    $display("DIV");  
-
-    assertSignal(QuellReg1,6'b011000,QuellReg2,6'b011000,ZielReg1,6'b011000,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b0,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b000011,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-    
-    Instruktion = SQRT;
-    #2000
-
-    $display("SQRT"); 
- 
-    assertSignal(QuellReg1,6'b000111,QuellReg2,6'b000000,ZielReg1,6'b000111,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b0,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b000101,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-
-    Instruktion = SL;
-    #2000
-
-    $display("SL ");  
-
-    assertSignal(QuellReg1,6'b010010,QuellReg2,6'b000000,ZielReg1,6'b001101,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b0,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b000111,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-
-    Instruktion = CNE;
-    #2000
-
-    $display("CNE");
-  
-    assertSignal(QuellReg1,6'b010011,QuellReg2,6'b010010,ZielReg1,6'b001100,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b0,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b010001,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-
-    Instruktion = CL;
-    #2000
-
-    $display("CL");  
-
-    assertSignal(QuellReg1,6'b010110,QuellReg2,6'b011010,ZielReg1,6'b001011,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b0,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b010100,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-
-    Instruktion = AND;
-    #2000
-
-    $display("AND");  
-
-    assertSignal(QuellReg1,6'b011111,QuellReg2,6'b011110,ZielReg1,6'b010100,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b0,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b011001,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-
-    Instruktion = ADDS;
-    #2000
-
-    $display("ADD.S");  
-
-    assertSignal(QuellReg1,6'b101011,QuellReg2,6'b110000,ZielReg1,6'b100010,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b0,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b100000,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
+    $display("CGE");
+    `assert(QuellReg1, iq2);
+    `assert(QuellReg2, iq1);
+    `assert(ZielReg1, iq3);
+    `assert(IDaten, 0);
+    `assert(ImmediateAktiv, 0);
+    `assert(FunktionsCode, CGEFunktion);
+    `assert(JALBefehl, 0);
+    `assert(RelativerSprung, 0);
+    `assert(LoadBefehl, 0);
+    `assert(StoreBefehl, 0);
+    `assert(UnbedingterSprungBefehl, 0);
+    `assert(BedingterSprung, 0);
+    `assert(AbsoluterSprung, 0);
+    `assert(BranchEquals, 0);
 
     Instruktion = MULS;
     #2000
+    $display("MULS");
+    `assert(QuellReg1, sq4);
+    `assert(QuellReg2, sq2);
+    `assert(ZielReg1, sq1);
+    `assert(IDaten, 0);
+    `assert(ImmediateAktiv, 0);
+    `assert(FunktionsCode, MULSFunktion);
+    `assert(JALBefehl, 0);
+    `assert(RelativerSprung, 0);
+    `assert(LoadBefehl, 0);
+    `assert(StoreBefehl, 0);
+    `assert(UnbedingterSprungBefehl, 0);
+    `assert(BedingterSprung, 0);
+    `assert(AbsoluterSprung, 0);
+    `assert(BranchEquals, 0);
 
-    $display("MUL.S");  
-
-    assertSignal(QuellReg1,6'b110101,QuellReg2,6'b101011,ZielReg1,6'b101100,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b0,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b100010,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-
-    Instruktion = DIVS;
+    Instruktion = CGES;
     #2000
+    $display("CGES");
+    `assert(QuellReg1, sq1);
+    `assert(QuellReg2, sq2);
+    `assert(ZielReg1, iq2);
+    `assert(IDaten, 0);
+    `assert(ImmediateAktiv, 0);
+    `assert(FunktionsCode, CGESFunktion);
+    `assert(JALBefehl, 0);
+    `assert(RelativerSprung, 0);
+    `assert(LoadBefehl, 0);
+    `assert(StoreBefehl, 0);
+    `assert(UnbedingterSprungBefehl, 0);
+    `assert(BedingterSprung, 0);
+    `assert(AbsoluterSprung, 0);
+    `assert(BranchEquals, 0);
 
-    $display("DIV.S"); 
- 
-    assertSignal(QuellReg1,6'b101010,QuellReg2,6'b110101,ZielReg1,6'b110011,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b0,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b100011,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-
-    Instruktion = SQRTS;
+    Instruktion = MULI;
     #2000
+    $display("MULI");
+    `assert(QuellReg1, iq1);
+    `assert(QuellReg2, 0);
+    `assert(ZielReg1, iq3);
+    `assert(IDaten, ImmediateGross20);
+    `assert(ImmediateAktiv, 1);
+    `assert(FunktionsCode, MULFunktion);
+    `assert(JALBefehl, 0);
+    `assert(RelativerSprung, 0);
+    `assert(LoadBefehl, 0);
+    `assert(StoreBefehl, 0);
+    `assert(UnbedingterSprungBefehl, 0);
+    `assert(BedingterSprung, 0);
+    `assert(AbsoluterSprung, 0);
+    `assert(BranchEquals, 0);
 
-    $display("SQRT.S");  
-
-    assertSignal(QuellReg1,6'b110101,QuellReg2,6'b100000,ZielReg1,6'b111000,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b0,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b100101,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-
-    Instruktion = ADDI;
+    Instruktion = SLLI;
     #2000
+    $display("SLLI");
+    `assert(QuellReg1, iq4);
+    `assert(QuellReg2, 0);
+    `assert(ZielReg1, iq2);
+    `assert(IDaten, ImmediateGross10);
+    `assert(ImmediateAktiv, 1);
+    `assert(FunktionsCode, {1'b0,SLLIFunktion});
+    `assert(JALBefehl, 0);
+    `assert(RelativerSprung, 0);
+    `assert(LoadBefehl, 0);
+    `assert(StoreBefehl, 0);
+    `assert(UnbedingterSprungBefehl, 0);
+    `assert(BedingterSprung, 0);
+    `assert(AbsoluterSprung, 0);
+    `assert(BranchEquals, 0);
 
-    $display("ADDI");  
-
-    assertSignal(QuellReg1,6'b010001,QuellReg2,6'b000000,ZielReg1,6'b001110,IDaten,26'b11111111111000000000000001,KleinerImmediateAktiv,1'b1,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b0,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-
-    Instruktion = MODI;
-    #2000
-
-    $display("MODI");  
-
-    assertSignal(QuellReg1,6'b011100,QuellReg2,6'b000000,ZielReg1,6'b010100,IDaten,26'b00000000000000000000000010,KleinerImmediateAktiv,1'b1,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b000100,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-
-    Instruktion = SLCI;
-    #2000
-
-    $display("SLCI");
-  
-    assertSignal(QuellReg1,6'b000111,QuellReg2,6'b000000,ZielReg1,6'b000100,IDaten,26'b00000000000000000000000100,KleinerImmediateAktiv,1'b1,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b001000,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-
-    Instruktion = STORE;
-    #2000
-
-    $display("STORE");
-    $display("ZielReg kann ignoriert werden, da es intern nicht gebraucht wird bei Store"); 
-
-    assertSignal(QuellReg1,6'b001011,QuellReg2,6'b011001,ZielReg1,6'b011001,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b1,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b0,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b1,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-
-    Instruktion = JREG;
-    #2000
-
-    $display("JREG"); 
- 
-    assertSignal(QuellReg1,6'b011100,QuellReg2,6'b000000,ZielReg1,6'b000000,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b1,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b0,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b1,BedingterSprung,1'b0,AbsoluterSprung,1'b1);
-
-    Instruktion = BEZ;
-    #2000
-
-    $display("BEZ");  
-
-    assertSignal(QuellReg1,6'b011010,QuellReg2,6'b000000,ZielReg1,6'b000000,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b1,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b0,JALBefehl,1'b0,RelativerSprung,1'b1,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b1,AbsoluterSprung,1'b0);
-
-    Instruktion = JAL;
-    #2000
-
-    $display("JAL");  
-
-    assertSignal(QuellReg1,6'b000000,QuellReg2,6'b000000,ZielReg1,6'b011000,IDaten,26'b00000000000000000000000001,KleinerImmediateAktiv,1'b1,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b0,JALBefehl,1'b1,RelativerSprung,1'b1,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b1,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-
-    Instruktion = JMP;
-    #2000
-
-    $display("JMP");  
-
-    assertSignal(QuellReg1,6'b000000,QuellReg2,6'b000000,ZielReg1,6'b000000,IDaten,26'b00000000000000000000000010,KleinerImmediateAktiv,1'b0,GrosserImmediateAktiv,1'b1,FunktionsCode,6'b0,JALBefehl,1'b0,RelativerSprung,1'b1,LoadBefehl,1'b0,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b1,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-    
     Instruktion = LOAD;
     #2000
-
     $display("LOAD");
-  
-    assertSignal(QuellReg1,6'b000111,QuellReg2,6'b000000,ZielReg1,6'b011100,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b1,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b0,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b1,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
+    `assert(QuellReg1, iq1);
+    `assert(QuellReg2, 0);
+    `assert(ZielReg1, iq4);
+    `assert(IDaten, ImmediateGross20);
+    `assert(ImmediateAktiv, 1);
+    `assert(FunktionsCode, 0);
+    `assert(JALBefehl, 0);
+    `assert(RelativerSprung, 0);
+    `assert(LoadBefehl, 1);
+    `assert(StoreBefehl, 0);
+    `assert(UnbedingterSprungBefehl, 0);
+    `assert(BedingterSprung, 0);
+    `assert(AbsoluterSprung, 0);
+    `assert(BranchEquals, 0);
 
     Instruktion = LOADS;
     #2000
+    $display("LOADS");
+    `assert(QuellReg1, iq2);
+    `assert(QuellReg2, 0);
+    `assert(ZielReg1, sq1);
+    `assert(IDaten, ImmediateGross10);
+    `assert(ImmediateAktiv, 1);
+    `assert(FunktionsCode, 0);
+    `assert(JALBefehl, 0);
+    `assert(RelativerSprung, 0);
+    `assert(LoadBefehl, 1);
+    `assert(StoreBefehl, 0);
+    `assert(UnbedingterSprungBefehl, 0);
+    `assert(BedingterSprung, 0);
+    `assert(AbsoluterSprung, 0);
+    `assert(BranchEquals, 0);
 
-    $display("LOAD.S");
-  
-    assertSignal(QuellReg1,6'b011000,QuellReg2,6'b000000,ZielReg1,6'b100011,IDaten,26'b00000000000000000000000000,KleinerImmediateAktiv,1'b1,GrosserImmediateAktiv,1'b0,FunktionsCode,6'b0,JALBefehl,1'b0,RelativerSprung,1'b0,LoadBefehl,1'b1,StoreBefehl,1'b0,UnbedingterSprungBefehl,1'b0,BedingterSprung,1'b0,AbsoluterSprung,1'b0);
-   
+    Instruktion = STORE;
+    #2000
+    $display("STORE");
+    `assert(QuellReg1, iq3);
+    `assert(QuellReg2, iq2);
+    `assert(ZielReg1, iq2); //vlt 0
+    `assert(IDaten, ImmediateGross20);
+    `assert(ImmediateAktiv, 1);
+    `assert(FunktionsCode, 0);
+    `assert(JALBefehl, 0);
+    `assert(RelativerSprung, 0);
+    `assert(LoadBefehl, 0);
+    `assert(StoreBefehl, 1);
+    `assert(UnbedingterSprungBefehl, 0);
+    `assert(BedingterSprung, 0);
+    `assert(AbsoluterSprung, 0);
+    `assert(BranchEquals, 0);
+
+    Instruktion = STORES;
+    #2000
+    $display("STORES");
+    `assert(QuellReg1, iq4);
+    `assert(QuellReg2, sq3);
+    `assert(ZielReg1, sq3); //vlt 0
+    `assert(IDaten, ImmediateGross10);
+    `assert(ImmediateAktiv, 1);
+    `assert(FunktionsCode, 0);
+    `assert(JALBefehl, 0);
+    `assert(RelativerSprung, 0);
+    `assert(LoadBefehl, 0);
+    `assert(StoreBefehl, 1);
+    `assert(UnbedingterSprungBefehl, 0);
+    `assert(BedingterSprung, 0);
+    `assert(AbsoluterSprung, 0);
+    `assert(BranchEquals, 0);
+
+    Instruktion = JREG;
+    #2000
+    $display("JREG");
+    `assert(QuellReg1, iq1);
+    `assert(QuellReg2, 0); //egal
+    `assert(ZielReg1, iq4); //egal
+    `assert(IDaten, ImmediateGross20);
+    `assert(ImmediateAktiv, 1);
+    `assert(FunktionsCode, 0);
+    `assert(JALBefehl, 0);
+    `assert(RelativerSprung, 0);
+    `assert(LoadBefehl, 0);
+    `assert(StoreBefehl, 0);
+    `assert(UnbedingterSprungBefehl, 1);
+    `assert(BedingterSprung, 0);
+    `assert(AbsoluterSprung, 1);
+    `assert(BranchEquals, 0);
+
+    Instruktion = BEZ;
+    #2000
+    $display("BEZ");
+    `assert(QuellReg1, iq2);
+    `assert(QuellReg2, 0); //egal
+    `assert(ZielReg1, iq1); //egal
+    `assert(IDaten, ImmediateGross10);
+    `assert(ImmediateAktiv, 1);
+    `assert(FunktionsCode, 0);
+    `assert(JALBefehl, 0);
+    `assert(RelativerSprung, 1);
+    `assert(LoadBefehl, 0);
+    `assert(StoreBefehl, 0);
+    `assert(UnbedingterSprungBefehl, 0);
+    `assert(BedingterSprung, 1);
+    `assert(AbsoluterSprung, 0);
+    `assert(BranchEquals, 1);
+
+    Instruktion = BNEZ;
+    #2000
+    $display("BNEZ");
+    `assert(QuellReg1, iq3);
+    `assert(QuellReg2, 0); //egal
+    `assert(ZielReg1, iq2); //egal
+    `assert(IDaten, ImmediateGross20);
+    `assert(ImmediateAktiv, 1);
+    `assert(FunktionsCode, 0);
+    `assert(JALBefehl, 0);
+    `assert(RelativerSprung, 1);
+    `assert(LoadBefehl, 0);
+    `assert(StoreBefehl, 0);
+    `assert(UnbedingterSprungBefehl, 0);
+    `assert(BedingterSprung, 1);
+    `assert(AbsoluterSprung, 0);
+    `assert(BranchEquals, 0);
+
+    Instruktion = JAL;
+    #2000
+    $display("JAL");
+    `assert(QuellReg1, iq4); //egal
+    `assert(QuellReg2, 0); //egal
+    `assert(ZielReg1, iq3); 
+    `assert(IDaten, ImmediateGross10);
+    `assert(ImmediateAktiv, 1);
+    `assert(FunktionsCode, 0);
+    `assert(JALBefehl, 1);
+    `assert(RelativerSprung, 1);
+    `assert(LoadBefehl, 0);
+    `assert(StoreBefehl, 0);
+    `assert(UnbedingterSprungBefehl, 1);
+    `assert(BedingterSprung, 0);
+    `assert(AbsoluterSprung, 0);
+    `assert(BranchEquals, 0);
+
+    Instruktion = JMP;
+    #2000
+    $display("JMP");
+    `assert(QuellReg1, 0); //egal
+    `assert(QuellReg2, 0); //egal
+    `assert(ZielReg1, 0);  //egal
+    `assert(IDaten, ImmediateGross20);
+    `assert(ImmediateAktiv, 1);
+    `assert(FunktionsCode, 0);
+    `assert(JALBefehl, 0);
+    `assert(RelativerSprung, 1);
+    `assert(LoadBefehl, 0);
+    `assert(StoreBefehl, 0);
+    `assert(UnbedingterSprungBefehl, 1);
+    `assert(BedingterSprung, 0);
+    `assert(AbsoluterSprung, 0);
+    `assert(BranchEquals, 0);
+      
    #1000
 
 
@@ -284,83 +438,6 @@ reg[31:0] JMP =   32'b01000000000000000000000000000010;
     forever
       #1000 DekodierSignal = !DekodierSignal;
   end
- task assertSignal;
-  input  [5:0]assertQuellReg1;
-  input  [5:0]shouldQuellReg1;
-  input  [5:0] assertQuellReg2;
-  input  [5:0] shouldQuellReg2;
-  input  [5:0] assertZielReg1;
-  input  [5:0] shouldZielReg1;
-  input  [25:0] assertIDaten;
-  input  [25:0] shouldIDaten;
-  input  assertKleinerImmediateAktiv;
-  input  shouldKleinerImmediateAktiv;
-  input  assertGrosserImmediateAktiv;
-  input  shouldGrosserImmediateAktiv;
-  input  [5:0] assertFunktionsCode;
-  input  [5:0] shouldFunktionsCode;
-  input  assertJALBefehl;
-  input  shouldJALBefehl;
-  input  assertRelativerSprung;
-  input  shouldRelativerSprung;
-  input  assertLoadBefehl;
-  input  shouldLoadBefehl;
-  input  assertStoreBefehl;
-  input  shouldStoreBefehl;
-  input  assertUnbedingterSprungBefehl;
-  input  shouldUnbedingterSprungBefehl;
-  input  assertBedingterSprung;
-  input  shouldBedingterSprung;
-  input  assertAbsoluterSprung;
-  input  shouldAbsoluterSprung;
-  begin
-
-    if(assertQuellReg1 != shouldQuellReg1) begin 
-      $display("QuellReg1 = %b, should be %b!",QuellReg1,shouldQuellReg1);
-    end
-    if(assertQuellReg2 != shouldQuellReg2) begin
-      $display("QuellReg2 =  %b, should be  %b!",QuellReg2,shouldQuellReg2);
-    end
-    if(assertZielReg1 != shouldZielReg1) begin
-      $display("ZielReg1 =  %b, should be  %b!",ZielReg1,shouldZielReg1);
-    end
-    if(assertIDaten != shouldIDaten) begin
-      $display("IDaten =  %b, should be  %b!",IDaten,shouldIDaten);
-    end
-    if(assertKleinerImmediateAktiv != shouldKleinerImmediateAktiv) begin
-      $display("KleinerImmediateAktiv =  %b, should be  %b!",KleinerImmediateAktiv,shouldKleinerImmediateAktiv);
-    end
-    if(assertGrosserImmediateAktiv != shouldGrosserImmediateAktiv) begin
-      $display("GrosserImmediateAktiv =  %b, should be  %b!",GrosserImmediateAktiv,shouldGrosserImmediateAktiv);
-    end
-    if(assertFunktionsCode != shouldFunktionsCode) begin
-      $display("FunktionsCode =  %b, should be  %b!",FunktionsCode,shouldFunktionsCode);
-    end
-    if(assertJALBefehl != shouldJALBefehl) begin
-      $display("JALBefehl =  %b, should be  %b!",JALBefehl,shouldJALBefehl);
-    end
-    if(assertRelativerSprung != shouldRelativerSprung) begin
-      $display("RelativerSprung =  %b, should be  %b!",RelativerSprung,shouldRelativerSprung);
-    end
-
-    if(assertLoadBefehl != shouldLoadBefehl) begin
-      $display("LoadBefehl =  %b, should be  %b!",LoadBefehl,shouldLoadBefehl);
-    end
-    if(assertStoreBefehl != shouldStoreBefehl) begin
-      $display("QueStoreBefehlllReg1 =  %b, should be  %b!",StoreBefehl,shouldStoreBefehl);
-    end
-    if(assertUnbedingterSprungBefehl != shouldUnbedingterSprungBefehl) begin
-      $display("UnbedingterSprungBefehl =  %b, should be  %b!",UnbedingterSprungBefehl,shouldUnbedingterSprungBefehl);
-    end
-    if(assertBedingterSprung != shouldBedingterSprung) begin
-      $display("BedingterSprungBefehl =  %b, should be  %b!",BedingterSprung,shouldBedingterSprung);
-    end
-    if(assertAbsoluterSprung != shouldAbsoluterSprung) begin
-      $display("AbsoluterSprung =  %b, should be  %b!",AbsoluterSprung,shouldAbsoluterSprung);
-    end  
-
-  end
- endtask
 
 endmodule
 
