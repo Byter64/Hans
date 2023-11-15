@@ -77,10 +77,10 @@ wire[31:0] AluDaten1;
 wire[31:0] QuellDaten1;
 wire[31:0] QuellDaten2;
 
-//███████████████████████████████
-//████Signale von Nullpruefer████
-//███████████████████████████████
-wire Sprungbedingung;
+//█████████████████████████████████████
+//████Signale von Bedingungspruefer████
+//█████████████████████████████████████
+wire IstBedingungErfuellt;
 
 //█████████████████████████████
 //████Signale von Steuerung████
@@ -165,9 +165,10 @@ MultiplexerAluDaten2 MulAluDaten2(
     .Daten1(AluDaten1)
 );
 
-NullPruefer NullPruefer(
+Bedingungspruefer Bedingungspruefer(
     .Eingang(QuellDaten1),
-    .Ergebnis(Sprungbedingung)
+    .GleichNullPruefen(Sprungbedingung)
+    .Ergebnis(IstBedingungErfuellt)
 );
 
 Steuerung Steuerung(
@@ -176,7 +177,7 @@ Steuerung Steuerung(
     .JALBefehl(JALBefehl),
     .UnbedingterSprungBefehl(UnbedingterSprungBefehl),
     .BedingterSprungBefehl(BedingterSprungBefehl),
-    .Bedingung(Sprungbedingung),
+    .Bedingung(IstBedingungErfuellt),
     .BefehlGeladen(InstruktionGeladen),
     .DatenGeladen(DatenGeladen),
     .DatenGespeichert(DatenGespeichert),

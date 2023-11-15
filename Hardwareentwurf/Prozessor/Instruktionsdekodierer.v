@@ -49,14 +49,14 @@ assign GrosserImmediate = AktuellerBefehl[25:0];
 assign GleitkommaBefehl = AktuellerBefehl[3:0];
 
 //wichtige Befehle die einzeln behandelt werden muessen
-localparam[5:0] LoadCode   = 6'b101000;
-localparam[5:0] LoadSCode  = 6'b101001;
-localparam[5:0] StoreCode  = 6'b101010;
-localparam[5:0] StoreSCode = 6'b101011;
-localparam[5:0] JregCode   = 6'b101100;
-localparam[5:0] BezCode    = 6'b101101;
-localparam[5:0] BNezCode   = 6'b101110;
-localparam[5:0] JALCode    = 6'b101111;
+localparam[5:0] LoadCode   = 6'b111000;
+localparam[5:0] LoadSCode  = 6'b111001;
+localparam[5:0] StoreCode  = 6'b111010;
+localparam[5:0] StoreSCode = 6'b111011;
+localparam[5:0] JregCode   = 6'b111100;
+localparam[5:0] BezCode    = 6'b111101;
+localparam[5:0] BNezCode   = 6'b111110;
+localparam[5:0] JALCode    = 6'b111111;
 localparam[5:0] JmpCode    = 6'b010000;
 
 //wichtige Formate die behandelt werden muessen

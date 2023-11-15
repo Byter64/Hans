@@ -2,7 +2,7 @@
 // Fri, 17 Mar 2023 20:18:27 GMT
 
 // Testbench template
-`include "../NullPruefer.v"
+`include "../Bedingungspruefer.v"
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns
@@ -23,7 +23,7 @@ module main_tb
  wire Ergebnis;
  
  // Module instance
- NullPruefer main (
+ Bedingungspruefer main (
   .Eingang(Eingang),
   .Ergebnis(Ergebnis)
  );
