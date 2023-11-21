@@ -58,11 +58,11 @@ assign ProzessorLesDaten = memory[{index, offset}];
 assign ProzessorDatenGelesen = current_state[5] && ProzessorLesen;
 assign ProzessorDatenGeschrieben = current_state[5] && ProzessorSchreiben;
 
-assign RAMSchreiben = current_state[1];
-assign RAMLesen = current_state[3];
-assign RAMAdresse = (current_state[1] || current_state[2]) ? {tags[index], index, current_ram_offset} :
-                    (current_state[3] || current_state[4]) ? {tag, index, current_ram_offset} : 0;
-assign RAMSchreibDaten = (current_state[1] || current_state[2]) ? memory[{index, current_ram_offset}] : 0;
+assign RAMSchreiben = current_state[2];
+assign RAMLesen = current_state[4];
+assign RAMAdresse = current_state[2] ? {tags[index], index, current_ram_offset} :
+                    current_state[4] ? {tag, index, current_ram_offset} : 0;
+assign RAMSchreibDaten = current_state[2] ? memory[{index, current_ram_offset}] : 0;
 
 assign next_ram_offset = ((current_state[2] && RAMDatenGeschrieben) || (current_state[4] && RAMDatenGelesen)) ? current_ram_offset + 1 : current_ram_offset;
 
@@ -72,12 +72,12 @@ always @* begin
     IDLE:
         if (ProzessorLesen || ProzessorSchreiben)
             if (~valid[index])
-                next_state = READ_START;
+                next_state = READ;
             else if (tag ~= tags[index])
                 if (modified[index])
-                    next_state = WRITE_START;
+                    next_state = WRITE;
                 else
-                    next_state = READ_START;
+                    next_state = READ;
             else
                 next_state = RETURN;
         else
@@ -87,7 +87,7 @@ always @* begin
     WRITE:
         if (RAMDatenGeschrieben)
             if (next_ram_offset == 0)
-                next_state = READ_START;
+                next_state = READ;
             else
                 next_state = WRITE_START;
         else
