@@ -27,19 +27,19 @@ module Cache #(
 );
 
 localparam BLOCKNUMBITS = CACHESIZEBITS - BLOCKSIZEBITS;
-localparam TAGSIZEBITS = 32 - CACHESIZEBITS;\
+localparam TAGSIZEBITS = 32 - CACHESIZEBITS;
 
 localparam IDLE = 6'b000001;
 localparam WRITE_START = 6'b000010;
-localparam WRITE = 6'b000100
+localparam WRITE = 6'b000100;
 localparam READ_START = 6'b001000;
 localparam READ = 6'b010000;
 localparam RETURN = 6'b100000;
 
 reg [31 : 0] memory [2**CACHESIZEBITS-1 : 0];
 reg [TAGSIZEBITS-1 : 0] tags [2**BLOCKNUMBITS-1 : 0]; //adressed with the index, holds the tag
-reg valid [2**BLOCKNUMBITS-1 : 0];
-reg modified [2**BLOCKNUMBITS-1 : 0];
+reg [2**BLOCKNUMBITS-1 : 0] valid;
+reg [2**BLOCKNUMBITS-1 : 0] modified;
 
 reg [5 : 0] current_state;
 reg [5 : 0] next_state;
@@ -73,7 +73,7 @@ always @* begin
         if (ProzessorLesen || ProzessorSchreiben)
             if (~valid[index])
                 next_state = READ;
-            else if (tag ~= tags[index])
+            else if (tag != tags[index])
                 if (modified[index])
                     next_state = WRITE;
                 else
@@ -124,7 +124,7 @@ always @(posedge Clock) begin
             end
         end
 
-        if (current_state[5] && ProzessorSchreiben) begin
+        if (next_state[5] && ProzessorSchreiben) begin
             memory[{index, offset}] = ProzessorSchreibDaten;
             modified[index] = 1;
         end
