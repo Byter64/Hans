@@ -22,7 +22,11 @@ localparam Sra = 6'b000111;
 localparam Ce =  6'b001000;
 localparam Cne = 6'b001001;
 localparam Cg =  6'b001010;
-localparam Cge = 6'b001011;
+localparam Cl =  6'b001011;
+localparam Cgu = 6'b001100;
+localparam Clu = 6'b001101;
+localparam IToF =6'b001110;
+localparam UIToF=6'b001111;
 
 //Logik
 localparam Not = 6'b010000;
@@ -42,7 +46,9 @@ localparam Divs = 6'b100100;
 localparam Ces =  6'b101000;
 localparam Cnes = 6'b101001;
 localparam Cgs =  6'b101010;
-localparam Cges = 6'b101011;
+localparam Cls =  6'b101011;
+localparam FToI = 6'b101110;
+localparam FToUI =6'b101111;
 
  // Simulation time: 100ns (10 * 10ns)
  parameter DURATION = 10;
@@ -238,33 +244,115 @@ initial begin
         $display("Größer funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
     
 
-    //Cge-Befehl testen
+    //Cl-Befehl testen
     Daten1 = 32'b01001000000110010101010101010101;
     Daten2 = 32'b00000000000000000000000000000111;
-    FunktionsCode = Cge;
-    StartSignal = 0;
-    StartSignal = 1;
-    #200
-    if(Ergebnis != 32'b00000000000000000000000000000001)
-        $display("Größergleich funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
-    
-    Daten1 = 32'b00000000000000000000000000000111;
-    Daten2 = 32'b01001000000110010101010101010101;
-    FunktionsCode = Cge;
+    FunktionsCode = Cl;
     StartSignal = 0;
     StartSignal = 1;
     #200
     if(Ergebnis != 32'b00000000000000000000000000000000)
-        $display("Größergleich funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
-
-    Daten1 = 32'b11001000000110010101010101010101;
-    Daten2 = 32'b11001000000110010101010101010101;
-    FunktionsCode = Cge;
+        $display("Kleiner funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
+    
+    Daten1 = 32'b00000000000000000000000000000111;
+    Daten2 = 32'b01001000000110010101010101010101;
+    FunktionsCode = Cl;
     StartSignal = 0;
     StartSignal = 1;
     #200
     if(Ergebnis != 32'b00000000000000000000000000000001)
-        $display("Größergleich funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
+        $display("Kleiner funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
+
+    Daten1 = 32'b11001000000110010101010101010101;
+    Daten2 = 32'b11001000000110010101010101010101;
+    FunktionsCode = Cl;
+    StartSignal = 0;
+    StartSignal = 1;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000000)
+        $display("Kleiner funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
+    
+
+    //Cgu-Befehl testen
+    Daten1 = 32'b11001000000110010101010101010101;
+    Daten2 = 32'b00000000000000000000000000000111;
+    FunktionsCode = Cgu;
+    StartSignal = 0;
+    StartSignal = 1;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000001)
+        $display("Größer unsigned funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
+    
+    Daten1 = 32'b00000000000000000000000000000111;
+    Daten2 = 32'b11001000000110010101010101010101;
+    FunktionsCode = Cgu;
+    StartSignal = 0;
+    StartSignal = 1;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000000)
+        $display("Größer unsigned funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
+    
+
+    Daten1 = 32'b11001000000110010101010101010101;
+    Daten2 = 32'b11001000000110010101010101010101;
+    FunktionsCode = Cgu;
+    StartSignal = 0;
+    StartSignal = 1;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000000)
+        $display("Größer unsigned funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
+    
+
+    //Clu-Befehl testen
+    Daten1 = 32'b11001000000110010101010101010101;
+    Daten2 = 32'b00000000000000000000000000000111;
+    FunktionsCode = Clu;
+    StartSignal = 0;
+    StartSignal = 1;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000000)
+        $display("Kleiner unsigned funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
+    
+    Daten1 = 32'b00000000000000000000000000000111;
+    Daten2 = 32'b11001000000110010101010101010101;
+    FunktionsCode = Clu;
+    StartSignal = 0;
+    StartSignal = 1;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000001)
+        $display("Kleiner unsigned funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
+
+    Daten1 = 32'b11001000000110010101010101010101;
+    Daten2 = 32'b11001000000110010101010101010101;
+    FunktionsCode = Clu;
+    StartSignal = 0;
+    StartSignal = 1;
+    #200
+    if(Ergebnis != 32'b00000000000000000000000000000000)
+        $display("Kleiner unsigned funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
+    
+
+    //IToF testen
+    Daten1 = 32'b11001000000110010101010101010101; //-937,863,851
+    FunktionsCode = IToF;
+    StartSignal = 0;
+    StartSignal = 1;
+    #1200
+    //Erwartet: -937863872
+    if(Ergebnis != 32'b11001110010111111001101010101011)
+        $display("Int zu Float funktioniert nicht: \n Zahl1:   %d \n \n Ergebnis: %f \n Erwartet: %f\n", Daten1, Ergebnis, 32'b11001110010111111001101010101011);
+    
+
+    //UIToF testen
+    Daten1 = 32'b11001000000110010101010101010101; //3,357,103,445
+    FunktionsCode = UIToF;
+    StartSignal = 0;
+    StartSignal = 1;
+    #1200
+    //Erwartet: 3357103360
+    if(Ergebnis != 32'b01001111010010000001100101010101)
+        $display("Unsigned int zu Float funktioniert nicht: \n Zahl1:   %d \n Ergebnis: %f \n Erwartet: %f\n", Daten1, Ergebnis, 32'b01001111010010000001100101010101);
+    
     
     //Not-Befehl testen
     Daten1 = 32'b01001000000110010101010101010101;
@@ -501,34 +589,55 @@ initial begin
         $display("Float Größer funktioniert nicht: \n Zahl1:   %f \n Zahl2:   %f \n Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
     
 
-    //Cge.s-Befehl testen
+    //Cl.s-Befehl testen
     Daten1 = 32'b01000110100000101011110011100110; //16734.44921875
     Daten2 = 32'b11000001101110000000000000000000; //-23
-    FunktionsCode = Cges;
-    StartSignal = 0;
-    StartSignal = 1;
-    #1400
-    if(Ergebnis != 32'b00000000000000000000000000000001)
-        $display("Float Größergleich funktioniert nicht: \n Zahl1:   %f \n Zahl2:   %f \n Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
-    
-    Daten1 = 32'b01000110100000101011110011100110; //16734.44921875
-    Daten2 = 32'b11000001101110000000000000000000; //-23
-    FunktionsCode = Cges;
+    FunktionsCode = Cls;
     StartSignal = 0;
     StartSignal = 1;
     #1400
     if(Ergebnis != 32'b00000000000000000000000000000000)
-        $display("Float Größergleich funktioniert nicht: \n Zahl1:   %f \n Zahl2:   %f \n Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
-
-    Daten1 = 32'b01000110100000101011110011100110; //16734.44921875
-    Daten2 = 32'b11000001101110000000000000000000; //-23
-    FunktionsCode = Cges;
+        $display("Float Kleiner funktioniert nicht: \n Zahl1:   %f \n Zahl2:   %f \n Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
+    
+    Daten1 = 32'b11000001101110000000000000000000; //-23
+    Daten2 = 32'b01000110100000101011110011100110; //16734.44921875
+    FunktionsCode = Cls;
     StartSignal = 0;
     StartSignal = 1;
     #1400
     if(Ergebnis != 32'b00000000000000000000000000000001)
-        $display("Float Größergleich funktioniert nicht: \n Zahl1:   %f \n Zahl2:   %f \n Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
+        $display("Float Kleiner funktioniert nicht: \n Zahl1:   %f \n Zahl2:   %f \n Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
+
+    Daten1 = 32'b01000110100000101011110011100110; //16734.44921875
+    Daten2 = 32'b01000110100000101011110011100110; //16734.44921875
+    FunktionsCode = Cls;
+    StartSignal = 0;
+    StartSignal = 1;
+    #1400
+    if(Ergebnis != 32'b00000000000000000000000000000000)
+        $display("Float Kleiner funktioniert nicht: \n Zahl1:   %f \n Zahl2:   %f \n Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
     
+
+    //FToI-Befehl testen
+    Daten1 = 32'b11000110100000101011110011100110; //-16734.44921875
+    FunktionsCode = FToI;
+    StartSignal = 0;
+    StartSignal = 1;
+    #400
+    //Erwartet: -16734
+    if(Ergebnis != 32'b11111111111111111011111010100010)
+        $display("Float zu Int funktioniert nicht: \n Zahl1:   %f \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Ergebnis, $signed(32'b11111111111111111011111010100010));
+    
+
+    //FToI-Befehl testen
+    Daten1 = 32'b11000110100000101011110011100110; //16734.44921875
+    FunktionsCode = FToUI;
+    StartSignal = 0;
+    StartSignal = 1;
+    #600
+    //Erwartet: 16734
+    if(Ergebnis != 32'b00000000000000000100000101011110)
+        $display("Float zu Unsigned Int funktioniert nicht: \n Zahl1:   %f \n \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Ergebnis, 32'b00000000000000000100000101011110);
 
 
     #200 $display("End of simulation");

@@ -19,7 +19,7 @@ module main_tb
  
  // Input/Output
  reg [31:0] RegisterDaten2;
- reg [25:0] Immediate;
+ reg [31:0] Immediate;
  reg ImmediateAktiv;
  wire [31:0] Daten2;
  
@@ -36,7 +36,7 @@ module main_tb
     initial begin
         $dumpvars(0, main_tb);
         RegisterDaten2 = 32'b00010010000000110000010000001100;
-        Immediate = 26'b00011001001100001110010110;
+        Immediate = 32'b00011001001100001110010110;
         ImmediateAktiv = 0;
         $display("Start of simulation");
         #100
@@ -45,19 +45,19 @@ module main_tb
 
         #100
         RegisterDaten2 = 32'b00010010000000110000010000001100;
-        Immediate = 26'b10011001001100001110010110;
+        Immediate = 32'b10011001001100001110010110;
         ImmediateAktiv = 1;
         #100 
         if(Daten2 != 32'b11111110011001001100001110010110)
             $display("Wert in Daten2 ist ungleich Immediate[25:0]: \n Immediate: %d \n RegisterDaten2: %d", Immediate, RegisterDaten2);
 
         #100
-        Immediate = 26'b10000000001100001110010110;
+        Immediate = 32'b10000000001100001110010110;
         #100
         if(Daten2 != 32'b11111110000000001100001110010110)
             $display("Wert in Daten2 ist ungleich Immediate[25:0]: \n Immediate: %d \n RegisterDaten2: %d", Immediate, RegisterDaten2);
         #100
-        Immediate = 26'b00000000001100001110010110;
+        Immediate = 32'b00000000001100001110010110;
         #100
         if(Daten2 != 32'b00000000000000001100001110010110)
             $display("Wert in Daten2 ist ungleich Immediate[25:0]: \n Immediate: %d \n RegisterDaten2: %d", Immediate, RegisterDaten2);

@@ -38,7 +38,7 @@ assign DatenAdresse = ALUErgebnis;
 wire[5:0] QuellRegister1; 
 wire[5:0] QuellRegister2; 
 wire[5:0] ZielRegister;   
-wire[25:0] IDaten;       
+wire[31:0] IDaten;       
 wire ImmediateAktiv;   
 wire[5:0] FunktionsCode;  
 wire JALBefehl;              

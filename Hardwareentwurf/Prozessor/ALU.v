@@ -6,7 +6,12 @@
 `include "../ALUModule/verilog-math-master_FLOAT_/components/div.v"
 `include "../ALUModule/verilog-math-master_FLOAT_/components/eq.v"
 `include "../ALUModule/verilog-math-master_FLOAT_/components/gt.v"
-`include "../ALUModule/verilog-math-master_FLOAT_/components/ge.v"
+`include "../ALUModule/verilog-math-master_FLOAT_/components/lt.v"
+`include "../ALUModule/verilog-math-master_FLOAT_/components/int_to_single.v"
+`include "../ALUModule/verilog-math-master_FLOAT_/components/unsigned_int_to_single.v"
+`include "../ALUModule/verilog-math-master_FLOAT_/components/single_to_int.v"
+`include "../ALUModule/verilog-math-master_FLOAT_/components/single_to_unsigned_int.v"
+
 
 module ALU (
     input[31:0] Daten1,
@@ -27,13 +32,17 @@ reg[7:0] TakteBisFertig = 0;
 wire[31:0] EinfacheRechnungErgebnis;
 wire[31:0] DivisionErgebnis; //Div und Mod
 wire[31:0] WurzelErgebnis;
+wire[31:0] IntZuFloatErgebnis;
+wire[31:0] UnsignedIntZuFloatErgebnis;
 wire[31:0] AdditionFloatErgebnis;
 wire[31:0] MultiplikationFloatErgebnis;
 wire[31:0] WurzelFloatErgebnis;
 wire[31:0] DivisionFloatErgebnis;
+wire[31:0] FloatZuIntErgebnis;
+wire[31:0] FloatZuUnsignedIntErgebnis;
 wire FloatGleichheitErgebnis;
 wire FloatGroesserErgebnis;
-wire FloatGroessergleichErgebnis;
+wire FloatKleinerErgebnis;
 wire WurzelFertig;
 wire DivisionFertig;
 wire DivisionInArbeit;
@@ -51,7 +60,11 @@ localparam RechtsSchiebenArithm=6'b000111;
 localparam Gleichheit =         6'b001000;
 localparam Ungleichheit =       6'b001001;
 localparam Groesser =           6'b001010;
-localparam Groessergleich =     6'b001011;
+localparam Kleiner =            6'b001011;
+localparam GroesserUnsigned =   6'b001100;
+localparam KleinerUnsigned =    6'b001101;
+localparam IntZuFloat =         6'b001110;
+localparam UnsignedIntZuFloat = 6'b001111;
 
 //Logik
 localparam Verneinung =         6'b010000;
@@ -71,7 +84,9 @@ localparam FloatDivision =        6'b100100;
 localparam FloatGleichheit =      6'b101000;
 localparam FloatUngleichheit =    6'b101001;
 localparam FloatGroesser =        6'b101010;
-localparam FloatGroessergleich =  6'b101011;
+localparam FloatKleiner =         6'b101011;
+localparam FloatZuInt =           6'b101110;
+localparam FloatZuUnsignedInt =   6'b101111;
 
 Goldschmidt_Integer_Divider_Parallel #(
     .P_GDIV_FACTORS_MSB(31), 
@@ -97,6 +112,18 @@ Intsqrt QuadratModul(
     .Num_in(Radikand),
     .Done(WurzelFertig),
     .Sq_root(WurzelErgebnis)
+);
+
+int_to_single IntZuFloatMacher(
+    .clk(Clock),
+    .int_to_single_a(Daten1),
+    .int_to_single_z(IntZuFloatErgebnis)
+);
+
+unsigned_int_to_single UnsignedIntZuFloatMacher(
+    .clk(Clock),
+    .unsigned_int_to_single_a(Daten1),
+    .unsigned_int_to_single_z(UnsignedIntZuFloatErgebnis)
 );
 
 add FloatAddierer(
@@ -140,11 +167,23 @@ gt FloatVergleicherGroesser(
     .gt_z(FloatGroesserErgebnis)
 );
 
-ge FloatVergleicherGroesserGleich(
+lt FloatVergleicherKleiner(
     .clk(Clock),
-    .ge_a(Daten1),
-    .ge_b(Daten2),
-    .ge_z(FloatGroesserGleichErgebnis)
+    .lt_a(Daten1),
+    .lt_b(Daten2),
+    .lt_z(FloatKleinerErgebnis)
+);
+
+single_to_int FloatZuIntMacher(
+    .clk(Clock),
+    .single_to_int_a(Daten1),
+    .single_to_int_z(FloatZuIntErgebnis)
+);
+
+single_to_unsigned_int FloatZuUnsignedIntMacher(
+    .clk(Clock),
+    .single_to_unsigned_int_a(Daten1),
+    .single_to_unsigned_int_z(FloatZuUnsignedIntErgebnis)
 );
 
 assign EinfacheRechnungErgebnis =   FunktionsCode[5:0] == IntAddition        ? $signed(Daten1) + $signed(Daten2) :
@@ -154,8 +193,10 @@ assign EinfacheRechnungErgebnis =   FunktionsCode[5:0] == IntAddition        ? $
                                     FunktionsCode[5:0] == RechtsSchiebenArithm? $signed(Daten1) >>> $signed(Daten2) :
                                     FunktionsCode[5:0] == Gleichheit         ? $signed({31'b0, Daten1 == Daten2})  : 
                                     FunktionsCode[5:0] == Ungleichheit       ? $signed({31'b0, Daten1 != Daten2})  :
-                                    FunktionsCode[5:0] == Groesser             ? $signed({31'b0, Daten1 > Daten2})  :     
-                                    FunktionsCode[5:0] == Groessergleich       ? $signed({31'b0, Daten1 >= Daten2})  :
+                                    FunktionsCode[5:0] == Groesser             ? $signed({31'b0, $signed(Daten1) > $signed(Daten2)})  :     
+                                    FunktionsCode[5:0] == Kleiner              ? $signed({31'b0, $signed(Daten1) < $signed(Daten2)})  :
+                                    FunktionsCode[5:0] == GroesserUnsigned? $signed({31'b0, Daten1 > Daten2}) : 
+                                    FunktionsCode[5:0] == KleinerUnsigned? $signed({31'b0, Daten1 < Daten2}) : 
                                     FunktionsCode[5:0] == Verneinung         ? $signed(~Daten1) : 
                                     FunktionsCode[5:0] == Und                ? $signed(Daten1 & Daten2) :        
                                     FunktionsCode[5:0] == Oder               ? $signed(Daten1 | Daten2) :       
@@ -167,6 +208,8 @@ assign EinfacheRechnungErgebnis =   FunktionsCode[5:0] == IntAddition        ? $
 assign Ergebnis =   FunktionsCode[5:0] == IntQuadratwurzel ? WurzelErgebnis :
                     FunktionsCode[5:0] == IntDivision ? DivisionErgebnis :
                     FunktionsCode[5:0] == IntModulo ? DivisionErgebnis :
+                    FunktionsCode[5:0] == IntZuFloat ? IntZuFloatErgebnis :
+                    FunktionsCode[5:0] == UnsignedIntZuFloat ? UnsignedIntZuFloatErgebnis :
                     FunktionsCode[5:0] == FloatAddition ? AdditionFloatErgebnis :
                     FunktionsCode[5:0] == FloatSubtraktion ? AdditionFloatErgebnis :
                     FunktionsCode[5:0] == FloatMultiplikation ? MultiplikationFloatErgebnis :
@@ -175,7 +218,9 @@ assign Ergebnis =   FunktionsCode[5:0] == IntQuadratwurzel ? WurzelErgebnis :
                     FunktionsCode[5:0] == FloatGleichheit ? {31'b0, FloatGleichheitErgebnis} :
                     FunktionsCode[5:0] == FloatUngleichheit ? {31'b0, ~FloatGleichheitErgebnis} :
                     FunktionsCode[5:0] == FloatGroesser ? {31'b0, FloatGroesserErgebnis} :
-                    FunktionsCode[5:0] == FloatGroessergleich ? {31'b0, FloatGroessergleichErgebnis} :
+                    FunktionsCode[5:0] == FloatKleiner ? {31'b0, FloatKleinerErgebnis} :
+                    FunktionsCode[5:0] == FloatZuInt ? {31'b0, FloatZuIntErgebnis} :
+                    FunktionsCode[5:0] == FloatZuUnsignedInt ? {31'b0, FloatZuUnsignedIntErgebnis} :
                                                         EinfacheRechnungErgebnis;
 
 assign HatFertigGerechnet = TakteBisFertig <= 0;
@@ -191,8 +236,8 @@ always @(posedge Clock) begin
             TakteBisFertig = 0;
         end
     else if(StartSignal) begin
-            DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
-            DivStb <= 0;
+        DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
+        DivStb <= 0;
         case (FunktionsCode[5:0])
         default : begin
             TakteBisFertig <= 1;
@@ -216,7 +261,12 @@ always @(posedge Clock) begin
             DivStb <= 1;
             TakteBisFertig <= 9;
         end
-
+        IntZuFloat : begin
+            TakteBisFertig <= 5;
+        end
+        UnsignedIntZuFloat : begin
+            TakteBisFertig <= 5;
+        end
         //Float Arithmetik
         //Add.s
         6'b100000: begin
@@ -235,28 +285,22 @@ always @(posedge Clock) begin
         end
         //Sqrt.s
         6'b100011    : begin 
-            //Radikand <= Daten1; wenn CPU ohne diese Zeile funktioniert, bitte diese Zeile loeschen
             TakteBisFertig <= 10;
         end
         //Div.s
         6'b100100    : begin 
             TakteBisFertig <= 32;
         end
-        //Ce.s
-        6'b101000	: begin
-            TakteBisFertig <= 1;
-        end
-        //Cne.s
-        6'b101001	: begin
-            TakteBisFertig <= 1;
-        end
         //Cg.s
         6'b101010	: begin
             TakteBisFertig <= 7;
         end
-        //Cge.s
+        //Cl.s
         6'b101011	: begin
             TakteBisFertig <= 7;
+        end
+        FloatZuInt : begin
+            TakteBisFertig <= 2;
         end
         endcase
     end

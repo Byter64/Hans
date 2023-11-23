@@ -7,7 +7,7 @@ module Instruktionsdekodierer (
     output[5:0] QuellRegister1,
     output[5:0] QuellRegister2,
     output[5:0] ZielRegister,
-    output[25:0] IDaten,
+    output[31:0] IDaten,
     output ImmediateAktiv,
     output[5:0] FunktionsCode,
     output JALBefehl,
@@ -58,6 +58,7 @@ localparam[5:0] BezCode    = 6'b111101;
 localparam[5:0] BNezCode   = 6'b111110;
 localparam[5:0] JALCode    = 6'b111111;
 localparam[5:0] JmpCode    = 6'b010000;
+localparam[5:0] AddisCode  = 6'b110000;
 
 //wichtige Formate die behandelt werden muessen
 localparam[1:0] RegisterFormat = 2'b00;
@@ -89,14 +90,15 @@ assign ZielRegister =           (Opcode==LoadSCode || Opcode == StoreSCode || ((
                                 (((Format == RegisterFormat) || (Format[1] == ImmediateFormat)) ? {1'b0, ZRegister}:
                                 6'b0));
 
-assign IDaten =                 (Format == JumpFormat) ? GrosserImmediate :
-                                (Format[1] == ImmediateFormat) ? {{10{KleinerImmediate[15]}}, KleinerImmediate} :
-                                26'b0;
+assign IDaten =                 (Format == JumpFormat) ? {6'b0, GrosserImmediate} :
+                                (Opcode == AddisCode) ? {KleinerImmediate, 16'b0} : 
+                                (Format[1] == ImmediateFormat) ? {{16{KleinerImmediate[15]}}, KleinerImmediate} :
+                                32'b0;
 
 assign ImmediateAktiv =         (Format == JumpFormat || Format[1] == ImmediateFormat);
                             
-assign FunktionsCode =          (Format == RegisterFormat) ? Funktion:
-                                ((Format == JumpFormat||(Opcode >= LoadCode && Opcode <= JALCode)) ? 6'b0:
+assign FunktionsCode =          (Format == RegisterFormat) ? Funktion :
+                                ((Opcode == AddisCode || Format == JumpFormat||(Opcode >= LoadCode && Opcode <= JALCode)) ? 6'b0:
                                 {1'b0,FunktionAnfang});
 
 assign JALBefehl =              (Opcode == JALCode);
