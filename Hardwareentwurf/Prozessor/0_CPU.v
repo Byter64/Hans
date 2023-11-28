@@ -1,13 +1,13 @@
-`include "ALU.v"
-`include "Instruktionsdekodierer.v"
-`include "MultiplexerAluDaten.v"
-`include "MultiplexerAluDaten2.v"
-`include "MultiplexerNeuerPC.v"
-`include "MultiplexerZielDaten.v"
-`include "NullPruefer.v"
-`include "Programmzahler.v"
-`include "Register.v"
-`include "Steuerung.v"
+`include "../Prozessor/ALU.v"
+`include "../Prozessor/Instruktionsdekodierer.v"
+`include "../Prozessor/MultiplexerAluDaten.v"
+`include "../Prozessor/MultiplexerAluDaten2.v"
+`include "../Prozessor/MultiplexerNeuerPC.v"
+`include "../Prozessor/MultiplexerZielDaten.v"
+`include "../Prozessor/Bedingungspruefer.v"
+`include "../Prozessor/Programmzahler.v"
+`include "../Prozessor/Register.v"
+`include "../Prozessor/Steuerung.v"
 
 
 module CPU (
@@ -38,9 +38,8 @@ assign DatenAdresse = ALUErgebnis;
 wire[5:0] QuellRegister1; 
 wire[5:0] QuellRegister2; 
 wire[5:0] ZielRegister;   
-wire[25:0] IDaten;       
-wire KleinerImmediateAktiv;  
-wire GrosserImmediateAktiv;  
+wire[31:0] IDaten;       
+wire ImmediateAktiv;   
 wire[5:0] FunktionsCode;  
 wire JALBefehl;              
 wire RelativerSprungBefehl;               
@@ -49,6 +48,7 @@ wire StoreBefehl;
 wire UnbedingterSprungBefehl;
 wire BedingterSprungBefehl;  
 wire AbsoluterSprung;
+wire Sprungbedingung;
 
 //███████████████████████████████████████
 //████Signale von MultiplexerAluDaten████
@@ -77,10 +77,10 @@ wire[31:0] AluDaten1;
 wire[31:0] QuellDaten1;
 wire[31:0] QuellDaten2;
 
-//███████████████████████████████
-//████Signale von Nullpruefer████
-//███████████████████████████████
-wire Sprungbedingung;
+//█████████████████████████████████████
+//████Signale von Bedingungspruefer████
+//█████████████████████████████████████
+wire IstBedingungErfuellt;
 
 //█████████████████████████████
 //████Signale von Steuerung████
@@ -111,8 +111,7 @@ Instruktionsdekodierer Indek(
     .QuellRegister2(QuellRegister2),
     .ZielRegister(ZielRegister),
     .IDaten(IDaten),
-    .KleinerImmediateAktiv(KleinerImmediateAktiv),
-    .GrosserImmediateAktiv(GrosserImmediateAktiv),
+    .ImmediateAktiv(ImmediateAktiv),
     .FunktionsCode(FunktionsCode),
     .JALBefehl(JALBefehl),
     .RelativerSprung(RelativerSprungBefehl),
@@ -120,7 +119,8 @@ Instruktionsdekodierer Indek(
     .StoreBefehl(StoreBefehl),
     .UnbedingterSprungBefehl(UnbedingterSprungBefehl),
     .BedingterSprungBefehl(BedingterSprungBefehl),
-    .AbsoluterSprung(AbsoluterSprung)
+    .AbsoluterSprung(AbsoluterSprung),
+    .Sprungbedingung(Sprungbedingung)
 );
 
 Register Register(
@@ -138,7 +138,7 @@ Register Register(
 MultiplexerAluDaten MulAluDaten(
     .RegisterDaten2(QuellDaten2),
     .Immediate(IDaten),
-    .ImmediateAktiv(KleinerImmediateAktiv | GrosserImmediateAktiv),
+    .ImmediateAktiv(ImmediateAktiv),
     .Daten2(AluDaten2)
 );
 
@@ -165,9 +165,10 @@ MultiplexerAluDaten2 MulAluDaten2(
     .Daten1(AluDaten1)
 );
 
-NullPruefer NullPruefer(
+Bedingungspruefer Bedingungspruefer(
     .Eingang(QuellDaten1),
-    .Ergebnis(Sprungbedingung)
+    .GleichNullPruefen(Sprungbedingung),
+    .Ergebnis(IstBedingungErfuellt)
 );
 
 Steuerung Steuerung(
@@ -176,7 +177,7 @@ Steuerung Steuerung(
     .JALBefehl(JALBefehl),
     .UnbedingterSprungBefehl(UnbedingterSprungBefehl),
     .BedingterSprungBefehl(BedingterSprungBefehl),
-    .Bedingung(Sprungbedingung),
+    .Bedingung(IstBedingungErfuellt),
     .BefehlGeladen(InstruktionGeladen),
     .DatenGeladen(DatenGeladen),
     .DatenGespeichert(DatenGespeichert),

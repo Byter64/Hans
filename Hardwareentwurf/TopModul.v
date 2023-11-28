@@ -1,6 +1,8 @@
-`include "Prozessor/0_CPU.v"
-`include "Prozessor/Testbenches/1_RAM.v"
-`include "ecp5pll/hdl/sv/ecp5pll.sv"
+`include "../Prozessor/0_CPU.v"
+`include "../Prozessor/Testbenches/1_RAM.v"
+`ifndef IVERILOG
+`include "../ecp5pll/hdl/sv/ecp5pll.sv"
+`endif 
 
 module Top
 (
@@ -49,7 +51,35 @@ assign InstruktionRAMAdresseJetztAberWirklich = InstruktionInitialisierung == 1 
 //InstruktionRAM fuellen
 reg[31:0] InstruktionRAMEingang = 0;
 reg BeschreibeInstruktionRAM = 0;
-  
+
+`ifdef  IVERILOG
+reg[3:0] __SimulationsClocks;
+
+assign clocks = __SimulationsClocks;
+
+initial begin
+    __SimulationsClocks = 4'b0;
+end
+
+always begin //Tatsächliche Taktrate: 41,66666667 MHz
+   #12 __SimulationsClocks[0] = ~__SimulationsClocks[0]; 
+end
+
+always begin //Tatsächliche Taktrate: 50 MHz
+   #10 __SimulationsClocks[1] = ~__SimulationsClocks[1]; 
+end
+
+
+always begin //Tatsächliche Taktrate: 62,5 MHz MHz
+   #10 __SimulationsClocks[2] = ~__SimulationsClocks[2]; 
+end
+
+
+always begin //Tatsächliche Taktrate: 5 MHz
+   #10 __SimulationsClocks[3] = ~__SimulationsClocks[3]; 
+end
+
+`else
 ecp5pll
 #(
       .in_hz(25000000),
@@ -63,6 +93,8 @@ ecp5pll_inst
     .clk_i(clk_25mhz),
     .clk_o(clocks)
 );
+`endif
+
 
  // Module instance
  CPU CPU (
