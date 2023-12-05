@@ -1,7 +1,8 @@
-`include "../Prozessor/0_CPU.v"
-`include "../Prozessor/Testbenches/1_RAM.v"
+`include "Prozessor/0_CPU.v"
+`include "Cache/Cache.v"
+`include "Prozessor/Testbenches/1_RAM.v"
 `ifndef IVERILOG
-`include "../ecp5pll/hdl/sv/ecp5pll.sv"
+`include "ecp5pll/hdl/sv/ecp5pll.sv"
 `endif 
 
 module Top
@@ -36,6 +37,21 @@ wire RAMSchreibeDaten;
 wire[31:0] RAMDatenRaus;
 wire CPUDatenGeladen;
 wire CPUDatenGespeichert;
+
+wire LeseInstruktionRAM;
+wire BeschreibeInstruktionRAMRAM;
+wire [31:0] InstruktionRAMEingangRAM;
+wire [31:0] InstruktionRAMAdresseJetztAberWirklichRAM;
+wire [31:0] InstruktionRAM;
+wire InstruktionGeladenRAM;
+
+wire RAMLeseDatenRAM;
+wire RAMSchreibeDatenRAM;
+wire [31:0] DatenRausRAM;
+wire [31:0] DatenAdresseRAM[7:0];
+wire [31:0] DatenReinRAM;
+wire DatenGeladenRAM;
+wire DatenGespeichertRAM;
 
 assign RAMLeseDaten =       DatenAdresse[31] == 0 ? LeseDaten : 0;
 assign RAMSchreibeDaten =   DatenAdresse[31] == 0 ? SchreibeDaten : 0;
@@ -114,34 +130,80 @@ ecp5pll_inst
     .LeseInstruktion(LeseInstruktion)
  );
 
+Cache #(
+    .CACHESIZEBITS(15),
+    .BLOCKSIZEBITS(2)
+) InstruktionCache (
+    .ProzessorSchreiben(BeschreibeInstruktionRAM),
+    .ProzessorLesen(LeseInstruktion),
+    .ProzessorAdresse(InstruktionRAMAdresseJetztAberWirklich),
+    .ProzessorSchreibDaten(InstruktionRAMEingang),
+    .RAMLesDaten(InstruktionRAM),
+    .RAMDatenGeschrieben(Zero),
+    .RAMDatenGelesen(InstruktionGeladenRAM),
+    .Clock(Clock),
+    .Reset(Reset),
+
+    .ProzessorLesDaten(Instruktion),
+    .ProzessorDatenGeschrieben(Zero),
+    .ProzessorDatenGelesen(InstruktionGeladen),
+    .RAMSchreiben(BeschreibeInstruktionRAMRAM),
+    .RAMLesen(LeseInstruktionRAM),
+    .RAMAdresse(InstruktionRAMAdresseJetztAberWirklichRAM),
+    .RAMSchreibDaten(InstruktionRAMEingangRAM)
+)
+
 RAM #(
     .WORDSIZE(32),
     .WORDS(256)
 ) InstruktionRAM (
-    .LesenAn(LeseInstruktion),
-    .SchreibenAn(BeschreibeInstruktionRAM),
-    .DatenRein(InstruktionRAMEingang),
-    .Adresse(InstruktionRAMAdresseJetztAberWirklich[7:0]),
+    .LesenAn(LeseInstruktionRAM),
+    .SchreibenAn(BeschreibeInstruktionRAMRAM),
+    .DatenRein(InstruktionRAMEingangRAM),
+    .Adresse(InstruktionRAMAdresseJetztAberWirklichRAM[7:0]),
     .Clock(Clock),
 
-    .DatenRaus(Instruktion),
-    .DatenBereit(InstruktionGeladen),
+    .DatenRaus(InstruktionRAM),
+    .DatenBereit(InstruktionGeladenRAM),
     .DatenGeschrieben(Zero)
 );
+
+Cache #(
+    .CACHESIZEBITS(15),
+    .BLOCKSIZEBITS(2)
+) DatenCache (
+    .ProzessorSchreiben(RAMSchreibeDaten),
+    .ProzessorLesen(RAMLeseDaten),
+    .ProzessorAdresse(DatenAdresse),
+    .ProzessorSchreibDaten(DatenRaus),
+    .RAMLesDaten(DatenReinRAM),
+    .RAMDatenGeschrieben(DatenGespeichertRAM),
+    .RAMDatenGelesen(DatenGeladenRAM),
+    .Clock(Clock),
+    .Reset(Reset),
+
+    .ProzessorLesDaten(DatenRein),
+    .ProzessorDatenGeschrieben(DatenGespeichert),
+    .ProzessorDatenGelesen(DatenGeladen),
+    .RAMSchreiben(RAMSchreibeDatenRAM),
+    .RAMLesen(RAMLeseDatenRAM),
+    .RAMAdresse(DatenAdresseRAM),
+    .RAMSchreibDaten(DatenRausRAM)
+)
 
 RAM #(
     .WORDSIZE(32),
     .WORDS(256)
 ) DatenRAM (
-    .LesenAn(RAMLeseDaten),
-    .SchreibenAn(RAMSchreibeDaten),
-    .DatenRein(DatenRaus),
-    .Adresse(DatenAdresse[7:0]),
+    .LesenAn(RAMLeseDatenRAM),
+    .SchreibenAn(RAMSchreibeDatenRAM),
+    .DatenRein(DatenRausRAM),
+    .Adresse(DatenAdresseRAM[7:0]),
     .Clock(Clock),
 
-    .DatenRaus(DatenRein),
-    .DatenBereit(DatenGeladen),
-    .DatenGeschrieben(DatenGespeichert)
+    .DatenRaus(DatenReinRAM),
+    .DatenBereit(DatenGeladenRAM),
+    .DatenGeschrieben(DatenGespeichertRAM)
 );
 
 integer resetTimer = 10;
