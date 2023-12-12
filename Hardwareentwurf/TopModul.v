@@ -1,8 +1,8 @@
-`include "Prozessor/0_CPU.v"
-`include "Cache/Cache.v"
-`include "Prozessor/Testbenches/1_RAM.v"
+`include "../Prozessor/0_CPU.v"
+`include "../Cache/Cache.v"
+`include "../Prozessor/Testbenches/1_RAM.v"
 `ifndef IVERILOG
-`include "ecp5pll/hdl/sv/ecp5pll.sv"
+`include "../ecp5pll/hdl/sv/ecp5pll.sv"
 `endif 
 
 module Top

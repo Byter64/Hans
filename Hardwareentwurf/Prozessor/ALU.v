@@ -1,5 +1,5 @@
 `include "../Prozessor/ALUModule/Goldschmidt_Integer_Divider_Parallel-main/source/Goldschmidt_Integer_Divider_Parallel.v"
-`include "../Prozessor/ALUModule/intsqrt.v"
+`include "../Prozessor/ALUModule/Intsqrt.v"
 `include "../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/add.v"
 `include "../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/mul.v"
 `include "../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/sqrt.v"
