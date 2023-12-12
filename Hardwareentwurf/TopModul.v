@@ -42,13 +42,13 @@ wire LeseInstruktionRAM;
 wire BeschreibeInstruktionRAMRAM;
 wire [31:0] InstruktionRAMEingangRAM;
 wire [31:0] InstruktionRAMAdresseJetztAberWirklichRAM;
-wire [31:0] InstruktionRAM;
+wire [31:0] InstruktionRAMNichtModul;
 wire InstruktionGeladenRAM;
 
 wire RAMLeseDatenRAM;
 wire RAMSchreibeDatenRAM;
 wire [31:0] DatenRausRAM;
-wire [31:0] DatenAdresseRAM[7:0];
+wire [31:0] DatenAdresseRAM;
 wire [31:0] DatenReinRAM;
 wire DatenGeladenRAM;
 wire DatenGespeichertRAM;
@@ -138,7 +138,7 @@ Cache #(
     .ProzessorLesen(LeseInstruktion),
     .ProzessorAdresse(InstruktionRAMAdresseJetztAberWirklich),
     .ProzessorSchreibDaten(InstruktionRAMEingang),
-    .RAMLesDaten(InstruktionRAM),
+    .RAMLesDaten(InstruktionRAMNichtModul),
     .RAMDatenGeschrieben(Zero),
     .RAMDatenGelesen(InstruktionGeladenRAM),
     .Clock(Clock),
@@ -151,7 +151,7 @@ Cache #(
     .RAMLesen(LeseInstruktionRAM),
     .RAMAdresse(InstruktionRAMAdresseJetztAberWirklichRAM),
     .RAMSchreibDaten(InstruktionRAMEingangRAM)
-)
+);
 
 RAM #(
     .WORDSIZE(32),
@@ -163,7 +163,7 @@ RAM #(
     .Adresse(InstruktionRAMAdresseJetztAberWirklichRAM[7:0]),
     .Clock(Clock),
 
-    .DatenRaus(InstruktionRAM),
+    .DatenRaus(InstruktionRAMNichtModul),
     .DatenBereit(InstruktionGeladenRAM),
     .DatenGeschrieben(Zero)
 );
@@ -189,7 +189,7 @@ Cache #(
     .RAMLesen(RAMLeseDatenRAM),
     .RAMAdresse(DatenAdresseRAM),
     .RAMSchreibDaten(DatenRausRAM)
-)
+);
 
 RAM #(
     .WORDSIZE(32),
