@@ -59,8 +59,6 @@ localparam[5:0] BNezCode   = 6'b111110;
 localparam[5:0] JALCode    = 6'b111111;
 localparam[5:0] JmpCode    = 6'b010000;
 localparam[5:0] AddisCode  = 6'b110000;
-localparam[5:0] IToF       = 6'b001110;
-localparam[5:0] UIToF      = 6'b001111;
 
 //wichtige Formate die behandelt werden muessen
 localparam[1:0] RegisterFormat = 2'b00;
@@ -88,7 +86,7 @@ assign QuellRegister2 =         (Opcode == StoreCode) ? {1'b0, ZRegister}:
                                 (Opcode == StoreSCode) ? {1'b1, ZRegister}:
                                 {((Format == RegisterFormat && Kategorie == Gleitkomma) ? 1'b1 : 1'b0), Q2Register};
 
-assign ZielRegister =           (Opcode==LoadSCode || Opcode == StoreSCode || ((Format == RegisterFormat && Kategorie == Gleitkomma && GleitkommaBefehl < 8) || Funktion == IToF || Funktion == UIToF) ? {1'b1, ZRegister}:
+assign ZielRegister =           (Opcode==LoadSCode || Opcode == StoreSCode || ((Format == RegisterFormat && Kategorie == Gleitkomma && GleitkommaBefehl < 8)) ? {1'b1, ZRegister}:
                                 (((Format == RegisterFormat) || (Format[1] == ImmediateFormat)) ? {1'b0, ZRegister}:
                                 6'b0));
 
