@@ -18,13 +18,17 @@ public class Assemblying : MonoBehaviour
         foreach (string file in assemblyFilePaths)
         {
             string outputFilePath = file.Remove(file.LastIndexOf('.')) + ".out";
+            string fullPathToAssembler = Application.dataPath + pathToAssembler;
+            string arguments = file + " -Fhans -o " + outputFilePath;
+            Log.Instance.Print(fullPathToAssembler + " " + arguments + "\n");
+
             Process assembler = new Process();
             assembler.StartInfo.FileName = Application.dataPath + pathToAssembler;
-            assembler.StartInfo.Arguments = path + " -Fhans -o " + outputFilePath;
+            assembler.StartInfo.Arguments = arguments;
             assembler.StartInfo.UseShellExecute = false;
             assembler.StartInfo.RedirectStandardOutput = true;
             assembler.Start();
-
+            Log.Instance.Print(assembler.StandardOutput);
             assembler.WaitForExit();
         }
     }

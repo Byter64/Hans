@@ -7,29 +7,35 @@ using UnityEngine.UIElements;
 
 public class ButtonAllocator : MonoBehaviour
 {
-    [SerializeField] UnityEvent<string> assembleMethod;
-    [SerializeField] UnityEvent linkMethod;
+    [SerializeField] 
+    private UnityEvent<string> assembleMethod;
+    [SerializeField] 
+    private UnityEvent linkMethod;
 
+    public static ButtonAllocator Instance { get; private set; }
+    public static VisualElement root { get; private set; }
     public StreamReader LogStream { set; get; }
 
-    private VisualElement root;
     private Button assembleButton;
     private Button linkButton;
-    private Label logText;
-
-    // Start is called before the first frame update
+    
     void Awake()
     {
+        if(Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
         root = GetComponent<UIDocument>().rootVisualElement;
 
         assembleButton = root.Query<Button>("Assemble").First();
         linkButton = root.Query<Button>("Link").First();
-        logText = root.Query<Label>("Text").First();
+        
 
         assembleButton.clicked += OnAssembleButton;
         linkButton.clicked += OnLinkButton;
-
-        StartCoroutine(PrintLog());
     }
 
     private void OnAssembleButton()
@@ -40,16 +46,5 @@ public class ButtonAllocator : MonoBehaviour
     private void OnLinkButton()
     {
         linkMethod.Invoke();
-    }
-
-    private IEnumerator PrintLog()
-    {
-        while (LogStream != null && !LogStream.EndOfStream) 
-        {
-            logText.text += (char)LogStream.Read();
-            yield return new WaitForSeconds(0.02f);
-        }
-
-        StartCoroutine(PrintLog());
     }
 }
