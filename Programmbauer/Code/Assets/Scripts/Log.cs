@@ -6,6 +6,9 @@ using UnityEngine.UIElements;
 
 public class Log : MonoBehaviour
 {
+    [SerializeField]
+    private float charsPerSecond;
+    private float timePerChar;
     public static Log Instance { get; private set; }
 
     private Label logText;
@@ -19,6 +22,7 @@ public class Log : MonoBehaviour
             return;
         }
         Instance = this;
+        timePerChar = 1 / charsPerSecond;
     }
 
     void Start()
@@ -32,7 +36,7 @@ public class Log : MonoBehaviour
     {
         while(true)
         {
-            yield return new WaitForSeconds(0.01f);
+            yield return new WaitForSeconds(timePerChar);
 
             if(buffer.Count > 0)
             {

@@ -10,7 +10,7 @@ public class ButtonAllocator : MonoBehaviour
     [SerializeField] 
     private UnityEvent<string> assembleMethod;
     [SerializeField] 
-    private UnityEvent linkMethod;
+    private UnityEvent<string> linkMethod;
 
     public static ButtonAllocator Instance { get; private set; }
     public static VisualElement root { get; private set; }
@@ -18,7 +18,9 @@ public class ButtonAllocator : MonoBehaviour
 
     private Button assembleButton;
     private Button linkButton;
-    
+    private string activeDirectory = "C:\\Users\\Yanni\\Desktop\\AssemblyTemp";
+
+
     void Awake()
     {
         if(Instance != null && Instance != this)
@@ -40,11 +42,11 @@ public class ButtonAllocator : MonoBehaviour
 
     private void OnAssembleButton()
     {
-        assembleMethod.Invoke("C:\\Users\\Yanni\\Desktop\\AssemblyTemp");
+        assembleMethod.Invoke(activeDirectory);
     }
 
     private void OnLinkButton()
     {
-        linkMethod.Invoke();
+        linkMethod.Invoke(activeDirectory);
     }
 }

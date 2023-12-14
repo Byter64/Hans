@@ -244,6 +244,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb610f23695bd68439dd2484244bcb36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  charsPerSecond: 200
 --- !u!4 &656908395
 Transform:
   m_ObjectHideFlags: 0
@@ -337,7 +338,19 @@ MonoBehaviour:
         m_CallState: 2
   linkMethod:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1901898351}
+        m_TargetAssemblyTypeName: Linker.Linker, Assembly-CSharp
+        m_MethodName: LinkInFolder
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1387341096
 GameObject:
   m_ObjectHideFlags: 0
@@ -367,7 +380,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 184ef2d1043d52e49a66d63ddaf3796b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pathToAssembler: /Programs/vasm.exe
+  pathToAssemblerWindows: Programs/vasmhans_std_win32.exe
+  pathToAssemblerLinux: Programs/vasmhans_std_linux.exe
 --- !u!4 &1387341098
 Transform:
   m_ObjectHideFlags: 0
@@ -383,6 +397,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1901898350
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1901898352}
+  - component: {fileID: 1901898351}
+  m_Layer: 0
+  m_Name: Linker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1901898351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1901898350}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 217c49bbde118344aa80b6826524fd15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1901898352
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1901898350}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -390,4 +448,5 @@ SceneRoots:
   - {fileID: 519420032}
   - {fileID: 794422543}
   - {fileID: 1387341098}
+  - {fileID: 1901898352}
   - {fileID: 656908395}
