@@ -29,30 +29,40 @@ module main_tb
     for (idx = 0; idx < 256; idx = idx + 1) $dumpvars(0, main.DatenRAM.Daten[idx]);
     for (idx = 0; idx < 256; idx = idx + 1) $dumpvars(0, main.InstruktionCache.memory[idx]);
     for (idx = 0; idx < 256; idx = idx + 1) $dumpvars(0, main.DatenCache.memory[idx]);
-    for (idx = 32768; idx < 33024; idx = idx + 1) $dumpvars(0, main.DatenCache.memory[idx]);
     for (idx = 0; idx < 64;  idx = idx + 1) $dumpvars(0, main.CPU.Register.registers[idx]);
 
     clk_25mhz = 0;
 
+  main.InstruktionRAM.Daten[0] = 32'h80200001;
+  main.InstruktionRAM.Daten[1] = 32'hE8200000;
+  main.InstruktionRAM.Daten[2] = 32'h80400002;
+  main.InstruktionRAM.Daten[3] = 32'hE8400001;
+  main.InstruktionRAM.Daten[4] = 32'h80600003;
+  main.InstruktionRAM.Daten[5] = 32'hE8600002;
+  main.InstruktionRAM.Daten[6] = 32'h80800004;
+  main.InstruktionRAM.Daten[7] = 32'hE8800003;
+  main.InstruktionRAM.Daten[8] = 32'h80200005;
+  main.InstruktionRAM.Daten[9] = 32'hE8204000;
+  main.InstruktionRAM.Daten[10] = 32'h80400006;
+  main.InstruktionRAM.Daten[11] = 32'hE8404001;
+  main.InstruktionRAM.Daten[12] = 32'h80600007;
+  main.InstruktionRAM.Daten[13] = 32'hE8604002;
+  main.InstruktionRAM.Daten[14] = 32'h80800008;
+  main.InstruktionRAM.Daten[15] = 32'hE8804003;
+  main.InstruktionRAM.Daten[16] = 32'hE0200000;
+  main.InstruktionRAM.Daten[17] = 32'hE8200010;
+  main.InstruktionRAM.Daten[18] = 32'hE0400001;
+  main.InstruktionRAM.Daten[19] = 32'hE8400011;
+  main.InstruktionRAM.Daten[20] = 32'hE0600002;
+  main.InstruktionRAM.Daten[21] = 32'hE8600012;
+  main.InstruktionRAM.Daten[22] = 32'hE0800003;
+  main.InstruktionRAM.Daten[23] = 32'hE8800013;
+  main.InstruktionRAM.Daten[24] = 32'hE0204000;
+  main.InstruktionRAM.Daten[25] = 32'hE0404001;
+  main.InstruktionRAM.Daten[26] = 32'hE0604002;
+  main.InstruktionRAM.Daten[27] = 32'hE0804003;
 
-    // main.InstruktionRAM.Daten[0] = 32'b10000000010000000000000000001111; //Addi R2, R0, 15
-    // main.InstruktionRAM.Daten[1] = 32'b00000000001000000000000000000000; //Add R1, R0, R0
-    // main.InstruktionRAM.Daten[2] = 32'b10000011111000000000000000000001; //Addi R31, R0, #1
-    // main.InstruktionRAM.Daten[3] = 32'b11011011111111110000000000011111; //Sli R31, R31, #31
-    // main.InstruktionRAM.Daten[4] = 32'b00000000001000010001000000000000; //Add R1, R1, R2
-    // main.InstruktionRAM.Daten[5] = 32'b10000100010000100000000000000001; //Subi R2, R2, 1
-    // main.InstruktionRAM.Daten[6] = 32'b00000000011000100000000000001000; //Ce R3, R2, R0
-    // main.InstruktionRAM.Daten[7] = 32'b11101000001111110000000000000000; //Store R1, R31, #0
-    // main.InstruktionRAM.Daten[8] = 32'b11110100000000111111111111111011; //Bez R3, -5
-    // main.InstruktionRAM.Daten[9] = 32'b01000011111111111111111111111111; //jmp -1
-
-  main.InstruktionRAM.Daten[0] = 32'b10000000001000001100000000000000; //Addi R1, R0, #-16384
-  main.InstruktionRAM.Daten[1] = 32'b10011100001000010000000000000101; //Srai R1, R1, #5
-  main.InstruktionRAM.Daten[2] = 32'b11000000010000001111111111111111; //Addis R2, R0, #0b1111111111111111
-  main.InstruktionRAM.Daten[3] = 32'b00000000001000100000000000001110; //Itof F1, R2
-  main.InstruktionRAM.Daten[4] = 32'b01000011111111111111111111111111; //jmp -1
-
-  #5000
+  #10000
   $display("End of simulation");
   $finish;
  end

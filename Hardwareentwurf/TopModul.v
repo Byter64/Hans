@@ -169,7 +169,7 @@ RAM #(
 );
 
 Cache #(
-    .CACHESIZEBITS(15),
+    .CACHESIZEBITS(14),
     .BLOCKSIZEBITS(2)
 ) DatenCache (
     .ProzessorSchreiben(RAMSchreibeDaten),
@@ -193,12 +193,12 @@ Cache #(
 
 RAM #(
     .WORDSIZE(32),
-    .WORDS(256)
+    .WORDS(32768)
 ) DatenRAM (
     .LesenAn(RAMLeseDatenRAM),
     .SchreibenAn(RAMSchreibeDatenRAM),
     .DatenRein(DatenRausRAM),
-    .Adresse(DatenAdresseRAM[7:0]),
+    .Adresse(DatenAdresseRAM[14:0]),
     .Clock(Clock),
 
     .DatenRaus(DatenReinRAM),
