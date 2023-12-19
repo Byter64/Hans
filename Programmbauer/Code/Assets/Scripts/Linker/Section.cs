@@ -8,14 +8,13 @@ namespace Linker
     public struct Section
     {
         public string name;
-        public string dataAsText;
-        public byte[] data { get; private set; }
+
+        public byte[] data { get; set; }
         public List<Relocation> relocations;
 
         public Section(string name, string dataAsText, List<Relocation> relocations)
         {
             this.name = name;
-            this.dataAsText = dataAsText;
             this.relocations = relocations;
             data = null;
 
