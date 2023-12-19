@@ -268,7 +268,6 @@ dblock* eval_instruction(instruction* instruction, section* section, taddr progr
 			opCode |= (operand->reg & 31) << 11;
 			break;
 		case Immediate16:
-			opCode = add_immediate(opCode, immediateValue, operand);
 			if (baseOfImmediate != NULL)
 			{
 				if (is_pc_reloc(baseOfImmediate, section))
@@ -280,6 +279,7 @@ dblock* eval_instruction(instruction* instruction, section* section, taddr progr
 				else
 					immediateValue -= programCounter + 1;  /* relative distance to label */
 			}
+			opCode = add_immediate(opCode, immediateValue, operand);
 			break;
 		case Immediate16Label:
 			if (baseOfImmediate != NULL)
