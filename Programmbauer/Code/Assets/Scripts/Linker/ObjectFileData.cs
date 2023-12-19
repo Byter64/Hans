@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 namespace Linker
@@ -29,6 +30,8 @@ namespace Linker
         private void ParseFile(string content)
         {
             string[] parts = content.Split();
+            parts = parts.Where(part => string.IsNullOrEmpty(part) == false).ToArray();
+
             int i;
             #region Parse Symbols
             i = 0;
@@ -51,16 +54,17 @@ namespace Linker
             #region Parse Sections
             i = 0;
 
-            while (i < parts.Length && parts[i] != relocationMarker)
+            while (i < parts.Length && parts[i] != sectionMarker)
                 i++;
 
+            i++;
             while(i < parts.Length)
             {
                 string name = parts[i].Remove(parts[i].LastIndexOf(':'));
                 List<Relocation> relocations = new ();
                 i++;
                 if (parts[i] != relocationMarker)
-                    throw new LinkerException($"Expected \"{relocationMarker}\" but found \"{parts[i]}\" in file \"{file}\"");
+                    throw new LinkerException($"Expected \"{relocationMarker}\" but found \"{parts[i]}\" in file \"{file}\", section \"{name}\"");
                 i++;
 
                 //Parse Relocations
