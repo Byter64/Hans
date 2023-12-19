@@ -49,8 +49,13 @@ public class Log : MonoBehaviour
     {
         foreach(char c in text)
         {
-            buffer.Enqueue(c);
+            Print(c);
         }
+    }
+
+    public void Print(char c)
+    {
+        buffer.Enqueue(c);
     }
 
     public void Print(StreamReader reader)
@@ -62,10 +67,10 @@ public class Log : MonoBehaviour
     {
         while(reader != null)
         {
-            while(reader != null && reader.EndOfStream)
+            while(reader != null)
                 yield return null;
-            
-            Print(reader.ReadToEnd());
+
+            Print((char)reader.Read());
         }
     }
 }

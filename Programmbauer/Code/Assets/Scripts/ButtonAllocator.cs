@@ -10,7 +10,7 @@ public class ButtonAllocator : MonoBehaviour
     [SerializeField] 
     private UnityEvent<string> assembleMethod;
     [SerializeField] 
-    private UnityEvent<string> linkMethod;
+    private UnityEvent<string, string> linkMethod;
 
     public static ButtonAllocator Instance { get; private set; }
     public static VisualElement root { get; private set; }
@@ -47,6 +47,6 @@ public class ButtonAllocator : MonoBehaviour
 
     private void OnLinkButton()
     {
-        linkMethod.Invoke(activeDirectory);
+        linkMethod.Invoke(activeDirectory + "/ObjectFiles", activeDirectory);
     }
 }

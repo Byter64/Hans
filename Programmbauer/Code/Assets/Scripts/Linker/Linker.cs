@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +9,8 @@ namespace Linker
 {
     public class Linker : MonoBehaviour
     {
-        public void LinkInFolder(string path)
+        private const string resultFileName = "program.bin";
+        public void LinkInFolder(string path, string pathForResult)
         {
             List<ObjectFileData> objectFileData = ParseFiles(path);
             List<Symbol> symbols = new();
@@ -17,7 +19,14 @@ namespace Linker
                 symbols.AddRange(fileData.symbols);
             }
 
-            ResolveRelocations(objectFileData, symbols);
+            foreach (ObjectFileData filaData in objectFileData)
+            {
+                ResolveRelocations(filaData, symbols);
+            }
+
+            byte[] programCode = CreateProgramCode(objectFileData);
+
+            WriteProgram(pathForResult, programCode);
         }
 
         private List<ObjectFileData> ParseFiles(string path)
@@ -62,22 +71,55 @@ namespace Linker
             return objectFileDatas;
         }
 
-        private void ResolveRelocations(List<ObjectFileData> objectFileData, List<Symbol> symbols)
+        private void ResolveRelocations(ObjectFileData fileData, List<Symbol> symbols)
         {
+            foreach (Section section in fileData.sections)
+            {
+                foreach (Relocation relocation in section.relocations)
+                {
+                    IEnumerable<Symbol> symbolList = symbols.Where(x => relocation.symbolName == x);
+                    if (symbolList.Count() == 0)
+                        throw new LinkerException($"Relocation expects symbol \"{relocation.symbolName}\" but no such symbol has been declared");
+
+                    Symbol symbol = symbolList.First();
+                    int byteOffset = relocation.byteOffset * 4; //Convert from 32-Bit Bytes to 8-Bit Bytes
+                    for (int i = 0; i < 4; i++)
+                    {
+                        int mask =relocation.bitMask >> ((3 - i) * 8);
+                        int invertedMask = ~mask;
+                        int value = Convert.ToInt32((symbol.value + relocation.valueOffset) >> ((3 - i) * 8));
+                        int oldValue = section.data[byteOffset + i];
+                        section.data[byteOffset + i] |= Convert.ToByte((oldValue & invertedMask) | (value & mask));
+                    }
+                }
+            }
+        }
+
+        private static byte[] CreateProgramCode(List<ObjectFileData> objectFileData)
+        {
+            List<byte> programCode = new();
+
             foreach(ObjectFileData fileData in objectFileData)
             {
                 foreach(Section section in fileData.sections)
                 {
-                    foreach(Relocation relocation in section.relocations)
-                    {
-                        IEnumerable<Symbol> symbol = symbols.Where(x => relocation.symbolName == x);
-                        if (symbol.Count() == 0)
-                            throw new LinkerException($"Relocation expects symbol \"{relocation.symbolName}\" but no such symbol has been declared");
-                        
-                        //Weitermachen mit Relocation auflösen
-                    }
+                    programCode.AddRange(section.data);
                 }
             }
+
+            return programCode.ToArray();
+        }
+
+        private static void WriteProgram(string path, byte[] programCode)
+        {
+            path += Path.DirectorySeparatorChar + resultFileName;
+
+            if(File.Exists(path))
+            {
+                File.Delete(path);
+            }
+
+            File.WriteAllBytes(path, programCode);
         }
         
         /// <summary>

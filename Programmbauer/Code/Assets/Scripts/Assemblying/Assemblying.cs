@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class Assemblying : MonoBehaviour
@@ -16,6 +18,7 @@ public class Assemblying : MonoBehaviour
     private string pathToAssemblerLinux;
 
     private string pathToAssembler;
+    public Process lastAssemblyProcess;
     private void Awake()
     {
         if(Instance != null && Instance != this)
@@ -41,6 +44,11 @@ public class Assemblying : MonoBehaviour
         string outputDirectory = assemblyFilePaths.FirstOrDefault();
         outputDirectory = outputDirectory.Remove(outputDirectory.LastIndexOf(Path.DirectorySeparatorChar) + 1);
         outputDirectory += nameOfOutputDirectory + Path.DirectorySeparatorChar;
+        
+        if(Directory.Exists(outputDirectory))
+        {
+            Directory.Delete(outputDirectory, true);
+        }
         Directory.CreateDirectory(outputDirectory);
 
         foreach (string file in assemblyFilePaths)
@@ -56,9 +64,21 @@ public class Assemblying : MonoBehaviour
             assembler.StartInfo.Arguments = arguments;
             assembler.StartInfo.UseShellExecute = false;
             assembler.StartInfo.RedirectStandardOutput = true;
+            assembler.StartInfo.RedirectStandardError = true;
+            assembler.EnableRaisingEvents = true;
+            lastAssemblyProcess = assembler;
+            assembler.Exited += new EventHandler(PrintRemainingOutput);
+            
             assembler.Start();
             Log.Instance.Print(assembler.StandardOutput);
             assembler.WaitForExit();
+
         }
+    }
+
+    private void PrintRemainingOutput(object sender, EventArgs e)
+    {
+        Log.Instance.Print(lastAssemblyProcess.StandardOutput.ReadToEnd());
+        Log.Instance.Print(lastAssemblyProcess.StandardError.ReadToEnd());
     }
 }
