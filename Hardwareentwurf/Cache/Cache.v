@@ -29,20 +29,18 @@ module Cache #(
 localparam BLOCKNUMBITS = CACHESIZEBITS - BLOCKSIZEBITS;
 localparam TAGSIZEBITS = 32 - CACHESIZEBITS;
 
-localparam IDLE = 6'b000001;
-localparam WRITE_START = 6'b000010;
-localparam WRITE = 6'b000100;
-localparam READ_START = 6'b001000;
-localparam READ = 6'b010000;
-localparam RETURN = 6'b100000;
+localparam IDLE = 4'b0001;
+localparam WRITE = 4'b0010;
+localparam READ = 4'b0100;
+localparam RETURN = 4'b1000;
 
 reg [31 : 0] memory [2**CACHESIZEBITS-1 : 0];
 reg [TAGSIZEBITS-1 : 0] tags [2**BLOCKNUMBITS-1 : 0]; //adressed with the index, holds the tag
 reg [2**BLOCKNUMBITS-1 : 0] valid;
 reg [2**BLOCKNUMBITS-1 : 0] modified;
 
-reg [5 : 0] current_state;
-reg [5 : 0] next_state;
+reg [3 : 0] current_state;
+reg [3 : 0] next_state;
 reg [BLOCKSIZEBITS-1 : 0] current_ram_offset;
 wire [BLOCKSIZEBITS-1 : 0] next_ram_offset;
 
@@ -55,16 +53,16 @@ assign index = ProzessorAdresse[CACHESIZEBITS-1 : BLOCKSIZEBITS];
 assign offset = ProzessorAdresse[BLOCKSIZEBITS-1 : 0];
 
 assign ProzessorLesDaten = memory[{index, offset}];
-assign ProzessorDatenGelesen = current_state[5] && ProzessorLesen;
-assign ProzessorDatenGeschrieben = current_state[5] && ProzessorSchreiben;
+assign ProzessorDatenGelesen = current_state[3] && ProzessorLesen;
+assign ProzessorDatenGeschrieben = current_state[3] && ProzessorSchreiben;
 
-assign RAMSchreiben = current_state[2];
-assign RAMLesen = current_state[4];
-assign RAMAdresse = current_state[2] ? {tags[index], index, current_ram_offset} :
-                    current_state[4] ? {tag, index, current_ram_offset} : 0;
-assign RAMSchreibDaten = current_state[2] ? memory[{index, current_ram_offset}] : 0;
+assign RAMSchreiben = current_state[1];
+assign RAMLesen = current_state[2];
+assign RAMAdresse = current_state[1] ? {tags[index], index, current_ram_offset} :
+                    current_state[2] ? {tag, index, current_ram_offset} : 0;
+assign RAMSchreibDaten = current_state[1] ? memory[{index, current_ram_offset}] : 0;
 
-assign next_ram_offset = ((current_state[2] && RAMDatenGeschrieben) || (current_state[4] && RAMDatenGelesen)) ? current_ram_offset + 1 : current_ram_offset;
+assign next_ram_offset = ((current_state[1] && RAMDatenGeschrieben) || (current_state[2] && RAMDatenGelesen)) ? current_ram_offset + 1 : current_ram_offset;
 
 
 always @* begin
@@ -82,24 +80,14 @@ always @* begin
                 next_state = RETURN;
         else
             next_state = IDLE;
-    WRITE_START:
-        next_state = WRITE;
     WRITE:
-        if (RAMDatenGeschrieben)
-            if (next_ram_offset == 0)
+        if (RAMDatenGeschrieben && next_ram_offset == 0)
                 next_state = READ;
-            else
-                next_state = WRITE_START;
         else
             next_state = WRITE;
-    READ_START:
-        next_state = READ;
     READ:
-        if (RAMDatenGelesen)
-            if (next_ram_offset == 0)
+        if (RAMDatenGelesen && next_ram_offset == 0)
                 next_state = RETURN;
-            else
-                next_state = READ_START;
         else
             next_state = READ;
     RETURN:
@@ -115,7 +103,7 @@ always @(posedge Clock) begin
         current_state <= IDLE;
         current_ram_offset <= 0;
     end else begin
-        if (current_state[4] && RAMDatenGelesen) begin
+        if (current_state[2] && RAMDatenGelesen) begin
             memory[{index, current_ram_offset}] = RAMLesDaten;
             if (next_ram_offset == 0) begin
                 tags[index] = tag;
@@ -124,7 +112,7 @@ always @(posedge Clock) begin
             end
         end
 
-        if (next_state[5] && ProzessorSchreiben) begin
+        if (next_state[3] && ProzessorSchreiben) begin
             memory[{index, offset}] = ProzessorSchreibDaten;
             modified[index] = 1;
         end

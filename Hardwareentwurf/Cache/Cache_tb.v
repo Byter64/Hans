@@ -83,8 +83,6 @@ initial begin
     #(TIMESTEP)
     RAMLesDaten = 0;
     RAMDatenGelesen = 0;
-    assert(RAMLesen, 0, `__LINE__);
-    #(TIMESTEP)
     assert(RAMLesen, 1, `__LINE__);
     assert_32bit(RAMAdresse, 32'b00000000000000000000000000000001, `__LINE__);
     #(TIMESTEP)
@@ -94,8 +92,6 @@ initial begin
     #(TIMESTEP)
     RAMLesDaten = 0;
     RAMDatenGelesen = 0;
-    assert(RAMLesen, 0, `__LINE__);
-    #(TIMESTEP)
     assert(RAMLesen, 1, `__LINE__);
     assert_32bit(RAMAdresse, 32'b00000000000000000000000000000010, `__LINE__);
     #(TIMESTEP)
@@ -105,8 +101,6 @@ initial begin
     #(TIMESTEP)
     RAMLesDaten = 0;
     RAMDatenGelesen = 0;
-    assert(RAMLesen, 0, `__LINE__);
-    #(TIMESTEP)
     assert(RAMLesen, 1, `__LINE__);
     assert_32bit(RAMAdresse, 32'b00000000000000000000000000000011, `__LINE__);
     #(TIMESTEP)
@@ -152,8 +146,6 @@ initial begin
     #(TIMESTEP)
     RAMLesDaten = 0;
     RAMDatenGelesen = 0;
-    assert(RAMLesen, 0, `__LINE__);
-    #(TIMESTEP)
     assert(RAMLesen, 1, `__LINE__);
     assert_32bit(RAMAdresse, 32'b01000000000000000000000000000001, `__LINE__);
     #(TIMESTEP)
@@ -163,8 +155,6 @@ initial begin
     #(TIMESTEP)
     RAMLesDaten = 0;
     RAMDatenGelesen = 0;
-    assert(RAMLesen, 0, `__LINE__);
-    #(TIMESTEP)
     assert(RAMLesen, 1, `__LINE__);
     assert_32bit(RAMAdresse, 32'b01000000000000000000000000000010, `__LINE__);
     #(TIMESTEP)
@@ -174,8 +164,6 @@ initial begin
     #(TIMESTEP)
     RAMLesDaten = 0;
     RAMDatenGelesen = 0;
-    assert(RAMLesen, 0, `__LINE__);
-    #(TIMESTEP)
     assert(RAMLesen, 1, `__LINE__);
     assert_32bit(RAMAdresse, 32'b01000000000000000000000000000011, `__LINE__);
     #(TIMESTEP)
@@ -218,8 +206,6 @@ initial begin
 
     #(TIMESTEP)
     RAMDatenGeschrieben = 0;
-    assert(RAMSchreiben, 0, `__LINE__);
-    #(TIMESTEP)
     assert(RAMSchreiben, 1, `__LINE__);
     assert_32bit(RAMAdresse, 32'b01000000000000000000000000000001, `__LINE__);
     assert_32bit(RAMSchreibDaten, 32'b00000000000000000000000000001010, `__LINE__);
@@ -228,8 +214,6 @@ initial begin
 
     #(TIMESTEP)
     RAMDatenGeschrieben = 0;
-    assert(RAMSchreiben, 0, `__LINE__);
-    #(TIMESTEP)
     assert(RAMSchreiben, 1, `__LINE__);
     assert_32bit(RAMAdresse, 32'b01000000000000000000000000000010, `__LINE__);
     assert_32bit(RAMSchreibDaten, 32'b00000000000000000000000000000111, `__LINE__);
@@ -238,8 +222,6 @@ initial begin
 
     #(TIMESTEP)
     RAMDatenGeschrieben = 0;
-    assert(RAMSchreiben, 0, `__LINE__);
-    #(TIMESTEP)
     assert(RAMSchreiben, 1, `__LINE__);
     assert_32bit(RAMAdresse, 32'b01000000000000000000000000000011, `__LINE__);
     assert_32bit(RAMSchreibDaten, 32'b00000000000000000000000000001001, `__LINE__);
@@ -259,8 +241,6 @@ initial begin
     #(TIMESTEP)
     RAMLesDaten = 0;
     RAMDatenGelesen = 0;
-    assert(RAMLesen, 0, `__LINE__);
-    #(TIMESTEP)
     assert(RAMLesen, 1, `__LINE__);
     assert_32bit(RAMAdresse, 32'b00000000000000000000000000000001, `__LINE__);
     #(TIMESTEP)
@@ -270,8 +250,6 @@ initial begin
     #(TIMESTEP)
     RAMLesDaten = 0;
     RAMDatenGelesen = 0;
-    assert(RAMLesen, 0, `__LINE__);
-    #(TIMESTEP)
     assert(RAMLesen, 1, `__LINE__);
     assert_32bit(RAMAdresse, 32'b00000000000000000000000000000010, `__LINE__);
     #(TIMESTEP)
@@ -281,8 +259,6 @@ initial begin
     #(TIMESTEP)
     RAMLesDaten = 0;
     RAMDatenGelesen = 0;
-    assert(RAMLesen, 0, `__LINE__);
-    #(TIMESTEP)
     assert(RAMLesen, 1, `__LINE__);
     assert_32bit(RAMAdresse, 32'b00000000000000000000000000000011, `__LINE__);
     #(TIMESTEP)
