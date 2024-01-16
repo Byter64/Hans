@@ -1,13 +1,13 @@
-`include "ALU.v"
-`include "Instruktionsdekodierer.v"
-`include "MultiplexerAluDaten.v"
-`include "MultiplexerAluDaten2.v"
-`include "MultiplexerNeuerPC.v"
-`include "MultiplexerZielDaten.v"
-`include "NullPruefer.v"
-`include "Programmzahler.v"
-`include "Register.v"
-`include "Steuerung.v"
+`include "../Prozessor/ALU.v"
+`include "../Prozessor/Instruktionsdekodierer.v"
+`include "../Prozessor/MultiplexerAluDaten.v"
+`include "../Prozessor/MultiplexerAluDaten2.v"
+`include "../Prozessor/MultiplexerNeuerPC.v"
+`include "../Prozessor/MultiplexerZielDaten.v"
+`include "../Prozessor/Bedingungspruefer.v"
+`include "../Prozessor/Programmzahler.v"
+`include "../Prozessor/Register.v"
+`include "../Prozessor/Steuerung.v"
 
 
 module CPU (
@@ -167,7 +167,7 @@ MultiplexerAluDaten2 MulAluDaten2(
 
 Bedingungspruefer Bedingungspruefer(
     .Eingang(QuellDaten1),
-    .GleichNullPruefen(Sprungbedingung)
+    .GleichNullPruefen(Sprungbedingung),
     .Ergebnis(IstBedingungErfuellt)
 );
 
