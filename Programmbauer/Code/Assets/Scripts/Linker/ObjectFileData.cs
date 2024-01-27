@@ -38,6 +38,7 @@ namespace Linker
 
             while (i < parts.Length && parts[i] != symbolMarker)
                 i++;
+            i++;
 
             while(i < parts.Length && parts[i].StartsWith('.'))
             {
