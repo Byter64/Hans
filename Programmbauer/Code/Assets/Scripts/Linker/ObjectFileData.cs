@@ -42,7 +42,12 @@ namespace Linker
 
             while(i < parts.Length && parts[i].StartsWith('.'))
             {
-                string name = parts[i].Substring(1);
+                string name = parts[i].Substring(1, parts[i].LastIndexOf(':') - 1);
+                if (name == "__VASM" || name == "__MSDOSFS")
+                {
+                    i++;
+                    continue;
+                }
                 string valueAsString = parts[i].Substring(parts[i].LastIndexOf(':') + 1);
                 int? value = valueAsString == unknownValue ? null : Convert.ToInt32(valueAsString);
 
