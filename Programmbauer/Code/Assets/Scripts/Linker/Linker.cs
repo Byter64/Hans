@@ -14,9 +14,17 @@ namespace Linker
         {
             List<ObjectFileData> objectFileData = ParseFiles(path);
             List<Symbol> symbols = new();
+            int absoluteProgramOffset = 0;
             foreach(ObjectFileData fileData in objectFileData)
             {
                 symbols.AddRange(fileData.symbols);
+                for(int i = 0; i < fileData.sections.Count; i++)
+                {
+                    Section section = fileData.sections[i];
+                    section.absoluteOffset = absoluteProgramOffset;
+                    fileData.sections[i] = section;
+                    absoluteProgramOffset += section.data.Length / 4;
+                }
             }
 
             foreach (ObjectFileData filaData in objectFileData)
@@ -82,7 +90,7 @@ namespace Linker
                         throw new LinkerException($"Relocation expects symbol \"{relocation.symbolName}\" but no such symbol has been declared");
 
                     Symbol symbol = symbolList.First();
-                    int byteOffset = relocation.byteOffset * 4; //Convert from 32-Bit Bytes to 8-Bit Bytes
+                    int byteOffset = (relocation.byteOffset + section.absoluteOffset.Value) * 4; //Convert from 32-Bit Bytes to 8-Bit Bytes
                     for (int i = 0; i < 4; i++)
                     {
                         int mask =relocation.bitMask >> ((3 - i) * 8);

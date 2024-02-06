@@ -7,6 +7,7 @@ namespace Linker
 {
     public struct Section
     {
+        public int? absoluteOffset;
         public string name;
 
         public byte[] data { get; set; }
@@ -14,6 +15,7 @@ namespace Linker
 
         public Section(string name, string dataAsText, List<Relocation> relocations)
         {
+            absoluteOffset = null;
             this.name = name;
             this.relocations = relocations;
             data = null;
