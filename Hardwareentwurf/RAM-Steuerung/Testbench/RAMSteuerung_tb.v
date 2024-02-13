@@ -1,4 +1,4 @@
-`include "Cache.v"
+`include "../RAMSteuerung.v"
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns
@@ -87,8 +87,128 @@ end
 initial begin
     $dumpvars(0, main_tb);
 
+    BCAdresse = 0;
+    DCAdresse = 0;
+    VCAdresse = 0;
+
+    BCDaten = 0;
+    DCDaten = 0;
+    VCDaten = 0;
+
+    BCLesen = 0;
+    DCLesen = 0;
+    VCLesen = 0;
+
+    BCSchreiben = 0;
+    DCSchreiben = 0;
+    VCSchreiben = 0;
+
+    LeseDaten = 0;
+    LesenGeladen = 0;
+    busy = 0;
+
+    Clock = 1;
+    #1
+    Reset = 1;
+    #(TIMESTEP)
+    Reset = 0;
+
+    #(TIMESTEP)
+    BCAdresse = 23'b00000000000000000000001;
+    BCLesen = 1;
+    #(TIMESTEP)
+    assert(Lesen, 1, `__LINE__);
+    assert_32bit(LeseAdresse, 24'b000000000000000000000010, `__LINE__);
+    busy = 1;
+    #(TIMESTEP)
+    LeseDaten = 16'b0000000000000011;
+    busy = 0;
+    LesenGeladen = 1;
+    #(TIMESTEP)
+    assert(Lesen, 1, `__LINE__);
+    LesenGeladen = 0;
+    assert_32bit(LeseAdresse, 24'b000000000000000000000011, `__LINE__);
+    busy = 1;
+    #(TIMESTEP)
+    LeseDaten = 16'b0000000000000000;
+    busy = 0;
+    LesenGeladen = 1;
+    #(TIMESTEP)
+    assert(BCFertig, 1, `__LINE__);
+    LesenGeladen = 0;
+    assert_32bit(DatenAusgabe, 32'b00000000000000000000000000000011, `__LINE__);
+    BCLesen = 0;
 
 
+    #(TIMESTEP)
+    DCAdresse = 23'b00000000000000000000100;
+    DCDaten = 32'b00000000000000000000000000000101;
+    DCSchreiben = 1;
+    #(TIMESTEP)
+    assert(Schreiben, 1, `__LINE__);
+    assert_32bit(SchreibAdresse, 24'b000000000000000000001000, `__LINE__);
+    assert_32bit(SchreibDaten, 16'b0000000000000101, `__LINE__);
+    busy = 1;
+    #(TIMESTEP)
+    busy = 0;
+    #(TIMESTEP)
+    assert(Schreiben, 1, `__LINE__);
+    assert_32bit(SchreibAdresse, 24'b000000000000000000001001, `__LINE__);
+    assert_32bit(SchreibDaten, 16'b0000000000000000, `__LINE__);
+    busy = 1;
+    #(TIMESTEP)
+    busy = 0;
+    #(TIMESTEP)
+    assert(DCFertig, 1, `__LINE__);
+    DCSchreiben = 0;
+
+
+    #(TIMESTEP)
+    BCAdresse = 23'b00000000000000000000001;
+    BCLesen = 1;
+    DCAdresse = 23'b00000000000000000000100;
+    DCDaten = 32'b00000000000000000000000000000101;
+    DCSchreiben = 1;
+    #(TIMESTEP)
+    assert(Lesen, 1, `__LINE__);
+    assert(Schreiben, 0, `__LINE__);
+    assert_32bit(LeseAdresse, 24'b000000000000000000000010, `__LINE__);
+    busy = 1;
+    #(TIMESTEP)
+    LeseDaten = 16'b0000000000000011;
+    busy = 0;
+    LesenGeladen = 1;
+    #(TIMESTEP)
+    assert(Lesen, 1, `__LINE__);
+    assert(Schreiben, 0, `__LINE__);
+    LesenGeladen = 0;
+    assert_32bit(LeseAdresse, 24'b000000000000000000000011, `__LINE__);
+    busy = 1;
+    #(TIMESTEP)
+    LeseDaten = 16'b0000000000000000;
+    busy = 0;
+    LesenGeladen = 1;
+    #(TIMESTEP)
+    assert(BCFertig, 1, `__LINE__);
+    LesenGeladen = 0;
+    assert_32bit(DatenAusgabe, 32'b00000000000000000000000000000011, `__LINE__);
+    BCLesen = 0;
+    assert(Schreiben, 1, `__LINE__);
+    assert_32bit(SchreibAdresse, 24'b000000000000000000001000, `__LINE__);
+    assert_32bit(SchreibDaten, 16'b0000000000000101, `__LINE__);
+    busy = 1;
+    #(TIMESTEP)
+    busy = 0;
+    #(TIMESTEP)
+    assert(Schreiben, 1, `__LINE__);
+    assert_32bit(SchreibAdresse, 24'b000000000000000000001001, `__LINE__);
+    assert_32bit(SchreibDaten, 16'b0000000000000000, `__LINE__);
+    busy = 1;
+    #(TIMESTEP)
+    busy = 0;
+    #(TIMESTEP)
+    assert(DCFertig, 1, `__LINE__);
+    DCSchreiben = 0;
 
     #(TIMESTEP) $display("End of simulation");
     $finish;
