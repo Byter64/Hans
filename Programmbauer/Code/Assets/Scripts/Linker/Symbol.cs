@@ -8,11 +8,13 @@ namespace Linker
     {
         public string name;
         public int? value;
+        public bool isPCAdress;
 
-        public Symbol(string name, int? value)
+        public Symbol(string name, int? value, bool isPCAdress)
         {
             this.name = name;
             this.value = value;
+            this.isPCAdress = isPCAdress;
         }
 
         public static bool operator ==(Symbol left, Symbol right)

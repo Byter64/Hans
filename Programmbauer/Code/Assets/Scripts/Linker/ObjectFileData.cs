@@ -40,7 +40,7 @@ namespace Linker
                 i++;
             i++;
 
-            while(i < parts.Length && parts[i].StartsWith('.'))
+            while(i < parts.Length && (parts[i].StartsWith('.') || parts[i].StartsWith('$')))
             {
                 string name = parts[i].Substring(1, parts[i].LastIndexOf(':') - 1);
                 if (name == "__VASM" || name == "__MSDOSFS")
@@ -50,8 +50,8 @@ namespace Linker
                 }
                 string valueAsString = parts[i].Substring(parts[i].LastIndexOf(':') + 1);
                 int? value = valueAsString == unknownValue ? null : Convert.ToInt32(valueAsString);
-
-                symbols.Add(new Symbol(name, value));
+                bool isPCRelative = parts[i].StartsWith('$');
+                symbols.Add(new Symbol(name, value, isPCRelative));
                 i++;
             }
 
@@ -90,6 +90,7 @@ namespace Linker
                     relocation.bitMask = Convert.ToInt32(data[3]);
                     relocation.valueOffset = Convert.ToInt64(data[4]);
                     relocation.symbolName = data[5];
+                    relocation.isPCRelative = Convert.ToBoolean(data[6]);
 
                     relocations.Add(relocation);
                     relocationIndex++;
