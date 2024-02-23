@@ -34,13 +34,21 @@ public class Log : MonoBehaviour
 
     private IEnumerator PrintLog()
     {
-        while(true)
+        float time = 0;
+        while (true)
         {
-            yield return new WaitForSeconds(timePerChar);
+            time += Time.deltaTime;
+            yield return null;
 
-            if(buffer.Count > 0)
-            {
+            while (time >= timePerChar && buffer.Count > 0)
+            { 
                 logText.text += buffer.Dequeue();
+                time -= timePerChar;
+            }
+
+            if (buffer.Count == 0)
+            {
+                time = 0;
             }
         }
     }

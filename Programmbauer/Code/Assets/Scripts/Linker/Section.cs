@@ -1,26 +1,45 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 namespace Linker
 {
+    [DebuggerDisplay("{name}, Adress = {StartAdress}")]
     public struct Section
     {
-        private int startAdress;
+        public int StartAdress { get; private set; }
         public string name;
 
         public byte[] data { get; set; }
         public List<Relocation> relocations;
+        public List<Symbol> symbols;
 
-        public Section(string name, string dataAsText, List<Relocation> relocations)
+        public Section(string name, string dataAsText, List<Relocation> relocations, List<Symbol> symbols)
         {
-            startAdress = 0;
+            StartAdress = 0;
             this.name = name;
             this.relocations = relocations;
+            this.symbols = symbols;
             data = null;
 
             data = ConvertStringToData(dataAsText);
+        }
+
+        public void SetStartAdress(int startAdress)
+        {
+            for(int i = 0; i < symbols.Count; i++)
+            {
+                Symbol symbol = symbols[i];
+                if (symbol.value == null) continue;
+
+                symbol.value -= StartAdress;
+                symbol.value += startAdress;
+                symbols[i] = symbol;
+            }
+
+            StartAdress = startAdress;
         }
 
         private byte[] ConvertStringToData(string dataAsText)

@@ -9,10 +9,11 @@ namespace Linker
 {
     public class ObjectFileData
     {
-        private const string symbolMarker = "Symbols:";
-        private const string sectionMarker = "Sections:";
-        private const string relocationMarker = "Relocations:";
-        private const string dataMarker = "Data:";
+        private const int numberOfElementsInRelocation = 7;
+        private const string symbolMarker = "Symbole:";
+        private const string sectionMarker = "Abschnitte:";
+        private const string relocationMarker = "Relokationen:";
+        private const string dataMarker = "Daten:";
         private const string unknownValue = "?";
 
         public string file;
@@ -40,7 +41,7 @@ namespace Linker
                 i++;
             i++;
 
-            while(i < parts.Length && (parts[i].StartsWith('.') || parts[i].StartsWith('$')))
+            while(i < parts.Length && (parts[i].StartsWith('.')))
             {
                 string name = parts[i].Substring(1, parts[i].LastIndexOf(':') - 1);
                 if (name == "__VASM" || name == "__MSDOSFS")
@@ -50,8 +51,7 @@ namespace Linker
                 }
                 string valueAsString = parts[i].Substring(parts[i].LastIndexOf(':') + 1);
                 int? value = valueAsString == unknownValue ? null : Convert.ToInt32(valueAsString);
-                bool isPCRelative = parts[i].StartsWith('$');
-                symbols.Add(new Symbol(name, value, isPCRelative));
+                symbols.Add(new Symbol(name, value, false));
                 i++;
             }
 
@@ -67,8 +67,24 @@ namespace Linker
             while(i < parts.Length)
             {
                 string name = parts[i].Remove(parts[i].LastIndexOf(':'));
-                List<Relocation> relocations = new ();
+
+                //find symbols in section
+                while (i < parts.Length && parts[i] != symbolMarker)
+                    i++;
                 i++;
+                List<Symbol> sectionSymbols = new List<Symbol>();
+
+                while (i < parts.Length && (parts[i].StartsWith('.')))
+                {
+                    string labelName = parts[i].Substring(1, parts[i].LastIndexOf(':') - 1);
+                    string valueAsString = parts[i].Substring(parts[i].LastIndexOf(':') + 1);
+                    int? value = valueAsString == unknownValue ? null : Convert.ToInt32(valueAsString);
+                    sectionSymbols.Add(new Symbol(labelName, value, true));
+                    i++;
+                }
+
+                List<Relocation> relocations = new ();
+
                 if (parts[i] != relocationMarker)
                     throw new LinkerException($"Expected \"{relocationMarker}\" but found \"{parts[i]}\" in file \"{file}\", section \"{name}\"");
                 i++;
@@ -80,7 +96,7 @@ namespace Linker
                     string relocationAsText = parts[i].Substring(1);
                     relocationAsText = relocationAsText.Remove(relocationAsText.Length - 1);
                     string[] data = relocationAsText.Split(',');
-                    if (data.Length != 6)
+                    if (data.Length != numberOfElementsInRelocation)
                         throw new LinkerException($"Relocation {relocationIndex} in section \"{name}\" does not have the right amount of members in file \"{file}\"");
 
                     Relocation relocation;
@@ -88,7 +104,7 @@ namespace Linker
                     relocation.bitOffset = Convert.ToInt32(data[1]);
                     relocation.amountOfBits = Convert.ToInt32(data[2]);
                     relocation.bitMask = Convert.ToInt32(data[3]);
-                    relocation.valueOffset = Convert.ToInt64(data[4]);
+                    relocation.valueOffset = Convert.ToInt32(data[4]);
                     relocation.symbolName = data[5];
                     relocation.isPCRelative = Convert.ToBoolean(data[6]);
 
@@ -103,16 +119,27 @@ namespace Linker
                 i++;
 
                 string sectionData = parts[i];
-                sections.Add(new Section(name, sectionData, relocations));
+                sections.Add(new Section(name, sectionData, relocations, sectionSymbols));
                 i++;
             }
             #endregion 
 
         }
 
-        public bool Contains(Symbol symbol)
+        public bool ContainsValid(Symbol symbol)
         {
-            return symbols.Contains(symbol);
+            bool isContained = false;
+
+            if (symbols.Where(x => x == symbol && x.value != null).Count() != 0)
+                isContained = true;
+
+            foreach(Section section in sections)
+            {
+                if (section.symbols.Where(x => x == symbol && x.value != null).Count() != 0)
+                    isContained = true;
+            }
+
+            return isContained;
         }
 
         public bool Contains(Section section)

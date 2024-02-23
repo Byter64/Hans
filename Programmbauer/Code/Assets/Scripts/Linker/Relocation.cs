@@ -34,7 +34,7 @@ namespace Linker
         /// <summary>
         /// This value stems from some constant expression and needs to be added onto the value of the symbol
         /// </summary>
-        public long valueOffset;
+        public int valueOffset;
 
         /// <summary>
         /// The name of the symbol that this relocation refers to

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -15,15 +15,17 @@ namespace Linker
             List<ObjectFileData> objectFileData = ParseFiles(path);
             List<Symbol> symbols = new();
             int absoluteProgramOffset = 0;
+            
             foreach(ObjectFileData fileData in objectFileData)
             {
-                symbols.AddRange(fileData.symbols);
+                AddSymbols(symbols, fileData.symbols);
                 for(int i = 0; i < fileData.sections.Count; i++)
                 {
                     Section section = fileData.sections[i];
-                    section.startAdress = absoluteProgramOffset;
+                    section.SetStartAdress(absoluteProgramOffset);
                     fileData.sections[i] = section;
                     absoluteProgramOffset += section.data.Length / 4;
+                    AddSymbols(symbols, section.symbols);
                 }
             }
 
@@ -35,6 +37,30 @@ namespace Linker
             byte[] programCode = CreateProgramCode(objectFileData);
 
             WriteProgram(pathForResult, programCode);
+        }
+
+        private void AddSymbols(List<Symbol> symbols, List<Symbol> tobeAdded)
+        {
+            foreach (Symbol symbol in tobeAdded)
+            {
+                AddSymbol(symbols, symbol);
+            }
+        }
+        private void AddSymbol(List<Symbol> symbols, Symbol symbol)
+        {
+            if(symbols.Where(x => x == symbol && x.value == null).Count() != 0)
+            {
+                symbols.Remove(symbol);
+                symbols.Add(symbol);
+            }
+            else if (symbols.Where(x => x == symbol && x.value != null).Count() != 0 && symbol.value != null)
+            {
+                throw new LinkerException($"The symbol {symbol.name} was defined two times");
+            }
+            else if(!symbols.Contains(symbol)) 
+            { 
+                symbols.Add(symbol);
+            }
         }
 
         private List<ObjectFileData> ParseFiles(string path)
@@ -52,7 +78,7 @@ namespace Linker
                 {
                     foreach (ObjectFileData fileData in objectFileDatas)
                     {
-                        if (fileData.Contains(symbol))
+                        if (fileData.ContainsValid(symbol) && symbol.value != null)
                         {
                             string assemblyFile = RecreateLocationOfAssemblyFile(file);
                             throw new LinkerException($"Symbol \"{symbol.name}\" from file \"{assemblyFile}\" is already defined in \"{fileData.file}\"");
@@ -90,14 +116,23 @@ namespace Linker
                         throw new LinkerException($"Relocation expects symbol \"{relocation.symbolName}\" but no such symbol has been declared");
 
                     Symbol symbol = symbolList.First();
-                    int byteOffset = (relocation.byteOffset + section.startAdress) * 4; //Convert from 32-Bit Bytes to 8-Bit Bytes
+                    int byteOffset = (relocation.byteOffset + section.StartAdress) * 4; //Convert from 32-Bit Bytes to 8-Bit Bytes
+
+                    int relocValue = symbol.value.Value + relocation.valueOffset;
+                    if (relocation.isPCRelative)
+                        relocValue -= (relocation.byteOffset + section.StartAdress);
+
                     for (int i = 0; i < 4; i++)
                     {
-                        int mask =relocation.bitMask >> ((3 - i) * 8);
-                        int invertedMask = ~mask;
-                        int value = Convert.ToInt32((symbol.value + relocation.valueOffset) >> ((3 - i) * 8));
+                        int byteMask = relocation.bitMask & (255 << ((3 - i) * 8));
+                        byteMask >>= (3 - i) * 8;
+                        int byteValue = relocValue        & (255 << ((3 - i) * 8));
+                        byteValue >>= (3 - i) * 8;
+                        
+                        int invertedByteMask = ~byteMask & 255;
                         int oldValue = section.data[byteOffset + i];
-                        section.data[byteOffset + i] |= Convert.ToByte((oldValue & invertedMask) | (value & mask));
+
+                        section.data[byteOffset + i] |= Convert.ToByte((oldValue & invertedByteMask) | (byteValue & byteMask));
                     }
                 }
             }
@@ -121,7 +156,7 @@ namespace Linker
         private static void WriteProgram(string path, byte[] programCode)
         {
             path += Path.DirectorySeparatorChar + resultFileName;
-
+             
             if(File.Exists(path))
             {
                 File.Delete(path);
