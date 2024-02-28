@@ -37,42 +37,49 @@ public class Assemblying : MonoBehaviour
 
     public void Assemble(string directory)
     {
-        string[]allFilePaths = Directory.GetFiles(directory);
-        IEnumerable<string> assemblyFilePaths = allFilePaths.Where(x => x.EndsWith(".asm"));
-        if(assemblyFilePaths.Count() == 0 ) { return; }
-
-        string outputDirectory = assemblyFilePaths.FirstOrDefault();
-        outputDirectory = outputDirectory.Remove(outputDirectory.LastIndexOf(Path.DirectorySeparatorChar) + 1);
-        outputDirectory += nameOfOutputDirectory + Path.DirectorySeparatorChar;
-        
-        if(Directory.Exists(outputDirectory))
+        try
         {
-            Directory.Delete(outputDirectory, true);
+            string[] allFilePaths = Directory.GetFiles(directory);
+            IEnumerable<string> assemblyFilePaths = allFilePaths.Where(x => x.EndsWith(".asm"));
+            if (assemblyFilePaths.Count() == 0) { return; }
+
+            string outputDirectory = assemblyFilePaths.FirstOrDefault();
+            outputDirectory = outputDirectory.Remove(outputDirectory.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+            outputDirectory += nameOfOutputDirectory + Path.DirectorySeparatorChar;
+
+            if (Directory.Exists(outputDirectory))
+            {
+                Directory.Delete(outputDirectory, true);
+            }
+            Directory.CreateDirectory(outputDirectory);
+
+            foreach (string file in assemblyFilePaths)
+            {
+                string fileName = file.Substring(file.LastIndexOf(Path.DirectorySeparatorChar) + 1);
+                string outputFilePath = outputDirectory + fileName.Remove(fileName.LastIndexOf('.')) + ".out";
+                string fullPathToAssembler = Application.dataPath + "/" + pathToAssembler;
+                string arguments = file + " -Fhans -o " + outputFilePath;
+                Log.Instance.Print(fullPathToAssembler + " " + arguments + "\n");
+
+                Process assembler = new Process();
+                assembler.StartInfo.FileName = Application.dataPath + "/" + pathToAssembler;
+                assembler.StartInfo.Arguments = arguments;
+                assembler.StartInfo.UseShellExecute = false;
+                assembler.StartInfo.RedirectStandardOutput = true;
+                assembler.StartInfo.RedirectStandardError = true;
+                assembler.EnableRaisingEvents = true;
+                lastAssemblyProcess = assembler;
+                assembler.Exited += new EventHandler(PrintRemainingOutput);
+
+                assembler.Start();
+                Log.Instance.Print(assembler.StandardOutput);
+                assembler.WaitForExit();
+
+            }
         }
-        Directory.CreateDirectory(outputDirectory);
-
-        foreach (string file in assemblyFilePaths)
+        catch (Exception ex)
         {
-            string fileName = file.Substring(file.LastIndexOf(Path.DirectorySeparatorChar) + 1);
-            string outputFilePath = outputDirectory + fileName.Remove(fileName.LastIndexOf('.')) + ".out";
-            string fullPathToAssembler = Application.dataPath + "/" + pathToAssembler;
-            string arguments = file + " -Fhans -o " + outputFilePath;
-            Log.Instance.Print(fullPathToAssembler + " " + arguments + "\n");
-
-            Process assembler = new Process();
-            assembler.StartInfo.FileName = Application.dataPath + "/"+ pathToAssembler;
-            assembler.StartInfo.Arguments = arguments;
-            assembler.StartInfo.UseShellExecute = false;
-            assembler.StartInfo.RedirectStandardOutput = true;
-            assembler.StartInfo.RedirectStandardError = true;
-            assembler.EnableRaisingEvents = true;
-            lastAssemblyProcess = assembler;
-            assembler.Exited += new EventHandler(PrintRemainingOutput);
-            
-            assembler.Start();
-            Log.Instance.Print(assembler.StandardOutput);
-            assembler.WaitForExit();
-
+            Log.Instance.Print(ex.Message);
         }
     }
 

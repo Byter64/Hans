@@ -10,33 +10,45 @@ namespace Linker
     public class Linker : MonoBehaviour
     {
         private const string resultFileName = "program.bin";
+
+        private string[] lennyFaces = { "(▀̿Ĺ̯▀̿ ̿)", "ʕ•ᴥ•ʔ", "(づ｡◕‿‿◕｡)づ", "(ง'̀-'́)ง", 
+            "(☞ﾟヮﾟ)☞ ☜(ﾟヮﾟ☜)", "♪~ ᕕ(ᐛ)ᕗ", "(~˘▾˘)~", "（╯°□°）╯︵( .o.)", "ᕙ(⇀‸↼‶)ᕗ", "ᕦ(ò_óˇ)ᕤ" };
         public void Link(string path, string pathForResult)
         {
-            List<ObjectFileData> objectFileData = ParseFiles(path);
-            List<Symbol> symbols = new();
-            int absoluteProgramOffset = 0;
-            
-            foreach(ObjectFileData fileData in objectFileData)
+            try
             {
-                AddSymbols(symbols, fileData.symbols);
-                for(int i = 0; i < fileData.sections.Count; i++)
+                List<ObjectFileData> objectFileData = ParseFiles(path);
+                List<Symbol> symbols = new();
+                int absoluteProgramOffset = 0;
+
+                foreach (ObjectFileData fileData in objectFileData)
                 {
-                    Section section = fileData.sections[i];
-                    section.SetStartAdress(absoluteProgramOffset);
-                    fileData.sections[i] = section;
-                    absoluteProgramOffset += section.data.Length / 4;
-                    AddSymbols(symbols, section.symbols);
+                    AddSymbols(symbols, fileData.symbols);
+                    for (int i = 0; i < fileData.sections.Count; i++)
+                    {
+                        Section section = fileData.sections[i];
+                        section.SetStartAdress(absoluteProgramOffset);
+                        fileData.sections[i] = section;
+                        absoluteProgramOffset += section.data.Length / 4;
+                        AddSymbols(symbols, section.symbols);
+                    }
                 }
-            }
 
-            foreach (ObjectFileData filaData in objectFileData)
+                foreach (ObjectFileData filaData in objectFileData)
+                {
+                    ResolveRelocations(filaData, symbols);
+                }
+
+                byte[] programCode = CreateProgramCode(objectFileData);
+
+                WriteProgram(pathForResult, programCode);
+
+                Log.Instance.Print("Successfully linked program\n" + lennyFaces[UnityEngine.Random.Range(0, lennyFaces.Length)]);
+            }
+            catch(Exception e)
             {
-                ResolveRelocations(filaData, symbols);
+                Log.Instance.Print(e.Message);
             }
-
-            byte[] programCode = CreateProgramCode(objectFileData);
-
-            WriteProgram(pathForResult, programCode);
         }
 
         private void AddSymbols(List<Symbol> symbols, List<Symbol> tobeAdded)

@@ -59,6 +59,7 @@ public class Log : MonoBehaviour
         {
             Print(c);
         }
+        Print('\n');
     }
 
     public void Print(char c)
