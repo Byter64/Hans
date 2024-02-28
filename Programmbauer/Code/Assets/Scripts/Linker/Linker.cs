@@ -10,7 +10,7 @@ namespace Linker
     public class Linker : MonoBehaviour
     {
         private const string resultFileName = "program.bin";
-        public void LinkInFolder(string path, string pathForResult)
+        public void Link(string path, string pathForResult)
         {
             List<ObjectFileData> objectFileData = ParseFiles(path);
             List<Symbol> symbols = new();

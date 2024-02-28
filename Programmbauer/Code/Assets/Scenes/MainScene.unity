@@ -341,7 +341,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1901898351}
         m_TargetAssemblyTypeName: Linker.Linker, Assembly-CSharp
-        m_MethodName: LinkInFolder
+        m_MethodName: Link
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

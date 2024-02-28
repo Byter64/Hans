@@ -19,14 +19,9 @@ public class ButtonAllocator : MonoBehaviour
     private Button assembleButton;
     private Button linkButton;
     private TextField projectPath;
-    private string ActiveDirectory
-    {
-        get
-        {
-            return projectPath.text;
-        }
-    }
-
+    private TextField resultPath;
+    private string ActiveDirectory { get { return projectPath.text; } }
+    private string ResultDirectory { get { return resultPath.text; } }
 
     void Awake()
     {
@@ -42,6 +37,7 @@ public class ButtonAllocator : MonoBehaviour
         assembleButton = root.Query<Button>("Assemble").First();
         linkButton = root.Query<Button>("Link").First();
         projectPath = root.Query<TextField>("Projektpfad").First();
+        resultPath = root.Query<TextField>("Ergebnispfad").First();
 
         assembleButton.clicked += OnAssembleButton;
         linkButton.clicked += OnLinkButton;
@@ -54,6 +50,6 @@ public class ButtonAllocator : MonoBehaviour
 
     private void OnLinkButton()
     {
-        linkMethod.Invoke(ActiveDirectory + "/ObjectFiles", ActiveDirectory);
+        linkMethod.Invoke(ActiveDirectory + "/ObjectFiles", ResultDirectory);
     }
 }

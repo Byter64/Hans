@@ -10,4 +10,5 @@
     <ui:VisualElement name="SchritteZumErfolg" style="flex-grow: 1; position: absolute; background-image: url(&apos;project://database/Assets/Graphics/UI/SchritteZumErfolg.png?fileID=2800000&amp;guid=fa12370a0e87cf14f8e98e397f3ef9f9&amp;type=3#SchritteZumErfolg&apos;); height: 242px; width: 515px; top: 26px; left: -4px;" />
     <ui:VisualElement name="Pfeil1" style="flex-grow: 1; position: absolute; background-image: url(&apos;project://database/Assets/Graphics/UI/Pfeil.png?fileID=2800000&amp;guid=df514f077178b0247a5adad36a622d4a&amp;type=3#Pfeil&apos;); height: 105px; width: 63px; top: 444px; left: 191px;" />
     <ui:TextField picking-mode="Ignore" label="Projektpfad" value="Absoluten Pfad zu Ordner angeben" name="Projektpfad" style="position: absolute; top: 51px; left: 911px; width: 844px; height: 46px; font-size: 20px;" />
+    <ui:TextField picking-mode="Ignore" label="Ergebnispfad" value="Absoluten Pfad zu Ordner angeben" name="Ergebnispfad" style="position: absolute; top: 123px; left: 911px; width: 844px; height: 46px; font-size: 20px;" />
 </ui:UXML>
