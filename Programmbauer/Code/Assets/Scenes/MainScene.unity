@@ -326,7 +326,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1387341097}
         m_TargetAssemblyTypeName: Assemblying, Assembly-CSharp
-        m_MethodName: AssembleInFolder
+        m_MethodName: Assemble
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

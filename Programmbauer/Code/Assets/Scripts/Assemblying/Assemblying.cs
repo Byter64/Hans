@@ -35,9 +35,9 @@ public class Assemblying : MonoBehaviour
 #endif
     }
 
-    public void AssembleInFolder(string path)
+    public void Assemble(string directory)
     {
-        string[]allFilePaths = Directory.GetFiles(path);
+        string[]allFilePaths = Directory.GetFiles(directory);
         IEnumerable<string> assemblyFilePaths = allFilePaths.Where(x => x.EndsWith(".asm"));
         if(assemblyFilePaths.Count() == 0 ) { return; }
 
