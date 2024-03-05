@@ -1,15 +1,16 @@
-module SDKarteWithSDController (
+
+module SDKarte (
     input Clock, // Clock 
     input Reset,
 
     // Interface
-    input [31:0] Adresse, // The address from which to read
+    input [31:0] Adresse, // The address from which to read [31:12] Sektor Adresse [11:7] unused [6:0] Daten Adresse 
     input Lesen, // 1: Read operation
-    output [31:0] Daten, // Data output
-    output Fertig, // 1: Data is ready to be read
-    output Busy, // gibt an ob gerade beschäftigt
+    output reg [31:0] Daten, // Data output
+    output reg Fertig, // 1: Data is ready to be read
+    output wire Busy, // gibt an ob gerade beschäftigt
 
-    output reg cs, // Connect to SD_DAT[3].
+    output cs, // Connect to SD_DAT[3].
     output mosi, // Connect to SD_CMD.
     input miso, // Connect to SD_DAT[0].
     output sclk // Connect to SD_SCK.
@@ -18,11 +19,13 @@ module SDKarteWithSDController (
 );
 
     // SD CARD INPUTS/OUTPUTS
-    reg rd = 0;
+    reg rd = 0; // Read signal for SD card
     wire [7:0] dout; // data output for read operation
     wire byte_available; // byte can be read
     wire [4:0] status; // status
     wire ready;
+
+    wire ignore;
 
     // Verbindung zum SD-Controller
     sd_controller sd1 (
@@ -33,24 +36,31 @@ module SDKarteWithSDController (
         .rd(rd),
         .dout(dout),
         .byte_available(byte_available),
-        .wr(0),
+        .wr(1'b0),
         .din(8'b0),
-        .ready_for_next_byte(0),
+        .ready_for_next_byte(ignore),
         .reset(Reset),
         .ready(ready),
-        .address(Adresse),
+        .address(SektorAdresse),
         .clk(Clock),
         .status(status)
     );
 
     // Zustandsdefinitionen für den SD-Controller
-    parameter IDLE = 2'd0;
-    parameter BUSY_STATE = 2'd1;
-    parameter OUTPUT_READY = 2'd2;
-    
+    localparam IDLE = 2'd0;
+    localparam COUNTING = 2'd1;
+    localparam READING = 2'd2;
+    localparam OUTPUT_READY = 2'd3;
+
+    wire [6:0] DatenAdresse;
+    assign DatenAdresse = Adresse [6:0];
+    wire [31:0] SektorAdresse;
+    assign SektorAdresse = {Adresse [31:12],12'b0}; // Nur bei SD-Controller genutzt <<12
+    assign Busy = ~ready;
     // Zustands- und Zählerregistervariablen für den SD-Controller
-    reg [1:0] state = IDLE;
+    reg [2:0] state = IDLE;
     reg [1:0] byte_count = 0;
+    reg [6:0] DatenCounter = 0; 
 
     // Zustandsautomat für den SD-Controller
     always @(posedge Clock or posedge Reset) begin
@@ -59,28 +69,59 @@ module SDKarteWithSDController (
             byte_count <= 0;
             Daten <= 0;
             Fertig <= 0;
-            Busy <= 0;
+            DatenCounter <= 0;
         end else begin
             case (state)
                 IDLE: begin
+                    Fertig <= 0;
                     if (Lesen && ready) begin
+                        DatenCounter <= DatenAdresse;
+                        if(DatenAdresse == 7'b0) begin
+                            state <= READING;
+                        end
+                        else begin
+                            state <= COUNTING;
+                        end
                         rd <= 1;
-                        state <= BUSY_STATE;
-                        Busy <= 1;
                     end
                 end
-                BUSY_STATE: begin
+                COUNTING: begin
+                    rd <= 0;
+                    if(byte_available) begin
+                        if(DatenCounter != 0)begin
+                            if(byte_count == 2'b11) begin
+                                byte_count <= 2'b00;
+                                DatenCounter <= DatenCounter - 1;
+                            end
+                            else begin
+                                byte_count <= byte_count + 1;
+                            end
+                        end
+                        else begin
+                            state <= READING;
+                            byte_count <= 2'b00;
+                        end
+                    end
+                end
+                READING: begin
+                    rd <= 0;
                     if (byte_available) begin
-                        if(byte_count == 0)
-                            rd <= 0;
+                        if(byte_count == 2'b00) begin
                             Daten[7:0] <= dout;
-                        if(byte_count == 1)
+                            byte_count <= byte_count + 1;
+                        end
+                        else if (byte_count == 2'b01) begin
                             Daten[15:8] <= dout;
-                        if(byte_count == 2)
+                            byte_count <= byte_count + 1;
+                        end
+                        else if (byte_count == 2'b10) begin
                             Daten[23:16] <= dout;
-                        byte_count <= byte_count + 1;
-                        if (byte_count == 3) begin
+                            byte_count <= byte_count + 1;
                             state <= OUTPUT_READY;
+                        end
+                        else begin
+                            state <= OUTPUT_READY;
+                            Daten <= 32'b1;
                         end
                     end
                 end
@@ -88,7 +129,6 @@ module SDKarteWithSDController (
                     Daten[31:24] = dout;
                     byte_count <= 0;
                     Fertig <= 1;
-                    Busy <= 0;
                     state <= IDLE;
                 end
                 default: state <= IDLE;

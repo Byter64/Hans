@@ -10,16 +10,16 @@ module sd_controller(
     output sclk, // Connect to SD_SCK.
                 // For SPI mode, SD_DAT[2] and SD_DAT[1] should be held HIGH. 
                 // SD_RESET should be held LOW.
-    // For SDKarte
+
     input rd,   // Read-enable. When [ready] is HIGH, asseting [rd] will 
-                // begin a 32-byte READ operation at [address]. 
+                // begin a 512-byte READ operation at [address]. 
                 // [byte_available] will transition HIGH as a new byte has been
                 // read from the SD card. The byte is presented on [dout].
     output reg [7:0] dout, // Data output for READ operation.
     output reg byte_available, // A new byte has been presented on [dout].
 
     input wr,   // Write-enable. When [ready] is HIGH, asserting [wr] will
-                // begin a 32-byte WRITE operation at [address].
+                // begin a 512-byte WRITE operation at [address].
                 // [ready_for_next_byte] will transition HIGH to request that
                 // the next byte to be written should be presentaed on [din].
     input [7:0] din, // Data input for WRITE operation.
@@ -28,7 +28,7 @@ module sd_controller(
     input reset, // Resets controller on assertion.
     output ready, // HIGH if the SD card is ready for a read or write operation.
     input [31:0] address,   // Memory address for read/write operation. This MUST 
-                            // be a multiple of 32 bytes, due to SD sectoring.
+                            // be a multiple of 512 bytes, due to SD sectoring.
     input clk,  // 25 MHz clock.
     output [4:0] status // For debug purposes: Current state of controller.
 );
@@ -54,7 +54,7 @@ module sd_controller(
     parameter WRITE_BLOCK_BYTE = 17;
     parameter WRITE_BLOCK_WAIT = 18;
     
-    parameter WRITE_DATA_SIZE = 35;
+    parameter WRITE_DATA_SIZE = 515;
     
     reg [4:0] state = RST;
     assign status = state;
@@ -65,7 +65,7 @@ module sd_controller(
     reg cmd_mode = 1;
     reg [7:0] data_sig = 8'hFF;
     
-    reg [6:0] byte_counter;
+    reg [9:0] byte_counter;
     reg [9:0] bit_counter;
     
     reg [26:0] boot_counter = 27'd100_000_000;
@@ -148,7 +148,7 @@ module sd_controller(
                 end
                 READ_BLOCK_WAIT: begin
                     if(sclk_sig == 1 && miso == 0) begin
-                        byte_counter <= 3;
+                        byte_counter <= 511;
                         bit_counter <= 7;
                         return_state <= READ_BLOCK_DATA;
                         state <= RECEIVE_BYTE;
