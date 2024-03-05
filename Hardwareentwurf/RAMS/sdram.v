@@ -123,23 +123,23 @@ wire oe = oeA;
 reg acycle;
 
 always @(posedge clk) begin
-   if (q == STATE_CMD_START)
-     acycle <= oeA | we;
+    if (q == STATE_CMD_START)
+        acycle <= oeA | we;
 
    // optimization, ready writes faster
    if (acycle && we) begin
-      if (q == STATE_CMD_CONT + 1)
-	ready <= 1;
-      else if (q == STATE_CMD_CONT + 3)
-	ready <= 0;
+        if (q == STATE_CMD_CONT + 1)
+	        ready <= 1;
+        else if (q == STATE_CMD_CONT + 3)
+	        ready <= 0;
    end else if (acycle && oeA) begin
-      if (q == STATE_CMD_READ)
-	dout[15:0] <= sd_data_in[15:0];
-      else if (q == STATE_CMD_READ2) begin
-	 dout[31:16] <= sd_data_in[15:0];
-	 ready <= 1;
-      end else if (q == STATE_CMD_READ2 + 2)
-	ready <= 0;
+        if (q == STATE_CMD_READ)
+	        dout[15:0] <= sd_data_in[15:0];
+        else if (q == STATE_CMD_READ2) begin
+	        dout[31:16] <= sd_data_in[15:0];
+	        ready <= 1;
+        end else if (q == STATE_CMD_READ2 + 2)
+	        ready <= 0;
    end
 end
 
