@@ -9,7 +9,7 @@ namespace Linker
 {
     public class ObjectFileData
     {
-        private const int numberOfElementsInRelocation = 7;
+        private const int numberOfElementsInRelocation = 8;
         private const string symbolMarker = "Symbole:";
         private const string sectionMarker = "Abschnitte:";
         private const string relocationMarker = "Relokationen:";
@@ -107,6 +107,7 @@ namespace Linker
                     relocation.valueOffset = Convert.ToInt32(data[4]);
                     relocation.symbolName = data[5];
                     relocation.isPCRelative = Convert.ToBoolean(data[6]);
+                    relocation.type = Relocation.ToType(data[7]);
 
                     relocations.Add(relocation);
                     relocationIndex++;
