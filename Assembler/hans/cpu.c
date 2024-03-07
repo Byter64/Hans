@@ -75,67 +75,9 @@ const char* cpu_copyright = "vasm hans cpu backend 1.0 (c)2023 by Yannik Stamm";
 const char* cpuname = "hans";
 int bytespertaddr = 1;
 
-typedef struct hansreloc
-{
-    size_t byteoffset;  /* byte-offset in data atom to beginning of relocation */
-    size_t bitoffset;   /* bit-offset adds to byte-off. - start of reloc.field */
-    size_t size;        /* size of relocation field in bits */
-    utaddr mask;
-    taddr addend;
-    symbol* sym;
-    int isPCRelative;
-} hansreloc;
-
-static hansreloc* new_hansreloc(void)
-{
-    hansreloc* new = mymalloc(sizeof(*new));
-    new->mask = DEFMASK;
-    new->byteoffset = new->bitoffset = new->size = 0;
-    new->addend = 0;
-    new->isPCRelative = 0;
-    return new;
-}
-
-
-static rlist* add_exthansreloc(rlist** relocs, symbol* sym, taddr addend, int type,
-    size_t bitoffs, size_t size, size_t byteoffs, int isPCRelative)
-{
-    rlist* rl;
-    hansreloc* r;
-
-    if (sym->flags & ABSLABEL)
-        return NULL;  /* no relocation, when symbol is from an ORG-section */
-
-    /* mark symbol as referenced, so we can find unreferenced imported symbols */
-    sym->flags |= REFERENCED;
-
-    r = new_hansreloc();
-    r->isPCRelative = isPCRelative;
-    r->byteoffset = byteoffs;
-    r->bitoffset = bitoffs;
-    r->size = size;
-    r->sym = sym;
-    r->addend = addend;
-    rl = mymalloc(sizeof(rlist));
-    rl->type = type;
-    rl->reloc = r;
-    rl->next = *relocs;
-    *relocs = rl;
-
-    return rl;
-}
-
 static int strequals(const char* c1, const char* c2)
 {
     return strcmp(c1, c2) == 0;
-}
-
-static int is_pc_relative_instruction(mnemonic* mnemonic)
-{
-    int isrel = strequals(mnemonic->name, "bez") || strequals(mnemonic->name, "bnez") ||
-        strequals(mnemonic->name, "jal") || strequals(mnemonic->name, "jmp");
-
-    return isrel;
 }
 
 operand* new_operand()
@@ -190,7 +132,7 @@ static void resolve_high_low_label_reference
 {
     operand->isLowLabel = 0;
     operand->isHighLabel = 0;
-    operand->isHighArithmeticLabel = 0;
+    operand->isHighAlgebraicLabel = 0;
     if (*lastSymbolOfName != '@') return;
 
     if (*(lastSymbolOfName + 1) == 'l' || *(lastSymbolOfName + 1) == 'L')
@@ -201,7 +143,7 @@ static void resolve_high_low_label_reference
     {
         if (*(lastSymbolOfName + 2) == 'a' || *(lastSymbolOfName + 2) == 'A')
         {
-            operand->isHighArithmeticLabel = 1;
+            operand->isHighAlgebraicLabel = 1;
         }
         else
         {
@@ -269,7 +211,7 @@ static uint32_t add_immediate(uint32_t opCode, taddr immediateValue, operand* op
     {
         opCode |= (immediateValue & 0xffff0000) >> 16;
     }
-    else if (operand->isHighArithmeticLabel)
+    else if (operand->isHighAlgebraicLabel)
     {
         uint16_t higherHalf = (immediateValue & 0xffff0000) >> 16;
         uint16_t lowerHalf = immediateValue & 0x0000ffff;
@@ -286,18 +228,6 @@ static uint32_t add_immediate(uint32_t opCode, taddr immediateValue, operand* op
     }
 
     return opCode;
-}
-
-int does_expression_contain_pc_label(expr* expression)
-{
-    if (expression->type == SYM) return 1;
-    if (expression->left != NULL
-        && does_expression_contain_pc_label(expression->left))
-        return 1;
-    if (expression->right != NULL
-        && does_expression_contain_pc_label(expression->right))
-        return 1;
-    return 0;
 }
 
 /*Converts the received instruction into its final binary format*/
@@ -357,49 +287,60 @@ dblock* eval_instruction
                 if (is_pc_reloc(baseOfImmediate, section))
                 {
                     /* external label or label from a different section needs reloc */
-                    rlist* newReloc = add_exthansreloc(&dataBlock->relocs,
-                        baseOfImmediate, immediateValue, REL_PC, 16, 16, 0,
-                        is_pc_relative_instruction(mnemonic));
-                    ((hansreloc*)newReloc->reloc)->mask = 65535;
+                    int mask;
+                    if (operand->isHighLabel)
+                    {
+                        mask = 0xFFFF0000;
+                    }
+                    else if (operand->isHighAlgebraicLabel)
+                    {
+                        mask = 0xFFFF0000;
+
+                        rlist* hareloc = add_extnreloc(&dataBlock->relocs,
+                            baseOfImmediate, immediateValue, REL_ABS, 16, 16, 0);
+                        ((nreloc*)hareloc->reloc)->mask = 0x8000;
+                    }
+                    else
+                    {
+                        mask = 0xFFFF;
+                    }
+                    rlist* newReloc = add_extnreloc(&dataBlock->relocs,
+                        baseOfImmediate, immediateValue, REL_ABS, 16, 16, 0);
+                    ((nreloc*)newReloc->reloc)->mask = mask;
                 }
             }
-            else if(operand->exp != NULL && does_expression_contain_pc_label(operand->exp))/* relative distance to label */
-                immediateValue -= programCounter + 1;
             opCode = add_immediate(opCode, immediateValue, operand);
             break;
         case Immediate16Label:
+            /*If operand contains a label*/
             if (baseOfImmediate != NULL)
             {
                 /*If symbol is extern*/
                 if (is_pc_reloc(baseOfImmediate, section))
                 {
                     /* external label or label from a different section needs reloc */
-                    rlist* newReloc = add_exthansreloc(&dataBlock->relocs,
-                        baseOfImmediate, immediateValue, REL_PC, 16, 16, 0,
-                        is_pc_relative_instruction(mnemonic));
-                    ((hansreloc*)newReloc->reloc)->mask = 65535;
+                    rlist* newReloc = add_extnreloc(&dataBlock->relocs,
+                        baseOfImmediate, immediateValue, REL_PC, 16, 16, 0);
+                    ((nreloc*)newReloc->reloc)->mask = 65535;
                 }
             }
-            else if (operand->exp != NULL && does_expression_contain_pc_label(operand->exp)) /* relative distance to label */
-                immediateValue -= programCounter + 1;
+            immediateValue -= programCounter + 1;
             opCode = add_immediate(opCode, immediateValue, operand);
             break;
         case Immediate26Label:
-
+            /*If operand contains a label*/
             if (baseOfImmediate != NULL)
             {
                 /*If symbol is extern*/
                 if (is_pc_reloc(baseOfImmediate, section))
                 {
                     /* external label or label from a different section needs reloc */
-                    rlist* newReloc = add_exthansreloc(&dataBlock->relocs,
-                        baseOfImmediate, immediateValue, REL_PC, 6, 26, 0,
-                        is_pc_relative_instruction(mnemonic));
-                    ((hansreloc*)newReloc->reloc)->mask = 67108863;
+                    rlist* newReloc = add_extnreloc(&dataBlock->relocs,
+                        baseOfImmediate, immediateValue, REL_PC, 6, 26, 0);
+                    ((nreloc*)newReloc->reloc)->mask = 67108863;
                 }
             }
-            else if (operand->exp != NULL && does_expression_contain_pc_label(operand->exp)) /* relative distance to label */
-                immediateValue -= programCounter + 1;
+            immediateValue -= programCounter + 1;
             /*Should not be used with @l, @h, @ha so no add_immediate*/
             opCode |= immediateValue & 0x3ffffff; 
             break;

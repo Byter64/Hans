@@ -58,7 +58,7 @@ typedef struct {
   expr *exp;
   int isHighLabel;
   int isLowLabel;
-  int isHighArithmeticLabel;
+  int isHighAlgebraicLabel;
 } operand;
 
 /* additional mnemonic data */

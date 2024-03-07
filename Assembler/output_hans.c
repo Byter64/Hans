@@ -6,17 +6,6 @@ static char *copyright = "vasm Hans output module 1.0 (c) 2024 by Yannik Stamm";
 static const char* dataBlockMarker = "-";
 static const char* dataMarker = "->";
 
-typedef struct hansreloc
-{
-    size_t byteoffset;  /* byte-offset in data atom to beginning of relocation */
-    size_t bitoffset;   /* bit-offset adds to byte-off. - start of reloc.field */
-    size_t size;        /* size of relocation field in bits */
-    utaddr mask;
-    taddr addend;
-    symbol* sym;
-    int isPCRelative;
-} hansreloc;
-
 static char int_to_ascii(int number)
 {
     switch (number)
@@ -80,9 +69,20 @@ static void write_32bit_byte_to_file_from_pointer(FILE* file, unsigned char* fir
     write_32bit_byte_to_file(file, data);
 }
 
+static int is_HA_Reloc(nreloc* rel1, nreloc* rel2)
+{
+    return rel1->mask == 0xFFFF0000 && rel2->mask == 0x8000 &&
+        rel1->bitoffset == rel2->bitoffset &&
+        rel1->addend == rel2->addend &&
+        rel1->byteoffset == rel2->byteoffset &&
+        rel1->size == rel2->size &&
+        rel1->sym == rel2->sym;
+}
+
 static void write_output(FILE* file, section* firstSection, symbol* firstSymbol)
 {
     char* firstData;
+    const char* pcRelativeValue, *highLow;
     int i, j;
     unsigned int byteOffset;
     atom* atom;
@@ -115,7 +115,8 @@ static void write_output(FILE* file, section* firstSection, symbol* firstSymbol)
         for (activeSymbol = firstSymbol; activeSymbol != NULL;
             activeSymbol = activeSymbol->next)
         {
-            if (activeSymbol->type == LABSYM && activeSymbol->sec == section)
+            /*if is label and is in this section and is not an assembler internal symbol*/
+            if (activeSymbol->type == LABSYM && activeSymbol->sec == section && activeSymbol->name[0] != ' ')
             {
                 fprintf(file, "\t.%s:%i\n", activeSymbol->name, activeSymbol->pc);
             }
@@ -131,10 +132,36 @@ static void write_output(FILE* file, section* firstSection, symbol* firstSymbol)
                     listEntry = atom->content.db->relocs;
                     for (; listEntry != NULL; listEntry = listEntry->next)
                     {
-                        hansreloc* reloc = listEntry->reloc;
-                        fprintf(file, "\t<%i,%i,%i,%i,%i,%s,%s>\n", 
+                        nreloc* reloc = listEntry->reloc;
+
+                        if (listEntry->type == REL_PC)
+                            pcRelativeValue = "true";
+                        else if (listEntry->type == REL_ABS)
+                            pcRelativeValue = "false";
+                        else
+                            pcRelativeValue = "?";
+
+                        if (reloc->mask == 0xFFFF0000)
+                        {
+                            if (listEntry->next != NULL && is_HA_Reloc(reloc, listEntry->next->reloc))
+                            {
+                                highLow = "@ha";
+                                listEntry = listEntry->next;
+                            }
+                            else
+                                highLow = "@h";
+                            
+                            reloc->mask = 0xFFFF;
+                        }
+                        else
+                        {
+                            highLow = "@l";
+                        }
+
+                        fprintf(file, "\t<%i,%i,%i,%i,%i,%s,%s,%s>\n", 
                         reloc->byteoffset + byteOffset, reloc->bitoffset, 
-                        reloc->size, reloc->mask, reloc->addend, reloc->sym->name, reloc->isPCRelative ? "true" : "false");
+                            reloc->size, reloc->mask, reloc->addend, reloc->sym->name, 
+                            pcRelativeValue, highLow);
                     }
                 }
                 byteOffset++;
