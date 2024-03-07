@@ -17,7 +17,7 @@ namespace Linker
         /// <summary>
         /// If true, the value of the relocation needs to be subtracted by byteoffset of this relocation
         /// </summary>
-        public bool? isPCRelative;
+        public bool isPCRelative;
 
         /// <summary>
         /// The offset in bytes from the beginning of the section (1 Byte == 32 Bits)

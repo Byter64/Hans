@@ -15,40 +15,44 @@ namespace Linker
             "(☞ﾟヮﾟ)☞ ☜(ﾟヮﾟ☜)", "♪~ ᕕ(ᐛ)ᕗ", "(~˘▾˘)~", "（╯°□°）╯︵( .o.)", "ᕙ(⇀‸↼‶)ᕗ", "ᕦ(ò_óˇ)ᕤ" };
         public void Link(string path, string pathForResult)
         {
+#if !UNITY_EDITOR
             try
             {
-                List<ObjectFileData> objectFileData = ParseFiles(path);
-                List<Symbol> symbols = new();
-                int absoluteProgramOffset = 0;
+#endif
+            List<ObjectFileData> objectFileData = ParseFiles(path);
+            List<Symbol> symbols = new();
+            int absoluteProgramOffset = 0;
 
-                foreach (ObjectFileData fileData in objectFileData)
+            foreach (ObjectFileData fileData in objectFileData)
+            {
+                AddSymbols(symbols, fileData.symbols);
+                for (int i = 0; i < fileData.sections.Count; i++)
                 {
-                    AddSymbols(symbols, fileData.symbols);
-                    for (int i = 0; i < fileData.sections.Count; i++)
-                    {
-                        Section section = fileData.sections[i];
-                        section.SetStartAdress(absoluteProgramOffset);
-                        fileData.sections[i] = section;
-                        absoluteProgramOffset += section.data.Length / 4;
-                        AddSymbols(symbols, section.symbols);
-                    }
+                    Section section = fileData.sections[i];
+                    section.SetStartAdress(absoluteProgramOffset);
+                    fileData.sections[i] = section;
+                    absoluteProgramOffset += section.data.Length / 4;
+                    AddSymbols(symbols, section.symbols);
                 }
+            }
 
-                foreach (ObjectFileData filaData in objectFileData)
-                {
-                    ResolveRelocations(filaData, symbols);
-                }
+            foreach (ObjectFileData filaData in objectFileData)
+            {
+                ResolveRelocations(filaData, symbols);
+            }
 
-                byte[] programCode = CreateProgramCode(objectFileData);
+            byte[] programCode = CreateProgramCode(objectFileData);
 
-                WriteProgram(pathForResult, programCode);
+            WriteProgram(pathForResult, programCode);
 
-                Log.Instance.Print("Successfully linked program\n" + lennyFaces[UnityEngine.Random.Range(0, lennyFaces.Length)]);
+            Log.Instance.Print("Successfully linked program\n" + lennyFaces[UnityEngine.Random.Range(0, lennyFaces.Length)]);
+#if !UNITY_EDITOR
             }
             catch(Exception e)
             {
                 Log.Instance.Print(e.Message);
             }
+#endif
         }
 
         private void AddSymbols(List<Symbol> symbols, List<Symbol> tobeAdded)
@@ -130,9 +134,25 @@ namespace Linker
                     Symbol symbol = symbolList.First();
                     int byteOffset = (relocation.byteOffset + section.StartAdress) * 4; //Convert from 32-Bit Bytes to 8-Bit Bytes
 
-                    int relocValue = symbol.value.Value + relocation.valueOffset;
+                    int relocValue = symbol.value.Value;
+
+                    //Add pc if pc relative
                     if (relocation.isPCRelative)
                         relocValue -= (relocation.byteOffset + section.StartAdress);
+                    
+                    //Use high 16 bits if @h or @ha
+                    if (relocation.type is Relocation.Type.HighAlgebraic or Relocation.Type.High)
+                    {
+                        relocValue >>= 16;
+                    }
+
+                    relocValue += relocation.valueOffset;
+
+                    //algabraic correction if low 16 bits are negative (i.e. bit 15 is 1)
+                    if(relocation.type is Relocation.Type.HighAlgebraic || (relocValue & 0x8000) == 1)
+                    {
+                        relocValue++;
+                    }
 
                     for (int i = 0; i < 4; i++)
                     {

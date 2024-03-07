@@ -119,7 +119,7 @@ namespace Linker
                     throw new LinkerException($"Expected \"{dataMarker}\" but found \"{parts[i]}\" in file \"{file}\"");
                 i++;
 
-                string sectionData = parts[i];
+                string sectionData = i < parts.Length ? parts[i] : string.Empty;
                 sections.Add(new Section(name, sectionData, relocations, sectionSymbols));
                 i++;
             }
