@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace Linker
 {
@@ -113,6 +114,13 @@ namespace Linker
                             throw new LinkerException($"Section \"{section.name}\" from file {assemblyFile} is already defined in {fileData.file}");
                         }
                     }
+                }
+
+                //Check if any org sections exist
+                foreach (Section section in newFileData.sections)
+                {
+                    if (section.name.StartsWith("org"))
+                        throw new LinkerException($"Section \"{section.name}\" is an org section. This is not supported. Use \".section sectionName\" at the beginning of a section");
                 }
 
                 objectFileDatas.Add(newFileData);
