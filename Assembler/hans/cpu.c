@@ -224,7 +224,7 @@ static uint32_t add_immediate(uint32_t opCode, taddr immediateValue, operand* op
     else
     {
         /*Only throw warning if not explicitly marked as @l*/
-        if (!operand->isLowLabel && (immediateValue & 0x0000ffff) != immediateValue)
+        if (!operand->isLowLabel && ((int16_t)immediateValue) != immediateValue)
             cpu_error(1);
         opCode |= immediateValue & 0x0000ffff;
     }
