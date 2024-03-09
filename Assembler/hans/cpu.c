@@ -71,7 +71,7 @@ mnemonic mnemonics[] = {
 };
 const int mnemonic_cnt = sizeof(mnemonics) / sizeof(mnemonics[0]);
 
-const char* cpu_copyright = "vasm hans cpu backend 1.0 (c)2023 by Yannik Stamm";
+const char* cpu_copyright = "vasm hans cpu backend 1.0 (c)2024 by Yannik Stamm";
 const char* cpuname = "hans";
 int bytespertaddr = 1;
 
@@ -219,11 +219,13 @@ static uint32_t add_immediate(uint32_t opCode, taddr immediateValue, operand* op
         {
             higherHalf += 1;
         }
-
         opCode |= higherHalf;
     }
     else
     {
+        /*Only throw warning if not explicitly marked as @l*/
+        if (!operand->isLowLabel && (immediateValue & 0x0000ffff) != immediateValue)
+            cpu_error(1);
         opCode |= immediateValue & 0x0000ffff;
     }
 
