@@ -1,5 +1,5 @@
 `include "../Prozessor/ALUModule/Goldschmidt_Integer_Divider_Parallel-main/source/Goldschmidt_Integer_Divider_Parallel.v"
-`include "../Prozessor/ALUModule/intsqrt.v"
+`include "../Prozessor/ALUModule/Intsqrt.v"
 `include "../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/add.v"
 `include "../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/mul.v"
 `include "../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/sqrt.v"
@@ -25,10 +25,10 @@ module ALU (
 );
 
 reg[31:0] Radikand; //Wurzel
-reg[31:0] FloatAdditionDaten2;
 reg DivCyc = 0;
 reg DivStb = 0;
 reg[7:0] TakteBisFertig = 0;
+wire[31:0] FloatAdditionDaten2;
 wire[31:0] EinfacheRechnungErgebnis;
 wire[31:0] DivisionErgebnis; //Div und Mod
 wire[31:0] WurzelErgebnis;
@@ -223,97 +223,118 @@ assign Ergebnis =   FunktionsCode[5:0] == IntQuadratwurzel ? WurzelErgebnis :
                     FunktionsCode[5:0] == FloatZuUnsignedInt ? {31'b0, FloatZuUnsignedIntErgebnis} :
                                                         EinfacheRechnungErgebnis;
 
-assign HatFertigGerechnet = TakteBisFertig <= 0;
+assign HatFertigGerechnet =     FunktionsCode[5:1] == IntDivision[5:1] ? DivisionFertig:
+                                FunktionsCode[5:0] == IntQuadratwurzel ? WurzelFertig :
+                                (TakteBisFertig == 0);
 
 assign IntWurzelReset = (FunktionsCode[5:0] == IntQuadratwurzel & StartSignal) | Reset;
 
-always @(posedge Clock) begin
+assign FloatAdditionDaten2 = {(FunktionsCode[5:0] != FloatAddition),Daten2[30:0]};
+
+always @(posedge Reset or posedge StartSignal) begin
     if(Reset) begin
-            Radikand = 0;
-            FloatAdditionDaten2 = 0;
-            DivCyc = 0;
-            DivStb = 0;
-            TakteBisFertig = 0;
+            Radikand <= 0;
+            DivCyc <= 0;
+            DivStb <= 0;
+            TakteBisFertig <= 0;
         end
     else if(StartSignal) begin
-        DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
-        DivStb <= 0;
         case (FunktionsCode[5:0])
-        default : begin
-            TakteBisFertig <= 1;
-        end
-
-        //Integerarithmetik
-        //Sqrt
-        6'b000011    : begin 
-            Radikand <= Daten1;
-            TakteBisFertig <= 16;
-        end
-        //Div
-        6'b000100    : begin
-            DivCyc <= 1;
-            DivStb <= 1;
-            TakteBisFertig <= 7;
-        end
-        //Mod
-        6'b000101    : begin
-            DivCyc <= 1;
-            DivStb <= 1;
-            TakteBisFertig <= 9;
-        end
-        IntZuFloat : begin
-            TakteBisFertig <= 5;
-        end
-        UnsignedIntZuFloat : begin
-            TakteBisFertig <= 5;
-        end
-        //Float Arithmetik
-        //Add.s
-        6'b100000: begin
-            FloatAdditionDaten2 <= Daten2;
-            TakteBisFertig <= 7;
-        end
-        //Sub.s 
-        6'b100001: begin 
-            FloatAdditionDaten2[30:0] <= Daten2[30:0];
-            FloatAdditionDaten2[31] <= ~Daten2[31];
-            TakteBisFertig <= 7;
-        end
-        //Mul.s
-        6'b100010    : begin 
-            TakteBisFertig <= 9;
-        end
-        //Sqrt.s
-        6'b100011    : begin 
-            TakteBisFertig <= 10;
-        end
-        //Div.s
-        6'b100100    : begin 
-            TakteBisFertig <= 32;
-        end
-        //Cg.s
-        6'b101010	: begin
-            TakteBisFertig <= 7;
-        end
-        //Cl.s
-        6'b101011	: begin
-            TakteBisFertig <= 7;
-        end
-        FloatZuInt : begin
-            TakteBisFertig <= 2;
-        end
+            //Integerarithmetik
+            //Sqrt
+            6'b000011    : begin 
+                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
+                DivStb <= 0;
+                Radikand <= Daten1;
+            end
+            //Div
+            6'b000100    : begin
+                DivCyc <= 1;
+                DivStb <= 1;
+            end
+            //Mod
+            6'b000101    : begin
+                DivCyc <= 1;
+                DivStb <= 1;
+            end
+            IntZuFloat : begin
+                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
+                DivStb <= 0;
+                TakteBisFertig <= 4;
+            end
+            UnsignedIntZuFloat : begin
+                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
+                DivStb <= 0;
+                TakteBisFertig <= 4;
+            end
+            //Float Arithmetik
+            //Add.s
+            6'b100000: begin
+                DivCyc <= 0; 
+                DivStb <= 0;
+                TakteBisFertig <= 6;
+            end
+            //Sub.s 
+            6'b100001: begin 
+                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
+                DivStb <= 0;
+                TakteBisFertig <= 6;
+            end
+            //Mul.s
+            6'b100010    : begin 
+                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
+                DivStb <= 0;
+                TakteBisFertig <= 8;
+            end
+            //Sqrt.s
+            6'b100011    : begin 
+                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
+                DivStb <= 0;
+                TakteBisFertig <= 9;
+            end
+            //Div.s
+            6'b100100    : begin 
+                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
+                DivStb <= 0;
+                TakteBisFertig <= 31;
+            end
+            //Cg.s
+            6'b101010	: begin
+                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
+                DivStb <= 0;
+                TakteBisFertig <= 6;
+            end
+            //Cl.s
+            6'b101011	: begin
+                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
+                DivStb <= 0;
+                TakteBisFertig <= 6;
+            end
+            FloatZuInt : begin
+                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
+                DivStb <= 0;
+                TakteBisFertig <= 1;
+            end
+            default : begin
+                TakteBisFertig <= 0;
+                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
+                DivStb <= 0;
+            end
         endcase
-    end
-    else begin
-        if (DivisionInArbeit == 0 && DivStb == 1)
-            DivStb = 0;
-
-        if(DivisionFertig == 1) begin
-            DivCyc = 0;
-        end
-
-        TakteBisFertig = TakteBisFertig - 1;
     end
 end
 
+always @(posedge Clock) begin
+
+    if (DivisionInArbeit == 0 && DivStb == 1)
+        DivStb <= 0;
+    if(DivisionFertig == 1) begin
+        DivCyc <= 0;
+    end
+    if(TakteBisFertig != 0) begin
+        TakteBisFertig <= TakteBisFertig - 1;
+    end
+    
+end
+//vlt alle takte -1
 endmodule

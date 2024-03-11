@@ -30,24 +30,21 @@ initial begin
     Daten[idx] = 0;
 end
 
-always @(posedge Clock) begin
     
-    if (LesenAn) begin
-        DatenRaus = Daten[Adresse];
-        DatenBereit = 1;
-    end
-    else if(DatenBereit) begin
-        DatenBereit = 0;
-    end
+
+always @(posedge LesenAn) begin
+    DatenRaus <= Daten[Adresse];
+    DatenBereit <= 1;
+end
+always @(negedge LesenAn) begin
+    DatenBereit <= 0;
 end
 
-always @(posedge Clock ) begin
-    if(SchreibenAn) begin
-        Daten[Adresse] = DatenRein;
-        DatenGeschrieben = 1;
-    end
-    else if(DatenGeschrieben) begin
-        DatenGeschrieben = 0;
-    end
+always @(posedge SchreibenAn ) begin
+    Daten[Adresse] <= DatenRein;
+    DatenGeschrieben <= 1;
+end
+always @(negedge SchreibenAn) begin
+    DatenGeschrieben <= 0;
 end
 endmodule
