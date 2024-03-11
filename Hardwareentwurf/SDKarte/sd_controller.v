@@ -1,5 +1,8 @@
 /* SD Card controller module. Allows reading from and writing to a microSD card
-through SPI mode. */
+through SPI mode.
+taken from: https://web.mit.edu/6.111/volume2/www/f2019/tools/sd_controller.v
+ */
+
 
 `timescale 1ns / 1ps
 
