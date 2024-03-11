@@ -39,15 +39,15 @@ typedef uint32_t utaddr;
 
 /* operand types */
 enum {
-  None=0,					    /* none */
-  Data,						/* n-bit data */
-  SourceReg1,				/* general purpose register 1 */
-  SourceReg2,			    /* general purpose register 2 */
-  TargetReg,				/* target general purpose register */
+  None=0,                        /* none */
+  Data,                        /* n-bit data */
+  SourceReg1,                /* general purpose register 1 */
+  SourceReg2,                /* general purpose register 2 */
+  TargetReg,                /* target general purpose register */
   SourceFloatReg1,          /* floating point register 1 */
   SourceFloatReg2,          /* floating point register 2 */
   TargetFloatReg,           /* target floating point register */
-  Immediate16,				/* 16-bit signed immediate for I-format */
+  Immediate16,                /* 16-bit signed immediate for I-format */
   Immediate16Label,         /* 16-bit PC-relative label for I-format */
   Immediate26Label          /* 26-bit PC-relative label for J-format */
 };
@@ -58,7 +58,7 @@ typedef struct {
   expr *exp;
   int isHighLabel;
   int isLowLabel;
-  int isHighArithmeticLabel;
+  int isHighAlgebraicLabel;
 } operand;
 
 /* additional mnemonic data */

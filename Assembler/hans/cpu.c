@@ -4,8 +4,6 @@
 
 #include "vasm.h"
 
-extern symbol* first_symbol;
-
 mnemonic mnemonics[] = {
   "add",     { TargetReg,SourceReg1,SourceReg2 },  { FORMR(0) },
   "sub",     { TargetReg,SourceReg1,SourceReg2 },  { FORMR(1) },
@@ -73,306 +71,344 @@ mnemonic mnemonics[] = {
 };
 const int mnemonic_cnt = sizeof(mnemonics) / sizeof(mnemonics[0]);
 
-const char* cpu_copyright = "vasm hans cpu backend 0.3 (c)2023 by Yannik Stamm";
+const char* cpu_copyright = "vasm hans cpu backend 1.0 (c)2024 by Yannik Stamm";
 const char* cpuname = "hans";
 int bytespertaddr = 1;
 
-
 operand* new_operand()
 {
-	operand* new = mymalloc(sizeof(*new));
-	return new;
+    operand* new = mymalloc(sizeof(*new));
+    return new;
 }
 
 /*Returns the number of the register identifier, or a constant*/
 static int parse_reg(char** start, int regtype)
 {
-	char* endOfIdentifier = *start;
-	regsym* symbol;
-	int registerIndex;
+    char* endOfIdentifier = *start;
+    regsym* symbol;
+    int registerIndex;
+    unsigned int identifierLength;
 
-	/*If string is an identifier...*/
-	if (ISIDSTART(*endOfIdentifier))
-	{
-		endOfIdentifier++;
-		while (ISIDCHAR(*endOfIdentifier)) endOfIdentifier++;
+    /*If string is an identifier...*/
+    if (ISIDSTART(*endOfIdentifier))
+    {
+        endOfIdentifier++;
+        while (ISIDCHAR(*endOfIdentifier)) endOfIdentifier++;
 
-		/*...find that identifier and return the register number it references */
-		unsigned int identifierLength = endOfIdentifier - *start;
-		if (symbol = find_regsym_nc(*start, identifierLength))
-		{
-			if (symbol->reg_type == regtype)
-			{
-				*start = endOfIdentifier;
-				return symbol->reg_num;
-			}
-			
-			return -1; /*In case register type is not the expected type, die*/
-		}
-	}
+        /*...find that identifier and return the register number it references */
+        identifierLength = endOfIdentifier - *start;
+        if (symbol = find_regsym_nc(*start, identifierLength))
+        {
+            if (symbol->reg_type == regtype)
+            {
+                *start = endOfIdentifier;
+                return symbol->reg_num;
+            }
+            
+            return -1; /*In case register type is not the expected type, die*/
+        }
+    }
 
-	/*...else if it is a number, check if it is inside the valid interval and return it*/
-	registerIndex = (int)parse_constexpr(&endOfIdentifier);  /* get register number */
-	if (registerIndex >= 0 && registerIndex <= 31)
-	{
-		*start = endOfIdentifier;
-		return registerIndex;
-	}
+    /*...else if it is a number, check if it */
+    /*is inside the valid interval and return it*/
+    /* get register number */
+    registerIndex = (int)parse_constexpr(&endOfIdentifier);  
+    if (registerIndex >= 0 && registerIndex <= 31)
+    {
+        *start = endOfIdentifier;
+        return registerIndex;
+    }
 
-	return -1;
+    return -1;
 }
 
-static void resolve_high_low_label_reference(operand* operand, char* lastSymbolOfName)
+static void resolve_high_low_label_reference
+        (operand* operand, char* lastSymbolOfName)
 {
-	operand->isLowLabel = 0;
-	operand->isHighLabel = 0;
-	operand->isHighArithmeticLabel = 0;
-	if (*lastSymbolOfName != '@') return;
+    operand->isLowLabel = 0;
+    operand->isHighLabel = 0;
+    operand->isHighAlgebraicLabel = 0;
+    if (*lastSymbolOfName != '@') return;
 
-	if (*(lastSymbolOfName + 1) == 'l' || *(lastSymbolOfName + 1) == 'L')
-	{
-		operand->isLowLabel = 1;
-	}
-	else if (*(lastSymbolOfName + 1) == 'h' || *(lastSymbolOfName + 1) == 'H')
-	{
-		if (*(lastSymbolOfName + 2) == 'a' || *(lastSymbolOfName + 2) == 'A')
-		{
-			operand->isHighArithmeticLabel = 1;
-		}
-		else
-		{
-			operand->isHighLabel = 1;
-		}
-	}
+    if (*(lastSymbolOfName + 1) == 'l' || *(lastSymbolOfName + 1) == 'L')
+    {
+        operand->isLowLabel = 1;
+    }
+    else if (*(lastSymbolOfName + 1) == 'h' || *(lastSymbolOfName + 1) == 'H')
+    {
+        if (*(lastSymbolOfName + 2) == 'a' || *(lastSymbolOfName + 2) == 'A')
+        {
+            operand->isHighAlgebraicLabel = 1;
+        }
+        else
+        {
+            operand->isHighLabel = 1;
+        }
+    }
 
 }
 
-/*Sets operand->reg to the appropriate register and returns, if it was successful or not (returns PO_MATCH or PO_NOMATCH).
- *If the operand is an immediate-label, set operand->expr instead of operand->reg */
+/*Sets operand->reg to the appropriate register and returns, */
+/*if it was successful or not (returns PO_MATCH or PO_NOMATCH).*/
+/*If the operand is an immediate-label, set operand->expr instead of operand->reg */
 int parse_operand(char* start, int len, operand* operand, int requiredOperandType)
 {
-	/*Skips spaces*/
-	start = skip(start);
+    /*Skips spaces*/
+    start = skip(start);
 
-	switch (requiredOperandType)
-	{
-	case SourceReg1:
-	case SourceReg2:
-	case TargetReg:
-		if ((operand->reg = parse_reg(&start, RTYPE_R)) >= 0)
-			return PO_MATCH;
-		break;
+    switch (requiredOperandType)
+    {
+    case SourceReg1:
+    case SourceReg2:
+    case TargetReg:
+        if ((operand->reg = parse_reg(&start, RTYPE_R)) >= 0)
+            return PO_MATCH;
+        break;
 
-	case SourceFloatReg1:
-	case SourceFloatReg2:
-	case TargetFloatReg:
-		if ((operand->reg = parse_reg(&start, RTYPE_F)) >= 0)
-			return PO_MATCH;
-		break;
+    case SourceFloatReg1:
+    case SourceFloatReg2:
+    case TargetFloatReg:
+        if ((operand->reg = parse_reg(&start, RTYPE_F)) >= 0)
+            return PO_MATCH;
+        break;
 
-	case Immediate16:
-		if (*start == '#')
-			start = skip(start + 1);  /* skip optional '#' */
-	case Data:
-	case Immediate16Label:
-	case Immediate26Label:
-		operand->exp = parse_expr(&start);
-		resolve_high_low_label_reference(operand, start);
-		return PO_MATCH;
-	}
-
-	return PO_NOMATCH;
+    case Immediate16:
+        if (*start == '#')
+            start = skip(start + 1);  /* skip optional '#' */
+    case Data:
+    case Immediate16Label:
+    case Immediate26Label:
+        operand->exp = parse_expr(&start);
+        resolve_high_low_label_reference(operand, start);
+        return PO_MATCH;
+    }
+    
+    return PO_NOMATCH;
 }
 
 
 char* parse_cpu_special(char* s)
 {
-	return s;  /* nothing special */
+    return s;  /* nothing special */
 }
 
-/*Instructions are always one byte (= 32 Bit for this CPU), so we can always return 1 here*/
+/*Instructions are always one byte (= 32 Bit for this CPU),*/
+/*so we can always return 1 here*/
 size_t instruction_size(instruction* ip, section* sec, taddr pc)
 {
-	return 1;
+    return 1;
 }
 
 /*Handles low and high labels*/
 static uint32_t add_immediate(uint32_t opCode, taddr immediateValue, operand* operand)
 {
-	if (operand->isHighLabel)
-	{
-		opCode |= (immediateValue & 0xffff0000) >> 16;
-	}
-	else if (operand->isHighArithmeticLabel)
-	{
-		uint16_t higherHalf = (immediateValue & 0xffff0000) >> 16;
-		uint16_t lowerHalf = immediateValue & 0x0000ffff;
-		if (lowerHalf > (1 << 15) - 1)
-		{
-			higherHalf += 1;
-		}
+    if (operand->isHighLabel)
+    {
+        opCode |= (immediateValue & 0xffff0000) >> 16;
+    }
+    else if (operand->isHighAlgebraicLabel)
+    {
+        uint16_t higherHalf = (immediateValue & 0xffff0000) >> 16;
+        uint16_t lowerHalf = immediateValue & 0x0000ffff;
+        if (lowerHalf > (1 << 15) - 1)
+        {
+            higherHalf += 1;
+        }
+        opCode |= higherHalf;
+    }
+    else
+    {
+        opCode |= immediateValue & 0x0000ffff;
+    }
 
-		opCode |= higherHalf;
-	}
-	else
-	{
-		opCode |= immediateValue & 0x0000ffff;
-	}
-
-	return opCode;
+    return opCode;
 }
 
 /*Converts the received instruction into its final binary format*/
-dblock* eval_instruction(instruction* instruction, section* section, taddr programCounter)
+dblock* eval_instruction
+        (instruction* instruction, section* section, taddr programCounter)
 {
-	mnemonic* mnemonic = &mnemonics[instruction->code];
-	uint32_t opCode = mnemonic->ext.opcode;
-	dblock* dataBlock = new_dblock();
-	int i;
+    mnemonic* mnemonic = &mnemonics[instruction->code];
+    uint32_t opCode = mnemonic->ext.opcode;
+    dblock* dataBlock = new_dblock();
+    int i;
 
-	dataBlock->size = 1;
-	dataBlock->data = mymalloc(OCTETS(dataBlock->size));
+    dataBlock->size = 1;
+    dataBlock->data = mymalloc(OCTETS(dataBlock->size));
 
-	/* assemble all operands into the opcode */
-	for (i = 0; i < MAX_OPERANDS; i++)
-	{
-		operand* operand = instruction->op[i];
-		symbol* baseOfImmediate = NULL; /*A relative symbol on which immediateValue depends on (e.g. a label)*/
-		int baseType;
-		taddr immediateValue; 
+    /* assemble all operands into the opcode */
+    for (i = 0; i < MAX_OPERANDS; i++)
+    {
+        operand* operand = instruction->op[i];
+        /*A relative symbol on which immediateValue depends on, either an unknown symbol OR a label (known and unknown) */
+        /*This symbol is needed to pass through information about the usage of this symbol*/
+        /*Which in turn is needed for the linker, to corretly relocate code*/
+        symbol* baseOfImmediate = NULL;
+        taddr immediateValue; 
 
-		if (operand == NULL)
-			break;  /* no more operands */
+        if (operand == NULL)
+            break;  /* no more operands */
+        if (operand->exp != NULL)
+        {
+            /*If immediateValue depends on a symbol, find that symbol*/
+            if (!eval_expr(operand->exp, &immediateValue, section, programCounter))
+            {
+                int result = find_base(operand->exp, &baseOfImmediate, section, programCounter);
+                if (result == BASE_ILLEGAL)
+                    general_error(38);
+            }
+        }
 
-		if (operand->exp != NULL)
-		{
-			/*If the value is compile time constant*/
-			/* evaluate expression, get baseOfImmediate and type for relocations */
-			if (!eval_expr(operand->exp, &immediateValue, section, programCounter))
-				/*Find the relative symbol, on which immediateValue depends on. If immediateValue is not dependent of any symbol, the baseSymbol becomes 0. */
-				baseType = find_base(operand->exp, &baseOfImmediate, section, programCounter);
-		}
 
-		switch (mnemonic->operand_type[i])
-		{
-		case TargetReg:
-		case TargetFloatReg:
-			opCode |= (operand->reg & 31) << 21;
-			break;
-		case SourceReg1:
-		case SourceFloatReg1:
-			opCode |= (operand->reg & 31) << 16;
-			break;
-		case SourceReg2:
-		case SourceFloatReg2:
-			opCode |= (operand->reg & 31) << 11;
-			break;
-		case Immediate16:
-			opCode = add_immediate(opCode, immediateValue, operand);
-			if (baseOfImmediate != NULL)
-			{
-				if (is_pc_reloc(baseOfImmediate, section))
-				{
-					/* external label or label from a different section needs reloc */
-					rlist* newReloc = add_extnreloc(&dataBlock->relocs, baseOfImmediate, immediateValue, REL_PC, 16, 16, 0);
-					((nreloc*)newReloc->reloc)->mask = 0b00000000000000001111111111111111;
-				}
-				else
-					immediateValue -= programCounter + 1;  /* relative distance to label */
-			}
-			break;
-		case Immediate16Label:
-			if (baseOfImmediate != NULL)
-			{
-				if (is_pc_reloc(baseOfImmediate, section))
-				{
-					/* external label or label from a different section needs reloc */
-					rlist* newReloc = add_extnreloc(&dataBlock->relocs, baseOfImmediate, immediateValue, REL_PC, 16, 16, 0);
-					((nreloc*)newReloc->reloc)->mask = 0b00000000000000001111111111111111;
-				}
-				else
-					immediateValue -= programCounter + 1;  /* relative distance to label */
-			}
+        switch (mnemonic->operand_type[i])
+        {
+        case TargetReg:
+        case TargetFloatReg:
+            opCode |= (operand->reg & 31) << 21;
+            break;
+        case SourceReg1:
+        case SourceFloatReg1:
+            opCode |= (operand->reg & 31) << 16;
+            break;
+        case SourceReg2:
+        case SourceFloatReg2:
+            opCode |= (operand->reg & 31) << 11;
+            break;
+        case Immediate16:
+            if (baseOfImmediate != NULL)
+            {
+                rlist* newReloc;
+                /* external label or label from a different section needs reloc */
+                int mask;
+                if (operand->isHighLabel)
+                {
+                    mask = 0xFFFF0000;
+                }
+                else if (operand->isHighAlgebraicLabel)
+                {
+                    rlist* hareloc;
+                    mask = 0xFFFF0000;
 
-			opCode = add_immediate(opCode, immediateValue, operand);
-			break;
-		case Immediate26Label:
-			if (baseOfImmediate != NULL)
-			{
-				if (is_pc_reloc(baseOfImmediate, section))
-				{
-					/* external label or label from a different section needs reloc */
-					rlist* newReloc = add_extnreloc(&dataBlock->relocs, baseOfImmediate, immediateValue, REL_PC, 6, 26, 0);
-					((nreloc*)newReloc->reloc)->mask = 0b00000011111111111111111111111111;
-				}
-				else
-					immediateValue -= programCounter + 1;  /* relative distance to label */
-			}
-			opCode |= immediateValue & 0x3ffffff; /*Should not be used with @l, @h, @ha so no add_immediate*/
-			break;
-		case Data:
-			ierror(0);  /* should be handled be eval_data() */
-			break;
-		}
-	}
+                    hareloc = add_extnreloc(&dataBlock->relocs,
+                        baseOfImmediate, immediateValue, REL_ABS, 16, 16, 0);
+                    ((nreloc*)hareloc->reloc)->mask = 0x8000;
+                }
+                else if (operand->isLowLabel)
+                {
+                    mask = 0xFFFF;
+                }
+                else
+                    mask = 0;
 
-	/* write opcode - endianess doesn't matter */
-	setval(1, dataBlock->data, dataBlock->size, opCode);
-	return dataBlock;
+                newReloc = add_extnreloc(&dataBlock->relocs,
+                    baseOfImmediate, immediateValue, REL_ABS, 16, 16, 0);
+                ((nreloc*)newReloc->reloc)->mask = mask;
+            }
+            /*Only throw warning if not explicitly marked as @l, and if immediate out of range of 16 Bit signed int*/
+            if (!operand->isLowLabel && ((int16_t)immediateValue) != immediateValue)
+                cpu_error(1, immediateValue);
+            opCode = add_immediate(opCode, immediateValue, operand);
+            break;
+        case Immediate16Label:
+            /*If operand contains a label*/
+            if (baseOfImmediate != NULL)
+            {
+                /*If symbol is extern*/
+                if (is_pc_reloc(baseOfImmediate, section))
+                {
+                    /* external label or label from a different section needs reloc */
+                    rlist* newReloc = add_extnreloc(&dataBlock->relocs,
+                        baseOfImmediate, immediateValue, REL_PC, 16, 16, 0);
+                    ((nreloc*)newReloc->reloc)->mask = 65535;
+                }
+            }
+            immediateValue -= programCounter + 1;
+
+            /*Only throw warning if not explicitly marked as @l, and if immediate out of range of 16 Bit signed int*/
+            if (!operand->isLowLabel && ((int16_t)immediateValue) != immediateValue)
+                cpu_error(2, immediateValue);
+            opCode = add_immediate(opCode, immediateValue, operand);
+            break;
+        case Immediate26Label:
+            /*If operand contains a label*/
+            if (baseOfImmediate != NULL)
+            {
+                /*If symbol is extern*/
+                if (is_pc_reloc(baseOfImmediate, section))
+                {
+                    /* external label or label from a different section needs reloc */
+                    rlist* newReloc = add_extnreloc(&dataBlock->relocs,
+                        baseOfImmediate, immediateValue, REL_PC, 6, 26, 0);
+                    ((nreloc*)newReloc->reloc)->mask = 67108863;
+                }
+            }
+            immediateValue -= programCounter + 1;
+            /*Should not be used with @l, @h, @ha so no add_immediate*/
+            opCode |= immediateValue & 0x3ffffff; 
+            break;
+        case Data:
+            ierror(0);  /* should be handled by eval_data() */
+            break;
+        }
+    }
+
+    /* write opcode - endianess doesn't matter */
+    setval(1, dataBlock->data, dataBlock->size, opCode);
+    return dataBlock;
 }
 
 /*Converts the received data operand into its final binary format*/
-dblock* eval_data(operand* operand, size_t bitsize, section* section, taddr programCounter)
+dblock* eval_data
+    (operand* operand, size_t bitsize, section* section, taddr programCounter)
 {
-	dblock* dataBlock = new_dblock();
-	taddr value;
+    dblock* dataBlock = new_dblock();
+    taddr value;
+    if (bitsize % BITSPERBYTE)
+        cpu_error(0, bitsize);  /* data size not supported */
 
-	if (bitsize % BITSPERBYTE)
-		cpu_error(0, bitsize);  /* data size not supported */
+    dataBlock->size = bitsize / BITSPERBYTE;
+    dataBlock->data = mymalloc(OCTETS(dataBlock->size));
 
-	dataBlock->size = bitsize / BITSPERBYTE;
-	dataBlock->data = mymalloc(OCTETS(dataBlock->size));
+    /* evaluate expression, get baseOfImmediate and type for relocations */
+    if (!eval_expr(operand->exp, &value, section, programCounter))
+    {
+        symbol* baseSymbol;
+        int baseType;
 
-	/* evaluate expression, get baseOfImmediate and type for relocations */
-	if (!eval_expr(operand->exp, &value, section, programCounter))
-	{
-		symbol* baseSymbol;
-		int baseType;
+        baseType = find_base(operand->exp, &baseSymbol, section, programCounter);
+        if (baseType == BASE_OK || baseType == BASE_PCREL)
+        {
+            add_extnreloc(&dataBlock->relocs, baseSymbol, value,
+                baseType == BASE_PCREL ? REL_PC : REL_ABS, 0, bitsize, 0);
+        }
+        else if (baseType != BASE_NONE)
+            general_error(38);  /* illegal relocation */
+    }
 
-		baseType = find_base(operand->exp, &baseSymbol, section, programCounter);
-		if (baseType == BASE_OK || baseType == BASE_PCREL)
-		{
-			add_extnreloc(&dataBlock->relocs, baseSymbol, value,
-				baseType == BASE_PCREL ? REL_PC : REL_ABS, 0, bitsize, 0);
-		}
-		else if (baseType != BASE_NONE)
-			general_error(38);  /* illegal relocation */
-	}
-
-	setval(1, dataBlock->data, dataBlock->size, value);
-	return dataBlock;
+    setval(1, dataBlock->data, dataBlock->size, value);
+    return dataBlock;
 }
 
 
 int init_cpu()
 {
-	char r[4];
-	int i;
+    char r[4];
+    int i;
 
-	/* define register symbols */
-	for (i = 0; i < 32; i++)
-	{
-		sprintf(r, "r%d", i);
-		new_regsym(0, 1, r, RTYPE_R, 0, i);
-		r[0] = 'f';
-		new_regsym(0, 1, r, RTYPE_F, 0, i);
-	}
+    /* define register symbols */
+    for (i = 0; i < 32; i++)
+    {
+        sprintf(r, "r%d", i);
+        new_regsym(0, 1, r, RTYPE_R, 0, i);
+        r[0] = 'f';
+        new_regsym(0, 1, r, RTYPE_F, 0, i);
+    }
 
-	return 1;
+    return 1;
 }
 
 
 int cpu_args(char* p)
 {
-	return 0;
+    return 0;
 }
