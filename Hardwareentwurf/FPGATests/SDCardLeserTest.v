@@ -1,6 +1,6 @@
 
 `include "../SDKarte/SDKarte.v"
-`include "../SDKarte/sd_controller.v"
+
 module Top
 (
     input clk_25mhz,
@@ -14,7 +14,6 @@ module Top
     wire heldHigh = 1'b1;
     assign sd_d[1] = heldHigh;
     assign sd_d[2] = heldHigh;
-
     reg [25:0] Adresse = 25'b0000000000000000000000000;
     reg Lesen = 1'b0;
     wire [31:0] VollAdresse = {Adresse,6'b0};
@@ -36,13 +35,13 @@ module Top
         .sclk(sd_clk)
     );
 
-    reg [22:0] counter;
+    reg [21:0] counter = 22'b1;
 
 always @(posedge clk_25mhz) begin
     if(~Busy && counter == 23'b0) begin
         Adresse <= Adresse + 1;
         Lesen <= 1'b1;
-        counter <= 23'b1;
+        counter <= 22'b1;
     end
     else begin
         if(Busy) begin

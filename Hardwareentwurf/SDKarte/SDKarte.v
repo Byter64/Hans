@@ -1,3 +1,4 @@
+`include "../SDKarte/sd_controller.v"
 
 module SDKarte (
     input Clock, // Clock 
@@ -10,6 +11,8 @@ module SDKarte (
     output reg Fertig, // 1: Data is ready to be read
     output wire Busy, // gibt an ob gerade beschäftigt
 
+
+    //SD_controller
     output cs, // Connect to SD_DAT[3].
     output mosi, // Connect to SD_CMD.
     input miso, // Connect to SD_DAT[0].
