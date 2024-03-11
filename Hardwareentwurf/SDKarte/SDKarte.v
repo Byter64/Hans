@@ -4,7 +4,7 @@ module SDKarte (
     input Reset,
 
     // Interface
-    input [31:0] Adresse, // The address from which to read [31:12]: Sektor Adresse [11:6]: Daten Adresse [6:0]: unused 
+    input [31:0] Adresse, // The address from which to read [31:12]: Sektor Adresse [11:6]: Daten Adresse [5:0]: unused 
     input Lesen, // 1: Read operation
     output reg [31:0] Daten, // Data output
     output reg Fertig, // 1: Data is ready to be read

@@ -15,9 +15,9 @@ module Top
     assign sd_d[1] = heldHigh;
     assign sd_d[2] = heldHigh;
 
-    reg [24:0] Adresse = 24'b0000000000000000000000000;
+    reg [25:0] Adresse = 25'b0000000000000000000000000;
     reg Lesen = 1'b0;
-    wire [31:0] VollAdresse = {Adresse,7'b0};
+    wire [31:0] VollAdresse = {Adresse,6'b0};
     wire [31:0] Daten;
     wire Fertig;
     wire  Busy;
