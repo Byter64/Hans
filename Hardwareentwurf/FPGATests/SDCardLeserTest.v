@@ -15,9 +15,9 @@ module Top
     assign sd_d[1] = heldHigh;
     assign sd_d[2] = heldHigh;
 
-    reg [31:0] Adresse = 32'b00001010010001011011011011001101;
+    reg [24:0] Adresse = 24'b0000000000000000000000000;
     reg Lesen = 1'b0;
-
+    wire [31:0] VollAdresse = {Adresse,7'b0};
     wire [31:0] Daten;
     wire Fertig;
     wire  Busy;
@@ -25,7 +25,7 @@ module Top
     SDKarte sdkart(
         .Clock(clk_25mhz),
         .Reset(1'b0),
-        .Adresse(Adresse),
+        .Adresse(VollAdresse),
         .Lesen(Lesen),
         .Daten(Daten),
         .Fertig(Fertig),
@@ -40,7 +40,7 @@ module Top
 
 always @(posedge clk_25mhz) begin
     if(~Busy && counter == 23'b0) begin
-        Adresse <= Adresse + Adresse;
+        Adresse <= Adresse + 1;
         Lesen <= 1'b1;
         counter <= 23'b1;
     end

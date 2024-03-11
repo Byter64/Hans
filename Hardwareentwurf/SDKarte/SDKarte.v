@@ -4,7 +4,7 @@ module SDKarte (
     input Reset,
 
     // Interface
-    input [31:0] Adresse, // The address from which to read [31:12] Sektor Adresse [11:7] unused [6:0] Daten Adresse 
+    input [31:0] Adresse, // The address from which to read [31:12]: Sektor Adresse [11:6]: Daten Adresse [6:0]: unused 
     input Lesen, // 1: Read operation
     output reg [31:0] Daten, // Data output
     output reg Fertig, // 1: Data is ready to be read
@@ -53,7 +53,7 @@ module SDKarte (
     localparam OUTPUT_READY = 2'd3;
 
     wire [6:0] DatenAdresse;
-    assign DatenAdresse = Adresse [6:0];
+    assign DatenAdresse = Adresse [11:6];
     wire [31:0] SektorAdresse;
     assign SektorAdresse = {Adresse [31:12],12'b0}; // Nur bei SD-Controller genutzt <<12
     assign Busy = ~ready;
