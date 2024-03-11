@@ -8,8 +8,8 @@ namespace Linker
     {
         public enum Type
         {
-            Standard = 0,
-            Low = 0,
+            Default,
+            Low,
             High,
             HighAlgebraic,
         }
@@ -58,7 +58,8 @@ namespace Linker
         {
             switch (type)
             {
-                case "@l": return Type.Standard;
+                case "none": return Type.Default;
+                case "@l": return Type.Low;
                 case "@h": return Type.High;
                 case "@ha": return Type.HighAlgebraic;
             }
