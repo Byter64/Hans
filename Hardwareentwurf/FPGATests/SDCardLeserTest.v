@@ -5,15 +5,15 @@ module Top
 (
     input clk_25mhz,
     output sd_cmd,      //mosi
-    inout [3:0] sd_dat,    //miso //cs
-    output sd_sclk,
+    inout [3:0] sd_d,    //miso //cs
+    output sd_clk,
     output [7:0] led
     
 );
 
     wire heldHigh = 1'b1;
-    assign sd_dat[1] = heldHigh;
-    assign sd_dat[2] = heldHigh;
+    assign sd_d[1] = heldHigh;
+    assign sd_d[2] = heldHigh;
 
     reg [31:0] Adresse = 32'b00001010010001011011011011001101;
     reg Lesen = 1'b0;
@@ -30,10 +30,10 @@ module Top
         .Daten(Daten),
         .Fertig(Fertig),
         .Busy(Busy),
-        .cs(sd_dat[3]),
+        .cs(sd_d[3]),
         .mosi(sd_cmd),
-        .miso(sd_dat[0]),
-        .sclk(sd_sclk)
+        .miso(sd_d[0]),
+        .sclk(sd_clk)
     );
 
     reg [22:0] counter;
