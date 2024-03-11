@@ -4,7 +4,7 @@
     <ui:VisualElement name="Log" style="flex-grow: 1; position: absolute; height: 690px; width: 673px; top: 202px; left: 1080px; background-image: url(&apos;project://database/Assets/Graphics/Test/WhitePixel.png?fileID=21300000&amp;guid=f3082876d22c852449f7c06371322707&amp;type=3#WhitePixel&apos;);">
         <ui:Label tabindex="-1" text="Log" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Header" style="-unity-background-image-tint-color: rgb(255, 255, 255); background-image: none; -unity-font-style: bold; font-size: 20px;" />
         <ui:ScrollView scroll-deceleration-rate="0,135" elasticity="0,1" name="ScrollView">
-            <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Text" style="white-space: normal; font-size: 18px;" />
+            <ui:Label tabindex="-1" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Text" focusable="true" style="white-space: normal; font-size: 18px;" />
         </ui:ScrollView>
     </ui:VisualElement>
     <ui:VisualElement name="SchritteZumErfolg" style="flex-grow: 1; position: absolute; background-image: url(&apos;project://database/Assets/Graphics/UI/SchritteZumErfolg.png?fileID=2800000&amp;guid=fa12370a0e87cf14f8e98e397f3ef9f9&amp;type=3#SchritteZumErfolg&apos;); height: 242px; width: 515px; top: 26px; left: -4px;" />
