@@ -75,11 +75,6 @@ const char* cpu_copyright = "vasm hans cpu backend 1.0 (c)2024 by Yannik Stamm";
 const char* cpuname = "hans";
 int bytespertaddr = 1;
 
-static int strequals(const char* c1, const char* c2)
-{
-    return strcmp(c1, c2) == 0;
-}
-
 operand* new_operand()
 {
     operand* new = mymalloc(sizeof(*new));
@@ -223,9 +218,6 @@ static uint32_t add_immediate(uint32_t opCode, taddr immediateValue, operand* op
     }
     else
     {
-        /*Only throw warning if not explicitly marked as @l*/
-        if (!operand->isLowLabel && ((int16_t)immediateValue) != immediateValue)
-            cpu_error(1);
         opCode |= immediateValue & 0x0000ffff;
     }
 
@@ -248,8 +240,9 @@ dblock* eval_instruction
     for (i = 0; i < MAX_OPERANDS; i++)
     {
         operand* operand = instruction->op[i];
-        /*A relative symbol on which immediateValue depends on (e.g. a label), in case */
-        /*the immediate is not a compile time constant*/
+        /*A relative symbol on which immediateValue depends on, either an unknown symbol OR a label (known and unknown) */
+        /*This symbol is needed to pass through information about the usage of this symbol*/
+        /*Which in turn is needed for the linker, to corretly relocate code*/
         symbol* baseOfImmediate = NULL;
         taddr immediateValue; 
 
@@ -257,14 +250,13 @@ dblock* eval_instruction
             break;  /* no more operands */
         if (operand->exp != NULL)
         {
-            int isValueUnknown = !eval_expr(operand->exp, &immediateValue, section, programCounter);
-            /*If the value is not a compile time constant*/
-            /* evaluate expression, get immediateValue and type for relocations */
-            if (isValueUnknown)
-                /*Find the relative symbol, on which immediateValue depends on. */
-                /*If immediateValue is not dependent on any symbol, */
-                /*the baseSymbol becomes 0. */
-                find_base(operand->exp, &baseOfImmediate, section, programCounter);
+            /*If immediateValue depends on a symbol, find that symbol*/
+            if (!eval_expr(operand->exp, &immediateValue, section, programCounter))
+            {
+                int result = find_base(operand->exp, &baseOfImmediate, section, programCounter);
+                if (result == BASE_ILLEGAL)
+                    general_error(38);
+            }
         }
 
 
@@ -285,32 +277,36 @@ dblock* eval_instruction
         case Immediate16:
             if (baseOfImmediate != NULL)
             {
-                /*If symbol is extern*/
-                if (is_pc_reloc(baseOfImmediate, section))
+                rlist* newReloc;
+                /* external label or label from a different section needs reloc */
+                int mask;
+                if (operand->isHighLabel)
                 {
-                    /* external label or label from a different section needs reloc */
-                    int mask;
-                    if (operand->isHighLabel)
-                    {
-                        mask = 0xFFFF0000;
-                    }
-                    else if (operand->isHighAlgebraicLabel)
-                    {
-                        mask = 0xFFFF0000;
-
-                        rlist* hareloc = add_extnreloc(&dataBlock->relocs,
-                            baseOfImmediate, immediateValue, REL_ABS, 16, 16, 0);
-                        ((nreloc*)hareloc->reloc)->mask = 0x8000;
-                    }
-                    else
-                    {
-                        mask = 0xFFFF;
-                    }
-                    rlist* newReloc = add_extnreloc(&dataBlock->relocs,
-                        baseOfImmediate, immediateValue, REL_ABS, 16, 16, 0);
-                    ((nreloc*)newReloc->reloc)->mask = mask;
+                    mask = 0xFFFF0000;
                 }
+                else if (operand->isHighAlgebraicLabel)
+                {
+                    rlist* hareloc;
+                    mask = 0xFFFF0000;
+
+                    hareloc = add_extnreloc(&dataBlock->relocs,
+                        baseOfImmediate, immediateValue, REL_ABS, 16, 16, 0);
+                    ((nreloc*)hareloc->reloc)->mask = 0x8000;
+                }
+                else if (operand->isLowLabel)
+                {
+                    mask = 0xFFFF;
+                }
+                else
+                    mask = 0;
+
+                newReloc = add_extnreloc(&dataBlock->relocs,
+                    baseOfImmediate, immediateValue, REL_ABS, 16, 16, 0);
+                ((nreloc*)newReloc->reloc)->mask = mask;
             }
+            /*Only throw warning if not explicitly marked as @l, and if immediate out of range of 16 Bit signed int*/
+            if (!operand->isLowLabel && ((int16_t)immediateValue) != immediateValue)
+                cpu_error(1, immediateValue);
             opCode = add_immediate(opCode, immediateValue, operand);
             break;
         case Immediate16Label:
@@ -327,6 +323,10 @@ dblock* eval_instruction
                 }
             }
             immediateValue -= programCounter + 1;
+
+            /*Only throw warning if not explicitly marked as @l, and if immediate out of range of 16 Bit signed int*/
+            if (!operand->isLowLabel && ((int16_t)immediateValue) != immediateValue)
+                cpu_error(2, immediateValue);
             opCode = add_immediate(opCode, immediateValue, operand);
             break;
         case Immediate26Label:

@@ -150,13 +150,15 @@ static void write_output(FILE* file, section* firstSection, symbol* firstSymbol)
                             }
                             else
                                 highLow = "@h";
-                            
+
                             reloc->mask = 0xFFFF;
                         }
-                        else
+                        else if (reloc->mask == 0xFFFF)
                         {
                             highLow = "@l";
                         }
+                        else
+                            highLow = "none";
 
                         fprintf(file, "\t<%i,%i,%i,%i,%i,%s,%s,%s>\n", 
                         reloc->byteoffset + byteOffset, reloc->bitoffset, 
