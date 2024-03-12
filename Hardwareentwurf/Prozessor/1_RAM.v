@@ -1,17 +1,13 @@
 module RAM#(
     parameter WORDSIZE = 32,
-    parameter WORDS = 32
+    parameter WORDS = 256
 )
 (
-    input LesenAn,
     input SchreibenAn,
     input[WORDSIZE - 1:0] DatenRein,
     input[$clog2(WORDS) - 1:0] Adresse,
     input Clock,
-
-    output reg[WORDSIZE - 1:0] DatenRaus,
-    output reg DatenBereit = 0,
-    output reg DatenGeschrieben = 0
+    output reg[WORDSIZE - 1:0] DatenRaus
 );
 
 reg[WORDSIZE - 1:0] Daten[WORDS - 1:0];
@@ -30,21 +26,11 @@ initial begin
     Daten[idx] = 0;
 end
 
-    
-
-always @(posedge LesenAn) begin
-    DatenRaus <= Daten[Adresse];
-    DatenBereit <= 1;
-end
-always @(negedge LesenAn) begin
-    DatenBereit <= 0;
-end
-
-always @(posedge SchreibenAn ) begin
+always @(posedge Clock) begin
+    if(SchreibenAn)
     Daten[Adresse] <= DatenRein;
-    DatenGeschrieben <= 1;
+    else
+    DatenRaus <= Daten[Adresse];
 end
-always @(negedge SchreibenAn) begin
-    DatenGeschrieben <= 0;
-end
+
 endmodule

@@ -18,7 +18,7 @@ module sd_controller(
                 // begin a 512-byte READ operation at [address]. 
                 // [byte_available] will transition HIGH as a new byte has been
                 // read from the SD card. The byte is presented on [dout].
-    output reg [7:0] dout, // Data output for READ operation.
+    output reg [7:0] dout, // Data output for READ operation. [0-7]
     output reg byte_available, // A new byte has been presented on [dout].
 
     input wr,   // Write-enable. When [ready] is HIGH, asserting [wr] will
