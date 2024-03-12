@@ -5,9 +5,9 @@ module SDKarte (
     input Reset,
 
     // Interface
-    input [31:0] Adresse, // The address from which to read [31:12]: Sektor Adresse [11:6]: Daten Adresse [5:0]: unused 
+    input [31:0] Adresse, //SektorenAdresse -Erste 12 Bits werden Ignoriert
     input Lesen, // 1: Read operation
-    output reg [31:0] Daten, // Data output
+    output reg [4095:0] Daten, // Data output MSB Bit ganz links => 1. 32 Bit Wort [31:0]
     output reg Fertig, // 1: Data is ready to be read
     output wire Busy, // gibt an ob gerade beschäftigt
 
@@ -51,88 +51,46 @@ module SDKarte (
 
     // Zustandsdefinitionen für den SD-Controller
     localparam IDLE = 2'd0;
-    localparam COUNTING = 2'd1;
     localparam READING = 2'd2;
-    localparam OUTPUT_READY = 2'd3;
 
-    wire [6:0] DatenAdresse;
-    assign DatenAdresse = Adresse [11:6];
     wire [31:0] SektorAdresse;
     assign SektorAdresse = {Adresse [31:12],12'b0}; // Nur bei SD-Controller genutzt <<12
     assign Busy = ~ready;
     // Zustands- und Zählerregistervariablen für den SD-Controller
     reg [2:0] state = IDLE;
-    reg [1:0] byte_count = 0;
-    reg [6:0] DatenCounter = 0; 
-
+    always @(posedge byte_available) begin
+        case(state)
+            IDLE: begin
+                
+            end
+            READING: begin
+                Daten <= {Daten[4087:0],dout};
+            end
+        endcase
+    end
+    always @(posedge Busy) begin
+            Fertig <= 0;
+            rd <= 0;
+    end
     // Zustandsautomat für den SD-Controller
     always @(posedge Clock or posedge Reset) begin
         if (Reset) begin
             state <= IDLE;
-            byte_count <= 0;
             Daten <= 0;
             Fertig <= 0;
-            DatenCounter <= 0;
         end else begin
             case (state)
                 IDLE: begin
-                    Fertig <= 0;
-                    if (Lesen && ready) begin
-                        DatenCounter <= DatenAdresse;
-                        if(DatenAdresse == 7'b0) begin
-                            state <= READING;
-                        end
-                        else begin
-                            state <= COUNTING;
-                        end
+                    if (Lesen && ~ready) begin
+                        state <= READING;
                         rd <= 1;
                     end
                 end
-                COUNTING: begin
-                    rd <= 0;
-                    if(byte_available) begin
-                        if(DatenCounter != 0)begin
-                            if(byte_count == 2'b11) begin
-                                byte_count <= 2'b00;
-                                DatenCounter <= DatenCounter - 1;
-                            end
-                            else begin
-                                byte_count <= byte_count + 1;
-                            end
-                        end
-                        else begin
-                            state <= READING;
-                            byte_count <= 2'b00;
-                        end
-                    end
-                end
                 READING: begin
-                    rd <= 0;
-                    if (byte_available) begin
-                        if(byte_count == 2'b00) begin
-                            Daten[7:0] <= dout;
-                            byte_count <= byte_count + 1;
-                        end
-                        else if (byte_count == 2'b01) begin
-                            Daten[15:8] <= dout;
-                            byte_count <= byte_count + 1;
-                        end
-                        else if (byte_count == 2'b10) begin
-                            Daten[23:16] <= dout;
-                            byte_count <= byte_count + 1;
-                            state <= OUTPUT_READY;
-                        end
-                        else begin
-                            state <= OUTPUT_READY;
-                            Daten <= 32'b1;
-                        end
+                    if (ready) begin
+                        state <= IDLE;
+                        Fertig <= 1;
                     end
-                end
-                OUTPUT_READY: begin
-                    Daten[31:24] = dout;
-                    byte_count <= 0;
-                    Fertig <= 1;
-                    state <= IDLE;
                 end
                 default: state <= IDLE;
             endcase

@@ -1,7 +1,7 @@
 `include "../Grafikkarte/Verilog/HDMI_test_DDR.v"
 `include "../Grafikkarte/Verilog/TMDS_encoder.v"
 `include "../Grafikkarte/Verilog/HDMI_clock.v"
-`include "../Grafikkarte/Verilog/Bildpuffer.v" ///home/timo/Hans/Hardwareentwurf/Grafikkarte/Verilog
+`include "../Grafikkarte/Verilog/Bildpuffer.v"
 
 
 module Top

@@ -1,6 +1,6 @@
 // Testbench template
-`include "../0_CPU.v"
-`include "1_RAM.v"
+`include "../Prozessor/0_CPU.v"
+`include "../Prozessor/1_RAM.v"
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns
@@ -39,9 +39,9 @@ reg BeschreibeInstruktionRAM;
  CPU CPU (
     .DatenRein(DatenRein),
     .Instruktion(Instruktion),
-    .InstruktionGeladen(InstruktionGeladen),
-    .DatenGeladen(DatenGeladen),
-    .DatenGespeichert(DatenGespeichert),
+    .InstruktionGeladen(1'b1),
+    .DatenGeladen(1'b1),
+    .DatenGespeichert(1'b1),
     .Clock(Clock),
     .Reset(Reset),
 
@@ -57,30 +57,24 @@ RAM #(
     .WORDSIZE(32),
     .WORDS(256)
 ) InstruktionRAM (
-    .LesenAn(LeseInstruktion),
     .SchreibenAn(BeschreibeInstruktionRAM),
     .DatenRein(InstruktionRAMEingang),
     .Adresse(InstruktionRAMAdresseJetztAberWirklich),
     .Clock(Clock),
 
-    .DatenRaus(Instruktion),
-    .DatenBereit(InstruktionGeladen),
-    .DatenGeschrieben(Zero)
+    .DatenRaus(Instruktion)
 );
 
 RAM #(
     .WORDSIZE(32),
     .WORDS(256)
 ) DatenRAM (
-    .LesenAn(LeseDaten),
     .SchreibenAn(SchreibeDaten),
     .DatenRein(DatenRaus),
     .Adresse(DatenAdresse),
     .Clock(Clock),
 
-    .DatenRaus(DatenRein),
-    .DatenBereit(DatenGeladen),
-    .DatenGeschrieben(DatenGespeichert)
+    .DatenRaus(DatenRein)
 );
 
 

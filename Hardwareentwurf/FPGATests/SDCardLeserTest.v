@@ -17,7 +17,7 @@ module Top
     reg [25:0] Adresse = 25'b0000000000000000000000000;
     reg Lesen = 1'b0;
     wire [31:0] VollAdresse = {Adresse,6'b0};
-    wire [31:0] Daten;
+    wire [4095:0] Daten;
     wire Fertig;
     wire  Busy;
 

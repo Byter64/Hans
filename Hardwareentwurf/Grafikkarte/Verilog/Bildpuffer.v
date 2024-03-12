@@ -1,6 +1,5 @@
 module Bildpuffer (
-  input clk_in,  //clk von Prozessor oder GPU
-  input clk_out, //clk von HDMI_transmitter 25MHZ
+  input clk,  //clk von Prozessor oder GPU
 
   input [7:0] x,
   input [7:0] y,
@@ -21,7 +20,7 @@ module Bildpuffer (
 
   assign pixelData = (x_data < WIDTH && y_data < HEIGHT)? ram[y_data*WIDTH+x_data] : 8'b0;
 
-  always @(posedge clk_in) begin
+  always @(posedge clk) begin
     if (write&&y<HEIGHT&&x<WIDTH) begin
       ram[y*WIDTH+x] <= color;
     end
