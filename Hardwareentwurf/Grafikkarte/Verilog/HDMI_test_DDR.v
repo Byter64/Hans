@@ -13,16 +13,16 @@
 //   that I tried to use with the standard LVCMOS33 mode, without success.
 
 module HDMI_test_DDR(
-   input pclk,
+   input clk,
    input [7:0] pixelData,
-   output [9:0] x,
-   output [9:0] y,
+   output [7:0] x,
+   output [7:0] y,
    output [3:0] gpdi_dp
    // Note: gpdi_dn[3:0] is generated automatically by LVCMOS33D mode in ulx3s.lpf
 );
 
 HDMI_gen hdmi_gen(
-   .pixclk(pclk),
+   .pixclk(clk),
    .TMDS_rgb_p(gpdi_dp[2:0]),
    .pixelData(pixelData),
    .x(x),

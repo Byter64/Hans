@@ -1,7 +1,5 @@
 
-module Loader#(
-    parameter WORDS = 32
-) (
+module Loader (
     input Clock, // Clock 
     input Reset,
 
@@ -14,7 +12,7 @@ module Loader#(
 
     // ZU RAM
 
-    output reg [$clog2(WORDS) - 1:0] RAMAdresse, //Adresse
+    output reg [31:0] RAMAdresse, //Adresse
     output [31:0] DatenRaus, //DatenRein
     output reg Schreiben, //Schreiben an
 
@@ -28,7 +26,7 @@ module Loader#(
     localparam READING = 2'd0;
     localparam WAITING = 2'd1;
     localparam WRITING = 2'd2;
-    localparam DONE 2'd3;
+    localparam DONE = 2'd3;
 
     reg [31:0] Counter = 32'b0;
     reg [31:0] SektorAdresse = 32'b0;
@@ -36,7 +34,7 @@ module Loader#(
     reg [4095:0] TempData = 4096'b0;
     reg[6:0] WortCounter = 7'b0;
     // Zustands- und Zählerregistervariablen für den SD-Controller
-    reg [2:0] state = READINGCOUNTER;
+    reg [2:0] state = READING;
 
     // Zustandsautomat für den SD-Controller
     always @(posedge Clock or posedge Reset) begin

@@ -1,6 +1,11 @@
 `include "../Prozessor/0_CPU.v"
-`include "../Cache/Cache.v"
-`include "../Prozessor/Testbenches/1_RAM.v"
+`include "../Prozessor/1_RAM.v"
+`include "../Loader/Loader.v"
+`include "../Grafikkarte/Verilog/Bildpuffer.v"
+`include "../SDKarte/SDKarte.v"
+`include "../Grafikkarte/Verilog/HDMI_clock.v"
+`include "../Grafikkarte/Verilog/HDMI_test_DDR.v"
+`include "../Grafikkarte/Verilog/TMDS_encoder.v"
 `ifndef IVERILOG
 `include "../ecp5pll/hdl/sv/ecp5pll.sv"
 `endif 
@@ -8,66 +13,31 @@
 module Top
 (
     input clk_25mhz,
-    output[7:0] led
+    output[7:0] led,
+    output sd_cmd,      //mosi
+    inout [3:0] sd_d,    //miso //cs
+    output sd_clk,
+    output[3:0] gpdi_dp
 );
+ wire ONE = 1'b1;
+ wire ZERO = 1'b0;
+ // Input/Output OUT
+ //SDKARTE
+ assign sd_d[0] = SDcs;
+ assign sd_d[1] = ONE;
+ assign sd_d[2] = ONE;
+ assign sd_d[3] = SDmiso;
+ assign sd_cmd = SDmosi;
+ //GPDI
+ assign gpdi_dp = HDMIgpdi_dp;
+ //LED
+ assign led = BildpufferX;
+ //CLOCKS
+ wire Clock;
+ wire [3:0] clocks;
+ assign Clock = clocks[3];
 
- // Input/Output
-reg[31:0] InstruktionAdresse;
-reg Reset;
-reg[7:0] ledReg = 7'b0;
-wire Clock;
-assign Clock = clocks[3];
-assign led = ledReg;
-wire [3:0] clocks;
-
-wire[31:0] Instruktion;
-wire[31:0] DatenRaus;
-wire[31:0] DatenAdresse;
-wire[31:0] DatenRein;
-wire DatenGeladen;
-wire DatenGespeichert;
-wire InstruktionGeladen;
-wire LeseDaten;
-wire SchreibeDaten;
-wire LeseInstruktion;
-wire Zero;
-
-wire RAMLeseDaten;
-wire RAMSchreibeDaten;
-wire[31:0] RAMDatenRaus;
-wire CPUDatenGeladen;
-wire CPUDatenGespeichert;
-
-wire LeseInstruktionRAM;
-wire BeschreibeInstruktionRAMRAM;
-wire [31:0] InstruktionRAMEingangRAM;
-wire [31:0] InstruktionRAMAdresseJetztAberWirklichRAM;
-wire [31:0] InstruktionRAMNichtModul;
-wire InstruktionGeladenRAM;
-
-wire RAMLeseDatenRAM;
-wire RAMSchreibeDatenRAM;
-wire [31:0] DatenRausRAM;
-wire [31:0] DatenAdresseRAM;
-wire [31:0] DatenReinRAM;
-wire DatenGeladenRAM;
-wire DatenGespeichertRAM;
-
-assign RAMLeseDaten =       DatenAdresse[31] == 0 ? LeseDaten : 0;
-assign RAMSchreibeDaten =   DatenAdresse[31] == 0 ? SchreibeDaten : 0;
-assign RAMDatenRaus =       DatenAdresse[31] == 0 ? DatenRein : {24'b0, ledReg};
-assign CPUDatenGeladen =    DatenAdresse[31] == 0 ? DatenGeladen : 1;
-assign CPUDatenGespeichert =DatenAdresse[31] == 0 ? DatenGespeichert : 1;
-
-wire[31:0] w_InstruktionAdresse;
-wire[31:0] InstruktionRAMAdresseJetztAberWirklich;
-reg InstruktionInitialisierung = 0;
-assign InstruktionRAMAdresseJetztAberWirklich = InstruktionInitialisierung == 1 ? InstruktionAdresse : w_InstruktionAdresse;
-
-//InstruktionRAM fuellen
-reg[31:0] InstruktionRAMEingang = 0;
-reg BeschreibeInstruktionRAM = 0;
-
+//Clock
 `ifdef  IVERILOG
 reg[3:0] __SimulationsClocks;
 
@@ -111,115 +81,181 @@ ecp5pll_inst
 );
 `endif
 
+    //Inputs CPU
+    wire [31:0] CPUDatenRein;
+    wire [31:0] CPUInstruktion;
+    //Outputs CPU
+    wire [31:0] CPUInstruktionAdresse;
+    wire [31:0] CPUDatenRaus;
+    wire [31:0] CPUDatenAdresse;
+    wire CPULeseDaten;
+    wire CPUSchreibeDaten;
+    wire CPULeseInstruktion;
 
  // Module instance
- CPU CPU (
-    .DatenRein(RAMDatenRaus),
-    .Instruktion(Instruktion),
-    .InstruktionGeladen(InstruktionGeladen),
-    .DatenGeladen(CPUDatenGeladen),
-    .DatenGespeichert(CPUDatenGespeichert),
+ CPU cpu (
+    .DatenRein(CPUDatenRein),
+    .Instruktion(CPUInstruktion),
+    .InstruktionGeladen(1'b1),
+    .DatenGeladen(1'b1),
+    .DatenGespeichert(1'b1),
     .Clock(Clock),
-    .Reset(Reset),
+    .Reset(GlobalReset||LoaderReset),
 
-    .InstruktionAdresse(w_InstruktionAdresse),
-    .DatenRaus(DatenRaus),
-    .DatenAdresse(DatenAdresse),
-    .LeseDaten(LeseDaten),
-    .SchreibeDaten(SchreibeDaten),
-    .LeseInstruktion(LeseInstruktion)
+    .InstruktionAdresse(CPUInstruktionAdresse),
+    .DatenRaus(CPUDatenRaus),
+    .DatenAdresse(CPUDatenAdresse),
+    .LeseDaten(CPULeseDaten),
+    .SchreibeDaten(CPUSchreibeDaten),
+    .LeseInstruktion(CPULeseInstruktion)
  );
-
-Cache #(
-    .CACHESIZEBITS(15),
-    .BLOCKSIZEBITS(2)
-) InstruktionCache (
-    .ProzessorSchreiben(BeschreibeInstruktionRAM),
-    .ProzessorLesen(LeseInstruktion),
-    .ProzessorAdresse(InstruktionRAMAdresseJetztAberWirklich),
-    .ProzessorSchreibDaten(InstruktionRAMEingang),
-    .RAMLesDaten(InstruktionRAMNichtModul),
-    .RAMDatenGeschrieben(Zero),
-    .RAMDatenGelesen(InstruktionGeladenRAM),
-    .Clock(Clock),
-    .Reset(Reset),
-
-    .ProzessorLesDaten(Instruktion),
-    .ProzessorDatenGeschrieben(Zero),
-    .ProzessorDatenGelesen(InstruktionGeladen),
-    .RAMSchreiben(BeschreibeInstruktionRAMRAM),
-    .RAMLesen(LeseInstruktionRAM),
-    .RAMAdresse(InstruktionRAMAdresseJetztAberWirklichRAM),
-    .RAMSchreibDaten(InstruktionRAMEingangRAM)
-);
-
+    //Inputs RAM
+    wire RAMSchreibenAn;
+    wire [31:0] RAMDatenInput;
+    wire [15:0] RAMAdresse;
+    //Outputs RAM
+    wire [31:0] RAMDatenOutput;
+    //Instanziierung 
 RAM #(
     .WORDSIZE(32),
-    .WORDS(256)
-) InstruktionRAM (
-    .LesenAn(LeseInstruktionRAM),
-    .SchreibenAn(BeschreibeInstruktionRAMRAM),
-    .DatenRein(InstruktionRAMEingangRAM),
-    .Adresse(InstruktionRAMAdresseJetztAberWirklichRAM[7:0]),
+    .WORDS(2**11) //2**16
+) ram (
+    .SchreibenAn(RAMSchreibenAn),
+    .DatenRein(RAMDatenInput),
+    .Adresse(RAMAdresse),
     .Clock(Clock),
 
-    .DatenRaus(InstruktionRAMNichtModul),
-    .DatenBereit(InstruktionGeladenRAM),
-    .DatenGeschrieben(Zero)
+    .DatenRaus(RAMDatenOutput)
 );
+    //Inputs Loader
+    wire [4095:0] LoaderDaten;
+    wire LoaderFertig;
+    wire LoaderBusy;
+    
+    //Outputs Loader
+    wire [31:0] LoaderSDAdresse;
+    wire LoaderLesen;
+    wire [31:0] LoaderRAMAdresse;
+    wire [31:0] LoaderDatenRaus;
+    wire LoaderSchreiben;
+    wire LoaderSchreibenFertig;
 
-Cache #(
-    .CACHESIZEBITS(14),
-    .BLOCKSIZEBITS(2)
-) DatenCache (
-    .ProzessorSchreiben(RAMSchreibeDaten),
-    .ProzessorLesen(RAMLeseDaten),
-    .ProzessorAdresse(DatenAdresse),
-    .ProzessorSchreibDaten(DatenRaus),
-    .RAMLesDaten(DatenReinRAM),
-    .RAMDatenGeschrieben(DatenGespeichertRAM),
-    .RAMDatenGelesen(DatenGeladenRAM),
+    //Instanziierung
+Loader dataloader(
     .Clock(Clock),
-    .Reset(Reset),
+    .Reset(GlobalReset),
+    .SDAdresse(LoaderSDAdresse),
+    .Lesen(LoaderLesen),
+    .Daten(LoaderDaten),
+    .Fertig(LoaderFertig),
+    .Busy(LoaderBusy),
 
-    .ProzessorLesDaten(DatenRein),
-    .ProzessorDatenGeschrieben(DatenGespeichert),
-    .ProzessorDatenGelesen(DatenGeladen),
-    .RAMSchreiben(RAMSchreibeDatenRAM),
-    .RAMLesen(RAMLeseDatenRAM),
-    .RAMAdresse(DatenAdresseRAM),
-    .RAMSchreibDaten(DatenRausRAM)
+    .RAMAdresse(LoaderRAMAdresse),
+    .DatenRaus(LoaderDatenRaus),
+    .Schreiben(LoaderSchreiben),
+    .SchreibenFertig(LoaderSchreibenFertig)
 );
-
-RAM #(
-    .WORDSIZE(32),
-    .WORDS(32768)
-) DatenRAM (
-    .LesenAn(RAMLeseDatenRAM),
-    .SchreibenAn(RAMSchreibeDatenRAM),
-    .DatenRein(DatenRausRAM),
-    .Adresse(DatenAdresseRAM[14:0]),
+    //Inputs SDKarte
+    wire [31:0] SDAdresse;
+    wire SDLesen;
+    wire SDmiso;
+    //Outputs SDKarte
+    wire [4095:0] SDDaten;
+    wire SDFertig;
+    wire SDBusy;
+    wire SDcs;
+    wire SDmosi;
+    //Instanziierung
+SDKarte sdkarte(
     .Clock(Clock),
+    .Reset(GlobalReset),
 
-    .DatenRaus(DatenReinRAM),
-    .DatenBereit(DatenGeladenRAM),
-    .DatenGeschrieben(DatenGespeichertRAM)
+    .Adresse(SDAdresse),
+    .Lesen(SDLesen),
+    .Daten(SDDaten),
+    .Fertig(SDFertig),
+    .Busy(SDBusy),
+    .cs(SDcs),
+    .mosi(SDmosi),
+    .miso(SDmiso),
+    .sclk(sd_clk)
 );
+    //Inputs Bildpuffer
+    wire [7:0] BildpufferX;
+    wire [7:0] BildpufferY;
+    wire [7:0] BildpufferColor;
+    wire BildpufferWrite;
+    wire [7:0] BildpufferXData;
+    wire [7:0] BildpufferYData;
 
+    //Outputs Bildpuffer
+    wire [7:0] BildpufferPixelData;
+    //Instanziierung
+Bildpuffer bildpuffer (
+    .clk(Clock),
+    .x(BildpufferX),
+    .y(BildpufferY),
+    .color(BildpufferColor),
+    .write(BildpufferWrite),
+    .x_data(BildpufferXData),
+    .y_data(BildpufferYData),
+    .pixelData(BildpufferPixelData)
+);
+    //Inputs HDMI
+    wire [7:0] HDMIPixelData;
+    //Outputs HDMI
+    wire [7:0] HDMIX;
+    wire [7:0] HDMIY;
+    wire [3:0] HDMIgpdi_dp;
+    //Instanziierung
+HDMI_test_DDR hdmi_test_ddr(
+    .clk(Clock),
+    .pixelData(HDMIPixelData),
+    .x(HDMIX),
+    .y(HDMIY),
+    .gpdi_dp(HDMIgpdi_dp)
+    );
+
+wire LoaderReset;
+
+//INPUT LOGIC
+//CPU
+    assign CPUDatenRein = RAMDatenOutput;
+    assign CPUInstruktion = RAMDatenOutput;
+//RAM
+    assign RAMSchreibenAn = CPUSchreibeDaten;
+    assign RAMDatenInput = CPUDatenRaus;
+    assign RAMAdresse = CPULeseInstruktion ? CPUInstruktionAdresse[15:0] : CPUDatenAdresse[15:0];
+//Loader
+    assign LoaderDaten = SDDaten;
+    assign LoaderFertig = SDFertig;
+    assign LoaderBusy = SDBusy;
+//SDKarte
+    assign SDAdresse = LoaderSDAdresse;
+    assign SDLesen = LoaderLesen;
+//Bildpuffer
+    assign BildpufferX = CPUDatenAdresse[23:16];
+    assign BildpufferY = CPUDatenAdresse[31:24];
+    assign BildpufferColor = CPUDatenRaus[7:0];
+    assign BildpufferWrite = (CPUDatenAdresse[15:0] == 16'b0) ? CPUSchreibeDaten : 0; 
+    assign BildpufferXData = HDMIX;
+    assign BildpufferYData = HDMIY;
+//HDMI
+    assign HDMIPixelData = BildpufferPixelData;
+//REST
+    assign LoaderReset = ~LoaderSchreibenFertig;
+//
+
+reg GlobalReset = 0;
 integer resetTimer = 10;
 always @(posedge Clock) begin
     if(resetTimer > 0)begin
-        Reset = 1;
-        resetTimer = resetTimer - 1;
+        GlobalReset <= 1;
+        resetTimer <= resetTimer - 1;
     end
     else if(resetTimer == 0)
-        Reset = 0;
+        GlobalReset <= 0;
 end
 
-always @(posedge Clock) begin
-    if(DatenAdresse[31] == 1 && SchreibeDaten == 1) begin
-        ledReg = DatenRaus[24:17];
-    end
-end
 
 endmodule
