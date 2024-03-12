@@ -14,6 +14,7 @@ public class ButtonAllocator : MonoBehaviour
 
     public static ButtonAllocator Instance { get; private set; }
     public static VisualElement root { get; private set; }
+    public static Toggle outputToggle;
     public StreamReader LogStream { set; get; }
 
     private Button assembleButton;
@@ -38,6 +39,7 @@ public class ButtonAllocator : MonoBehaviour
         linkButton = root.Query<Button>("Link").First();
         projectPath = root.Query<TextField>("Projektpfad").First();
         resultPath = root.Query<TextField>("Ergebnispfad").First();
+        outputToggle = root.Query<Toggle>("OutputToggle").First();
 
         assembleButton.clicked += OnAssembleButton;
         linkButton.clicked += OnLinkButton;

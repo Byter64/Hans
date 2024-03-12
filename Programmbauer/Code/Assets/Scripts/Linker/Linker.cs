@@ -10,7 +10,8 @@ namespace Linker
 {
     public class Linker : MonoBehaviour
     {
-        private const string resultFileName = "program.bin";
+        private const string resultFileNameBinary = "program.bin";
+        private const string resultFileNameHex = "program.txt";
 
         private string[] lennyFaces = { "(▀̿Ĺ̯▀̿ ̿)", "ʕ•ᴥ•ʔ", "(づ｡◕‿‿◕｡)づ", "(ง'̀-'́)ง", 
             "(☞ﾟヮﾟ)☞ ☜(ﾟヮﾟ☜)", "♪~ ᕕ(ᐛ)ᕗ", "(~˘▾˘)~", "（╯°□°）╯︵( .o.)", "ᕙ(⇀‸↼‶)ᕗ", "ᕦ(ò_óˇ)ᕤ" };
@@ -44,7 +45,7 @@ namespace Linker
 
             byte[] programCode = CreateProgramCode(objectFileData);
 
-            WriteProgram(pathForResult, programCode);
+            WriteProgram(pathForResult, programCode, ButtonAllocator.outputToggle.value);
 
             Log.Instance.Print("Successfully linked program\n" + lennyFaces[UnityEngine.Random.Range(0, lennyFaces.Length)]);
 #if !UNITY_EDITOR
@@ -199,16 +200,19 @@ namespace Linker
             return programCode.ToArray();
         }
 
-        private static void WriteProgram(string path, byte[] programCode)
+        private static void WriteProgram(string path, byte[] programCode, bool asHex)
         {
-            path += Path.DirectorySeparatorChar + resultFileName;
+            path += Path.DirectorySeparatorChar + (asHex ? resultFileNameHex : resultFileNameBinary);
              
             if(File.Exists(path))
             {
                 File.Delete(path);
             }
 
-            File.WriteAllBytes(path, programCode);
+            if (asHex)
+                File.WriteAllText(path, BitConverter.ToString(programCode).Replace("-", string.Empty));
+            else
+                File.WriteAllBytes(path, programCode);
         }
         
         /// <summary>
