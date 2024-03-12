@@ -240,9 +240,9 @@ dblock* eval_instruction
     for (i = 0; i < MAX_OPERANDS; i++)
     {
         operand* operand = instruction->op[i];
-        /*A relative symbol on which immediateValue depends on, either an unknown symbol OR a label (known and unknown) */
-        /*This symbol is needed to pass through information about the usage of this symbol*/
-        /*Which in turn is needed for the linker, to corretly relocate code*/
+
+        /*"A non-constant expression is based on a (defined or undefined) symbol*/
+        /*(baseOfImmediate) and an addend (ImmediateValue)."*/
         symbol* baseOfImmediate = NULL;
         taddr immediateValue; 
 
@@ -254,7 +254,7 @@ dblock* eval_instruction
             if (!eval_expr(operand->exp, &immediateValue, section, programCounter))
             {
                 int result = find_base(operand->exp, &baseOfImmediate, section, programCounter);
-                if (result == BASE_ILLEGAL)
+                if (result != BASE_OK)
                     general_error(38);
             }
         }
@@ -304,8 +304,8 @@ dblock* eval_instruction
                     baseOfImmediate, immediateValue, REL_ABS, 16, 16, 0);
                 ((nreloc*)newReloc->reloc)->mask = mask;
             }
-            /*Only throw warning if not explicitly marked as @l, and if immediate out of range of 16 Bit signed int*/
-            if (!operand->isLowLabel && ((int16_t)immediateValue) != immediateValue)
+            /*Only throw warning if not explicitly marked as @l, and if immediate out of range of 16 Bit signed/unsigned int*/
+            if (!operand->isLowLabel && (immediateValue < -0x8000 || immediateValue > 0xFFFF))
                 cpu_error(1, immediateValue);
             opCode = add_immediate(opCode, immediateValue, operand);
             break;
@@ -319,15 +319,15 @@ dblock* eval_instruction
                     /* external label or label from a different section needs reloc */
                     rlist* newReloc = add_extnreloc(&dataBlock->relocs,
                         baseOfImmediate, immediateValue, REL_PC, 16, 16, 0);
-                    ((nreloc*)newReloc->reloc)->mask = 65535;
                 }
             }
             immediateValue -= programCounter + 1;
 
-            /*Only throw warning if not explicitly marked as @l, and if immediate out of range of 16 Bit signed int*/
-            if (!operand->isLowLabel && ((int16_t)immediateValue) != immediateValue)
+            /*Only throw warning if immediate out of range of 16 Bit signed int*/
+            if (immediateValue < -0x8000 || immediateValue > 0x7FFF)
                 cpu_error(2, immediateValue);
-            opCode = add_immediate(opCode, immediateValue, operand);
+            /*Should not be used with @l, @h, @ha so no add_immediate*/
+            opCode |= immediateValue & 0xffff;
             break;
         case Immediate26Label:
             /*If operand contains a label*/
@@ -343,6 +343,9 @@ dblock* eval_instruction
                 }
             }
             immediateValue -= programCounter + 1;
+            if (immediateValue < -0x2000000 || immediateValue > 0x1FFFFFF)
+                cpu_error(3, immediateValue);
+
             /*Should not be used with @l, @h, @ha so no add_immediate*/
             opCode |= immediateValue & 0x3ffffff; 
             break;
@@ -372,13 +375,13 @@ dblock* eval_data
     /* evaluate expression, get baseOfImmediate and type for relocations */
     if (!eval_expr(operand->exp, &value, section, programCounter))
     {
-        symbol* baseSymbol;
+        symbol* baseOfImmediate;
         int baseType;
 
-        baseType = find_base(operand->exp, &baseSymbol, section, programCounter);
+        baseType = find_base(operand->exp, &baseOfImmediate, section, programCounter);
         if (baseType == BASE_OK || baseType == BASE_PCREL)
         {
-            add_extnreloc(&dataBlock->relocs, baseSymbol, value,
+            add_extnreloc(&dataBlock->relocs, baseOfImmediate, value,
                 baseType == BASE_PCREL ? REL_PC : REL_ABS, 0, bitsize, 0);
         }
         else if (baseType != BASE_NONE)

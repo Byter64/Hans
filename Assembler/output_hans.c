@@ -102,6 +102,7 @@ static void write_output(FILE* file, section* firstSection, symbol* firstSymbol)
         }
         else if (activeSymbol->type == EXPRESSION)
         {
+            simplify_expr(activeSymbol->expr);
             fprintf(file, ".%s:%i\n", activeSymbol->name, activeSymbol->expr->c.val);
         }
     }
