@@ -286,12 +286,12 @@ dblock* eval_instruction
                 }
                 else if (operand->isHighAlgebraicLabel)
                 {
-                    rlist* hareloc;
+                    rlist* reloc;
                     mask = 0xFFFF0000;
 
-                    hareloc = add_extnreloc(&dataBlock->relocs,
+                    reloc = add_extnreloc(&dataBlock->relocs,
                         baseOfImmediate, immediateValue, REL_ABS, 16, 16, 0);
-                    ((nreloc*)hareloc->reloc)->mask = 0x8000;
+                    ((nreloc*)reloc->reloc)->mask = 0x8000;
                 }
                 else if (operand->isLowLabel)
                 {
@@ -317,7 +317,7 @@ dblock* eval_instruction
                 if (is_pc_reloc(baseOfImmediate, section))
                 {
                     /* external label or label from a different section needs reloc */
-                    rlist* newReloc = add_extnreloc(&dataBlock->relocs,
+                    add_extnreloc(&dataBlock->relocs,
                         baseOfImmediate, immediateValue, REL_PC, 16, 16, 0);
                 }
             }
@@ -337,9 +337,9 @@ dblock* eval_instruction
                 if (is_pc_reloc(baseOfImmediate, section))
                 {
                     /* external label or label from a different section needs reloc */
-                    rlist* newReloc = add_extnreloc(&dataBlock->relocs,
+                    rlist* reloc = add_extnreloc(&dataBlock->relocs,
                         baseOfImmediate, immediateValue, REL_PC, 6, 26, 0);
-                    ((nreloc*)newReloc->reloc)->mask = 67108863;
+                    ((nreloc*)reloc->reloc)->mask = 67108863;
                 }
             }
             immediateValue -= programCounter + 1;
