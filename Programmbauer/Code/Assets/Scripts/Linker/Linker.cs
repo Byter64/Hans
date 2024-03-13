@@ -139,8 +139,11 @@ namespace Linker
                     IEnumerable<Symbol> symbolList = symbols.Where(x => relocation.symbolName == x);
                     if (symbolList.Count() == 0)
                         throw new LinkerException($"Relocation expects symbol \"{relocation.symbolName}\" but no such symbol has been declared");
-
                     Symbol symbol = symbolList.First();
+
+                    if (symbol.value == null)
+                        throw new LinkerException($"Symbol {symbol.name} is nowhere defined but used in file {fileData.file}");
+
                     int byteOffset = (relocation.byteOffset + section.StartAdress) * 4; //Convert from 32-Bit Bytes to 8-Bit Bytes
 
                     int relocValue = symbol.value.Value;
