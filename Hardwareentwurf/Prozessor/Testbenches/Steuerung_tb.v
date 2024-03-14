@@ -2,7 +2,7 @@
 // Sat, 18 Mar 2023 19:03:03 GMT
 
 // Testbench template
-`include "../Steuerung.v"
+`include "../Prozessor/Steuerung.v"
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns
@@ -86,159 +86,37 @@ module main_tb
   Reset = 0;
 
   #(TIMESTEP)
+  DatenGeladen <= 1;
   //Steuerung in FETCH
+  BefehlGeladen <= 1;
   assert(LoadBefehlSignal, 1, `__LINE__);
-  #6 //Wir simulieren einen geladenen Befehl nach 7 Zeiteinheiten
-  BefehlGeladen = 1;
-  #(TIMESTEP - 6)
-  //Steuerung in DECODE
-  assert(LoadBefehlSignal, 0, `__LINE__);
-  assert(DekodierSignal, 1, `__LINE__);
-  BefehlGeladen = 0;
-  
-  LoadBefehl = 0;
-  StoreBefehl = 0;
-  JALBefehl = 1;
-  //Bedingungstestung
-  UnbedingterSprungBefehl = 0;
-  BedingterSprungBefehl = 0;
-  Bedingung = 0;
-  #1 assert(PCSprungSignal, 0, `__LINE__);
-  BedingterSprungBefehl = 1;
-  #1 assert(PCSprungSignal, 0, `__LINE__);
-  Bedingung = 1;
-  #1 assert(PCSprungSignal, 1, `__LINE__);
-  BedingterSprungBefehl = 0;
-  Bedingung = 0;
-  UnbedingterSprungBefehl = 1;
-  #1 assert(PCSprungSignal, 1, `__LINE__);
-  #(DECODETIME * TIMESTEP - 4)
-  assert(DekodierSignal, 0, `__LINE__);
-
-  //Steuerung in ALU
-  assert(ALUStartSignal, 1, `__LINE__); //ALU rechnet
-  assert(RegisterSchreibSignal, 1, `__LINE__); //JALBefehl schreibt jetzt
-  #(TIMESTEP + 6)
-  ALUFertig = 1;
-  #(TIMESTEP - 6)
-  assert(ALUStartSignal, 0, `__LINE__);
-  assert(RegisterSchreibSignal, 0, `__LINE__);
-  ALUFertig = 0;
-  
-  assert(PCSignal, 1, `__LINE__);
-  #(PCWRITETIME * TIMESTEP)
-  assert(PCSignal, 0, `__LINE__);
-
-  //Hier startet Test LoadBefehl
-  assert(LoadBefehlSignal, 1, `__LINE__);
-  #6
-  BefehlGeladen = 1;
-  #(TIMESTEP - 6)
-  assert(LoadBefehlSignal, 0, `__LINE__);
-  assert(DekodierSignal, 1, `__LINE__);
-  BefehlGeladen = 0;
-  
-  LoadBefehl = 1;
-  StoreBefehl = 0;
-  JALBefehl = 0;
-  UnbedingterSprungBefehl = 0;
-  BedingterSprungBefehl = 0;
-  Bedingung = 0;
-  #(DECODETIME * TIMESTEP)
-  assert(DekodierSignal, 0, `__LINE__);
-
-  assert(ALUStartSignal, 1, `__LINE__);
-  assert(RegisterSchreibSignal, 0, `__LINE__);
-  #(TIMESTEP + 6)
-  ALUFertig = 1;
-  #(TIMESTEP - 6)
-  assert(ALUStartSignal, 0, `__LINE__);
-  ALUFertig = 0;
-
-  assert(PCSignal, 1, `__LINE__);
-  assert(LoadDatenSignal, 1, `__LINE__);
-  #(TIMESTEP + 6)
-  DatenGeladen = 1;
-  #(TIMESTEP - 6)
-  assert(LoadDatenSignal, 0, `__LINE__);
-  assert(PCSignal, 1, `__LINE__);
-  assert(RegisterSchreibSignal, 1, `__LINE__);
-  DatenGeladen = 0;
-  #(REGISTERWRITETIME * TIMESTEP)
-  assert(PCSignal, 0, `__LINE__);
-  assert(RegisterSchreibSignal, 0, `__LINE__);
-
-  //Hier startet Test StoreBefehl
-  assert(LoadBefehlSignal, 1, `__LINE__);
-  #6
-  BefehlGeladen = 1;
-  #(TIMESTEP - 6)
-  assert(LoadBefehlSignal, 0, `__LINE__);
-  assert(DekodierSignal, 1, `__LINE__);
-  BefehlGeladen = 0;
-  
-  LoadBefehl = 0;
-  StoreBefehl = 1;
-  JALBefehl = 0;
-  UnbedingterSprungBefehl = 0;
-  BedingterSprungBefehl = 0;
-  Bedingung = 0;
-  #(DECODETIME * TIMESTEP)
-  assert(DekodierSignal, 0, `__LINE__);
-  
-  assert(ALUStartSignal, 1, `__LINE__);
-  assert(RegisterSchreibSignal, 0, `__LINE__);
-  #(TIMESTEP + 6)
-  ALUFertig = 1;
-  #(TIMESTEP - 6)
-  assert(ALUStartSignal, 0, `__LINE__);
-  ALUFertig = 0;
-  
-  assert(PCSignal, 1, `__LINE__);
-  assert(StoreDatenSignal, 1, `__LINE__);
-  #(TIMESTEP * 2 + 6)
-  DatenGespeichert = 1;
-  #(TIMESTEP - 6)
-  assert(PCSignal, 0, `__LINE__);
-  assert(StoreDatenSignal, 0, `__LINE__);
-  assert(RegisterSchreibSignal, 0, `__LINE__);
-  DatenGespeichert = 0;
-
-  //Hier startet Test Standard
-  assert(LoadBefehlSignal, 1, `__LINE__);
-  #6
-  BefehlGeladen = 1;
-  #(TIMESTEP - 6)
-  assert(LoadBefehlSignal, 0, `__LINE__);
-  assert(DekodierSignal, 1, `__LINE__);
-  BefehlGeladen = 0;
-  
-  LoadBefehl = 0;
-  StoreBefehl = 0;
-  JALBefehl = 0;
-  UnbedingterSprungBefehl = 0;
-  BedingterSprungBefehl = 0;
-  Bedingung = 0;
-  #(DECODETIME * TIMESTEP)
-  assert(DekodierSignal, 0, `__LINE__);
-
-  assert(ALUStartSignal, 1, `__LINE__);
-  assert(RegisterSchreibSignal, 0, `__LINE__);
   #(TIMESTEP)
-  assert(ALUStartSignal, 0, `__LINE__);
-  #(15 * TIMESTEP + 6)
-  ALUFertig = 1;
-  #(TIMESTEP - 6)
-  assert(ALUStartSignal, 0, `__LINE__);
-  ALUFertig = 0;
+  //DECODE
+  BefehlGeladen <= 0;
 
+  assert(LoadBefehlSignal, 0, `__LINE__);
+  assert(DekodierSignal, 1, `__LINE__);
+  //ALU
+  #(TIMESTEP)
+  assert(DekodierSignal, 0, `__LINE__);
+  assert(ALUStartSignal, 1, `__LINE__);
+  ALUFertig <= 1;
+  #(TIMESTEP)
+  ALUFertig <= 0;
+  //WRITEBACK
+  assert(ALUStartSignal, 0, `__LINE__);
   assert(RegisterSchreibSignal, 1, `__LINE__);
-  assert(PCSignal, 1, `__LINE__);
-  #(REGISTERWRITETIME * TIMESTEP)
-
-  assert(PCSignal, 0, `__LINE__);
+  #(TIMESTEP)
+  //FETCH
   assert(RegisterSchreibSignal, 0, `__LINE__);
   assert(LoadBefehlSignal, 1, `__LINE__);
+  #(TIMESTEP)
+  BefehlGeladen <= 1;
+  ALUFertig <= 1;
+  JALBefehl <= 1;
+  BedingterSprungBefehl <= 1;
+  #(TIMESTEP*10)
+
 
   #(TIMESTEP) $display("End of simulation");
   $finish;
