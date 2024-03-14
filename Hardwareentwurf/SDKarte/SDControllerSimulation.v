@@ -3,7 +3,7 @@ module sd_controller (
     output mosi, // egal
     input miso, // egal
     output sclk, //egal
-    output [4:0] status // egal
+    output [4:0] status, // egal
     input wr,   // egal
     input [7:0] din, // egal
     output reg ready_for_next_byte, // egal
@@ -19,36 +19,37 @@ module sd_controller (
     output ready, // HIGH if the SD card is ready for a read or write operation.
     input [31:0] address,   // Memory address for read/write operation. This MUST 
                             // be a multiple of 512 bytes, due to SD sectoring.
-    input clk,  // 25 MHz clock.
+    input clk  // 25 MHz clock.
 );
 
 localparam IDLE = 2'b0;
 localparam LESEN = 2'b1;
 localparam BEENDEN = 2'b10;
-localparam IDLE = 2'b0;
 
 reg [7:0] daten[4096:0];
+reg [8:0] byteAdresse;
 wire [22:0] sekAdresse;
 reg [2:0] zustand = IDLE;
 
-assign ready = ~Reset && zustand == IDLE;
+assign ready = ~reset && zustand == IDLE;
 assign sekAdresse = address[31:9];
 
 initial begin
-    Daten[0] <= 0'd10;
-    Daten[1] <= 0'd450;
-    Daten[2] <= 0'd0;
-    Daten[3] <= 0'd33;
-    Daten[4] <= 0'd1047;
-    Daten[5] <= 0'd6742;
-    Daten[6] <= 0'd1555;
-    Daten[7] <= 0'd1;
+    daten[0] <= 8'd10;
+    daten[1] <= 8'd250;
+    daten[2] <= 8'd0;
+    daten[3] <= 8'd33;
+    daten[4] <= 8'd2;
+    daten[5] <= 8'd148;
+    daten[6] <= 8'd227;
+    daten[7] <= 8'd1;
 end
 
 always @(posedge clk) begin
     if(reset) begin
         dout <= 0;
         byte_available <= 0;
+        byteAdresse <= 0;
     end
     else begin
         case (zustand)
@@ -62,7 +63,7 @@ always @(posedge clk) begin
                 else begin
                     byte_available <= 1;
                     byteAdresse <= byteAdresse + 1;
-                    dout <= Daten[{sekAdresse, byteAdresse}];
+                    dout <= daten[{sekAdresse, byteAdresse}];
 
                     if(byteAdresse == 511)begin
                         zustand <= BEENDEN;

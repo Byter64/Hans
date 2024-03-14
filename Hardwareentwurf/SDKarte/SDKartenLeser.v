@@ -17,21 +17,21 @@ module SDKarte (
 
 
     //SD_controller
+    input miso, // Connect to SD_DAT[0].
     output sclk, // Connect to SD_SCK.
     output cs, // Connect to SD_DAT[3].
-    output mosi, // Connect to SD_CMD.
-    input miso // Connect to SD_DAT[0].
+    output mosi // Connect to SD_CMD.
                 // For SPI mode, SD_DAT[2] and SD_DAT[1] should be held HIGH. 
                 // SD_RESET should be held LOW.
 );
 
     // Zustandsdefinitionen für den SD-Controller
     localparam IDLE = 3'd0;
-    localparam WARTEAUFBYTES = 3'd1;
-    localparam BYTE1 = 3'd2;
-    localparam BYTE2 = 3'd3;
-    localparam BYTE3 = 3'd4;
-    localparam BYTE4 = 3'd5;
+    localparam BYTE1 = 3'd1;
+    localparam BYTE2 = 3'd2;
+    localparam BYTE3 = 3'd3;
+    localparam BYTE4 = 3'd4;
+    localparam SEKTORFERTIGLESEN = 3'd5;
 
     // SD CARD INPUTS/OUTPUTS
     reg rd = 0; // Read signal for SD card
@@ -74,11 +74,10 @@ module SDKarte (
         if(Reset)
             byteZaehler <= 0;
         else begin
-            if((state != IDLE || byteZaehler != 0) && byte_available)
+            if((state != IDLE) && byte_available)
                 byteZaehler <= byteZaehler + 1;
-            else begin
+            else if (state == IDLE) begin
                 byteZaehler <= 0;
-                Busy <= 0;
             end
         end
 
@@ -94,6 +93,7 @@ module SDKarte (
         end else begin
             case (state)
                 IDLE: begin
+                    Busy <= 0;
                     if (Lesen && ready) begin
                         state <= BYTE1;
                         Busy <= 1;
@@ -101,30 +101,38 @@ module SDKarte (
                     end
                 end
                 BYTE1: begin
+                    Busy <= 1;
                     if (byteZaehler == (Adresse[6:0] << 2) && byte_available) begin
                         Daten[31:24] <= dout;
                         state <= BYTE2;
                     end
                 end
                 BYTE2: begin
+                    Busy <= 1;
                     if (byte_available) begin
                         Daten[23:16] <= dout;
                         state <= BYTE3;
                     end
                 end
                 BYTE3: begin
+                    Busy <= 1;
                     if (byte_available) begin
                         Daten[15:8] <= dout;
                         state <= BYTE4;
                     end
                 end
                 BYTE4: begin
+                    Busy <= 1;
                     if (byte_available) begin
                         Daten[7:0] <= dout;
                         rd <= 0;
                         Fertig <= 1;
-                        state <= IDLE;
+                        state <= SEKTORFERTIGLESEN;
                     end
+                end
+                SEKTORFERTIGLESEN: begin
+                    if(byteZaehler == 9'd511)
+                        state <= IDLE;
                 end
                 default: state <= IDLE;
             endcase

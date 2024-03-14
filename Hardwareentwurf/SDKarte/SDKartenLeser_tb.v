@@ -1,4 +1,4 @@
-`include "../SDSDKarte/SDKartenLeser.v"
+`include "../SDKarte/SDKartenLeser.v"
 
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
@@ -9,7 +9,7 @@ module sd_tb ();
 
 reg Clock = 0;
 reg Reset = 0;
-reg [31:0] Adresse = 0
+reg [31:0] Adresse = 0;
 reg Lesen = 0;
 
 wire [31:0] Daten;
@@ -34,13 +34,15 @@ SDKarte SDKarte(
     .Busy(Busy), 
     .debug(debug), 
 
-    .miso(0),
+    .miso(1'b0),
     .sclk(sclk), 
     .cs(cs), 
     .mosi(mosi) 
-)
+);
 
 initial begin
+    $dumpvars(0, sd_tb);
+    for (integer idx = 0; idx < 256; idx = idx + 1) $dumpvars(0, SDKarte.sd1.daten[idx]);
     Reset = 1;
     #10
     Reset = 0;
@@ -51,13 +53,14 @@ initial begin
     #2
     Lesen = 0;
 
-    #1024
-    Adresse = 7;
+    #2050
+    Adresse = 1;
     Lesen = 1;
     #2
     Lesen = 0;
-    #1024
-    Adresse = -1;
+
+    #2050 $display("End of simulation");
+    $finish;
 
 end
 
