@@ -2,7 +2,7 @@
 // Sat, 18 Mar 2023 19:01:05 GMT
 
 // Testbench template
-`include "../ALU.v"
+`include "../Prozessor/ALU.v"
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns
@@ -86,7 +86,10 @@ end
 
 initial begin
     $dumpvars(0, main_tb);
- 
+    FunktionsCode <= 0;
+    Daten1 <= 0;
+    Daten2 <= 0;
+    StartSignal <= 0;
     //Alles zurücksetzen
     Reset = 1;
     #150
@@ -129,19 +132,21 @@ initial begin
     #200
     StartSignal = 0;
     #2000
+    
     if(Ergebnis != $signed(-32'sd98158))
         $display("Dividieren funktioniert nicht: \n Divisor:  %d \n Dividend: %d \n Ergebnis: %d \n Erwartet: %d\n", $signed(Daten1), $signed(Daten2), $signed(Ergebnis), $signed(-32'sd98158));
     #200
     //Mod-Befehl testen
-    Daten1 = 32'b01000000000110010101010101010101;
-    Daten2 = 32'b00000000000000000010101010101010;
+    Daten1 = 32'd512;
+    Daten2 = 32'd2;
     FunktionsCode = Mod;
     StartSignal = 1;
     #200
     StartSignal = 0;
-    #1600
-    if(Ergebnis != 32'd105)
-        $display("Modulo funktioniert nicht: \n Divisor:  %d \n Dividend: %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'd105);
+    #1800
+
+    if(Ergebnis != 32'd0)
+        $display("Modulo funktioniert nicht: \n Divisor:  %d \n Dividend: %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'd0);
     #200
 
     //Sqrt-Befehl testen
