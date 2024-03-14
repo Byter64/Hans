@@ -7,13 +7,13 @@
 module SDKarte (
     input Clock,
     input Reset,
-
     input [31:0] Adresse, //Für 32-Bit Bytes
-    input Lesen, // 1: Read operation
-    output reg [31:0] Daten, // Data output MSB Bit ganz links => 1. 32 Bit Wort [31:0]
-    output reg Fertig, // 1: Data is ready to be read
-    output reg Busy, // gibt an ob gerade beschäftigt
-    output [4:0] debug, //Vom SD-Card Controller
+    input Lesen, // Bitte nur einmal kurz hoch setzen und erst, wenn [Busy] unten ist
+
+    output reg [31:0] Daten, //Gelesene Daten. Ist erst gültig, wenn [Fertig] oben ist
+    output reg Fertig, //Daten an [Daten] sind gültig
+    output reg Busy, //Wenn oben, können Leseanfragen über [Lesen] gesendet werden
+    output [4:0] debug, //Vom SD-Card Controller, für Debugzwecke
 
 
     //SD_controller
