@@ -20,18 +20,19 @@ module SDKarte (
     input miso, // Connect to SD_DAT[0].
     output sclk, // Connect to SD_SCK.
     output cs, // Connect to SD_DAT[3].
-    output mosi // Connect to SD_CMD.
+    output mosi, // Connect to SD_CMD.
                 // For SPI mode, SD_DAT[2] and SD_DAT[1] should be held HIGH. 
                 // SD_RESET should be held LOW.
 );
 
     // Zustandsdefinitionen für den SD-Controller
-    localparam IDLE = 3'd0;
-    localparam BYTE1 = 3'd1;
-    localparam BYTE2 = 3'd2;
-    localparam BYTE3 = 3'd3;
-    localparam BYTE4 = 3'd4;
-    localparam SEKTORFERTIGLESEN = 3'd5;
+    localparam INITIALISIEREN = 3'd0;
+    localparam IDLE = 3'd1;
+    localparam BYTE1 = 3'd2;
+    localparam BYTE2 = 3'd3;
+    localparam BYTE3 = 3'd4;
+    localparam BYTE4 = 3'd5;
+    localparam SEKTORFERTIGLESEN = 3'd6;
 
     // SD CARD INPUTS/OUTPUTS
     reg rd = 0; // Read signal for SD card
@@ -45,7 +46,6 @@ module SDKarte (
     reg [8:0] byteZaehler = 0;
 
     assign sektorAdresse = {Adresse[29:6], 8'b0}; //Adresse wird von 8-Bit auf 32-Bit Bytes konvertiert, für Sektoradresse werden die ersten 9 Bits ignoriert
-
     // Verbindung zum SD-Controller
     sd_controller sd1 (
         .cs(cs),
@@ -65,11 +65,6 @@ module SDKarte (
         .status(debug)
     );
 
-    always @(negedge Busy) begin
-            Fertig <= 0;
-            rd <= 0;
-    end
-
     always @(posedge Clock or posedge Reset) begin
         if(Reset)
             byteZaehler <= 0;
@@ -84,14 +79,21 @@ module SDKarte (
     end
 
     // Zustandsautomat für den SD-Controller
-    always @(posedge Clock or posedge Reset) begin
+    always @(posedge Clock) begin
         if (Reset) begin
             Daten <= 0;
             Fertig <= 0;
-            state <= IDLE;
+            state <= INITIALISIEREN;
             rd <= 0;
+            Busy <= 1;
         end else begin
             case (state)
+                INITIALISIEREN:begin
+                    Busy <= 1;
+                    if(ready) begin
+                        state = IDLE;
+                    end
+                end
                 IDLE: begin
                     Busy <= 0;
                     if (Lesen && ready) begin
@@ -131,8 +133,12 @@ module SDKarte (
                     end
                 end
                 SEKTORFERTIGLESEN: begin
-                    if(byteZaehler == 9'd511)
+                    if(byteZaehler == 9'd0) begin
+                        Busy <= 0;
                         state <= IDLE;
+                        rd <= 0;
+                        Fertig <= 0;
+                    end
                 end
                 default: state <= IDLE;
             endcase
