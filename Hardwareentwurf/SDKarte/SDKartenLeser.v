@@ -1,4 +1,8 @@
-`include "../SDKarte/sd_controller.v"
+`ifdef IVERILOG
+    `include "../SDKarte/SDControllerSimulation.v"
+`else
+    `include "../SDKarte/sd_controller.v"
+`endif
 
 module SDKarte (
     input Clock,
@@ -8,14 +12,15 @@ module SDKarte (
     input Lesen, // 1: Read operation
     output reg [31:0] Daten, // Data output MSB Bit ganz links => 1. 32 Bit Wort [31:0]
     output reg Fertig, // 1: Data is ready to be read
-    output Busy, // gibt an ob gerade beschäftigt
+    output reg Busy, // gibt an ob gerade beschäftigt
+    output [4:0] debug, //Vom SD-Card Controller
 
 
     //SD_controller
+    output sclk, // Connect to SD_SCK.
     output cs, // Connect to SD_DAT[3].
     output mosi, // Connect to SD_CMD.
-    input miso, // Connect to SD_DAT[0].
-    output sclk // Connect to SD_SCK.
+    input miso // Connect to SD_DAT[0].
                 // For SPI mode, SD_DAT[2] and SD_DAT[1] should be held HIGH. 
                 // SD_RESET should be held LOW.
 );
@@ -32,15 +37,14 @@ module SDKarte (
     reg rd = 0; // Read signal for SD card
     wire [7:0] dout; // data output for read operation
     wire byte_available; // byte can be read
-    wire [4:0] status; // status
     wire ready;
     wire [31:0] sektorAdresse;
+    wire egal;
     
     reg [3:0] state = IDLE;
     reg [8:0] byteZaehler = 0;
 
     assign sektorAdresse = {Adresse[29:6], 8'b0}; //Adresse wird von 8-Bit auf 32-Bit Bytes konvertiert, für Sektoradresse werden die ersten 9 Bits ignoriert
-    assign Busy = ~ready;
 
     // Verbindung zum SD-Controller
     sd_controller sd1 (
@@ -53,15 +57,15 @@ module SDKarte (
         .byte_available(byte_available),
         .wr(1'b0),
         .din(8'b0),
-        .ready_for_next_byte(0),
+        .ready_for_next_byte(egal),
         .reset(Reset),
         .ready(ready),
         .address(sektorAdresse),
         .clk(Clock),
-        .status(status)
+        .status(debug)
     );
 
-    always @(posedge Busy) begin
+    always @(negedge Busy) begin
             Fertig <= 0;
             rd <= 0;
     end
@@ -72,8 +76,10 @@ module SDKarte (
         else begin
             if((state != IDLE || byteZaehler != 0) && byte_available)
                 byteZaehler <= byteZaehler + 1;
-            else if(state == IDLE)
+            else begin
                 byteZaehler <= 0;
+                Busy <= 0;
+            end
         end
 
     end
@@ -89,7 +95,8 @@ module SDKarte (
             case (state)
                 IDLE: begin
                     if (Lesen && ready) begin
-                        state <= WARTEAUFBYTES;
+                        state <= BYTE1;
+                        Busy <= 1;
                         rd <= 1;
                     end
                 end

@@ -1,5 +1,4 @@
-
-`include "../SDKarte/SDKarte.v"
+`include "../SDKarte/SDKartenLeser.v"
 
 module Top
 (
@@ -20,6 +19,7 @@ module Top
     wire [4095:0] Daten;
     wire Fertig;
     wire  Busy;
+    wire [4:0] debug;
 
     SDKarte sdkart(
         .Clock(clk_25mhz),
@@ -32,8 +32,9 @@ module Top
         .cs(sd_d[3]),
         .mosi(sd_cmd),
         .miso(sd_d[0]),
-        .sclk(sd_clk)
-    );
+        .sclk(sd_clk),
+        .debug(debug)
+    )
 
     reg [22:0] counter = -1;
 
@@ -47,9 +48,7 @@ always @(posedge clk_25mhz) begin
     end
 end
 
-assign led[7] = Busy;
-assign led[6] = Lesen;
-assign led[5:2] = 0;
-assign led[1:0] = sdkart.state;
+assign led[7:5] = 0;
+assign led[4:0] = debug;
 
 endmodule
