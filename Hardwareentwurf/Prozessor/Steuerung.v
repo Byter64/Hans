@@ -21,9 +21,10 @@ module Steuerung (
     output PCSignal,
     output PCSprungSignal
 );
-    localparam ALU1 = 3'b000;
-    localparam FETCH = 3'b001;
-    localparam DECODE = 3'b010;
+
+    localparam FETCH = 3'b000;
+    localparam DECODE = 3'b001;
+    localparam ALU1 = 3'b010;
     localparam ALU = 3'b011;
     localparam WRITEBACK_JUMP = 3'b100;
     localparam WRITEBACK_STORE = 3'b101;
@@ -97,7 +98,7 @@ module Steuerung (
     assign LoadBefehlSignal = current_state == FETCH;
     assign DekodierSignal = current_state == DECODE;
     assign ALUStartSignal = current_state == ALU1;
-    assign RegisterSchreibSignal = (current_state == ALU && JALBefehl) || current_state == WRITEBACK_DEFAULT;
+    assign RegisterSchreibSignal = ((current_state == ALU || current_state == ALU1) && JALBefehl) || current_state == WRITEBACK_DEFAULT;
     assign PCSignal = current_state > ALU;
     assign StoreDatenSignal = current_state == WRITEBACK_STORE;
     assign LoadDatenSignal = current_state == WRITEBACK_LOAD;
