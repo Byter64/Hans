@@ -2,7 +2,6 @@ module Instruktionsdekodierer (
     input[31:0] Instruktion,
     input DekodierSignal,
     input Reset,
-    input Clock,
 
     output[5:0] QuellRegister1,
     output[5:0] QuellRegister2,
@@ -72,10 +71,10 @@ localparam[1:0] Vektor = 2'b11;
 
 //START LOGIK
 
-always @(posedge Clock) begin
+always @(posedge Reset or posedge DekodierSignal) begin
     if(Reset)
         AktuellerBefehl <= 32'b00000000000000000000000000000000;
-    else if (DekodierSignal) begin
+    else begin
         AktuellerBefehl <= Instruktion;
     end
 end

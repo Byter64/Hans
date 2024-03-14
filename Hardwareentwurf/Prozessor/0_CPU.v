@@ -106,7 +106,6 @@ Instruktionsdekodierer Indek(
     .Instruktion(Instruktion),
     .DekodierSignal(DekodierSignal),
     .Reset(Reset),
-    .Clock(Clock),
     .QuellRegister1(QuellRegister1),
     .QuellRegister2(QuellRegister2),
     .ZielRegister(ZielRegister),
