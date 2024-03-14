@@ -14,9 +14,9 @@ module Top
     wire heldHigh = 1'b1;
     assign sd_d[1] = heldHigh;
     assign sd_d[2] = heldHigh;
-    reg [25:0] Adresse = 25'b0000000000000000000000000;
-    reg Lesen = 1'b0;
-    wire [31:0] VollAdresse = {Adresse,6'b0};
+    reg [19:0] Adresse = 19'b0000000000000000000000000;
+    reg Lesen = 1'b1;
+    wire [31:0] VollAdresse = {Adresse,12'b0};
     wire [4095:0] Daten;
     wire Fertig;
     wire  Busy;
@@ -35,24 +35,21 @@ module Top
         .sclk(sd_clk)
     );
 
-    reg [21:0] counter = 22'b1;
+    reg [22:0] counter = -1;
 
 always @(posedge clk_25mhz) begin
     if(~Busy && counter == 23'b0) begin
         Adresse <= Adresse + 1;
-        Lesen <= 1'b1;
-        counter <= 22'b1;
+        counter <= -1;
     end
     else begin
-        if(Busy) begin
-        Lesen <= 1'b0;
-        end
         counter <= counter -1;
     end
 end
 
-assign led = Daten[7:0];
-
-
+assign led[7] = Busy;
+assign led[6] = Lesen;
+assign led[5:2] = 0;
+assign led[1:0] = sdkart.state;
 
 endmodule
