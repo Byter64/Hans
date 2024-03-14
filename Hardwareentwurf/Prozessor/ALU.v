@@ -231,108 +231,75 @@ assign IntWurzelReset = (FunktionsCode[5:0] == IntQuadratwurzel & StartSignal) |
 
 assign FloatAdditionDaten2 = {(FunktionsCode[5:0] != FloatAddition),Daten2[30:0]};
 
-always @(posedge Reset or posedge StartSignal) begin
+
+always @(posedge Reset or posedge Clock) begin
     if(Reset) begin
-            Radikand <= 0;
-            DivCyc <= 0;
-            DivStb <= 0;
-            TakteBisFertig <= 0;
-        end
-    else if(StartSignal) begin
+        Radikand <= 0;
+        TakteBisFertig <= 0;
+        DivCyc <= 0;
+        DivStb <= 0;
+    end else if(TakteBisFertig != 0) begin
+        TakteBisFertig <= TakteBisFertig - 1;
+    end
+    else if (StartSignal) begin
+        Radikand <= Daten1;
         case (FunktionsCode[5:0])
-            //Integerarithmetik
-            //Sqrt
-            6'b000011    : begin 
-                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
-                DivStb <= 0;
-                Radikand <= Daten1;
-            end
-            //Div
-            6'b000100    : begin
-                DivCyc <= 1;
-                DivStb <= 1;
-            end
-            //Mod
-            6'b000101    : begin
-                DivCyc <= 1;
-                DivStb <= 1;
-            end
             IntZuFloat : begin
-                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
-                DivStb <= 0;
                 TakteBisFertig <= 4;
             end
             UnsignedIntZuFloat : begin
-                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
-                DivStb <= 0;
                 TakteBisFertig <= 4;
+            end
+            IntDivision: begin
+                DivCyc <= 1;
+                DivStb <= 1;
+            end
+            IntModulo: begin
+                DivCyc <= 1;
+                DivStb <= 1;
             end
             //Float Arithmetik
             //Add.s
             6'b100000: begin
-                DivCyc <= 0; 
-                DivStb <= 0;
                 TakteBisFertig <= 6;
             end
             //Sub.s 
             6'b100001: begin 
-                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
-                DivStb <= 0;
                 TakteBisFertig <= 6;
             end
             //Mul.s
             6'b100010    : begin 
-                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
-                DivStb <= 0;
                 TakteBisFertig <= 8;
             end
             //Sqrt.s
             6'b100011    : begin 
-                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
-                DivStb <= 0;
                 TakteBisFertig <= 9;
             end
             //Div.s
             6'b100100    : begin 
-                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
-                DivStb <= 0;
                 TakteBisFertig <= 31;
             end
             //Cg.s
             6'b101010	: begin
-                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
-                DivStb <= 0;
                 TakteBisFertig <= 6;
             end
             //Cl.s
             6'b101011	: begin
-                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
-                DivStb <= 0;
                 TakteBisFertig <= 6;
             end
             FloatZuInt : begin
-                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
-                DivStb <= 0;
                 TakteBisFertig <= 1;
             end
             default : begin
                 TakteBisFertig <= 0;
-                DivCyc <= 0; //diese zwei Zeilen waren vorher im default case
-                DivStb <= 0;
             end
         endcase
-    end
-end
-
-always @(posedge Clock) begin
-
-    if (DivisionInArbeit == 0 && DivStb == 1)
+    end else if (DivStb) begin
         DivStb <= 0;
-    if(DivisionFertig == 1) begin
-        DivCyc <= 0;
-    end
-    if(TakteBisFertig != 0) begin
-        TakteBisFertig <= TakteBisFertig - 1;
+    end else if(~DivisionInArbeit)begin
+        if(DivStb == 0) begin
+            DivCyc <= 0;
+        end
     end
     
 end
