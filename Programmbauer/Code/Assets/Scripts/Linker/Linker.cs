@@ -166,15 +166,17 @@ namespace Linker
                         relocValue++;
                     }
 
-                    if(relocation.type is Relocation.Type.Default && (relocValue < -0x8000 || relocValue > 0x7FFF))
+                    if(relocation.type is Relocation.Type.Default && (relocValue < -0x8000 || relocValue > 0xFFFF))
                     {
                         Log.Instance.Print($"WARNING in section {section.name}: value does not fit into immediate. Allowed range is [-3276:32767]. \n" +
                             $"Symbol is {relocation.symbolName} and has value {relocValue}.");
                     }
 
+                    int bitMask = (1 << relocation.amountOfBits) - 1;
+
                     for (int i = 0; i < 4; i++)
                     {
-                        int byteMask = relocation.bitMask & (255 << ((3 - i) * 8));
+                        int byteMask = bitMask & (255 << ((3 - i) * 8));
                         byteMask >>= (3 - i) * 8;
                         int byteValue = relocValue        & (255 << ((3 - i) * 8));
                         byteValue >>= (3 - i) * 8;
