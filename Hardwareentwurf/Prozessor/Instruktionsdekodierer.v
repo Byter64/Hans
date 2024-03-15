@@ -91,6 +91,7 @@ assign ZielRegister =           (Opcode==LoadSCode || Opcode == StoreSCode || ((
 
 assign IDaten =                 (Format == JumpFormat) ? {6'b0, GrosserImmediate} :
                                 (Opcode == AddisCode) ? {KleinerImmediate, 16'b0} : 
+                                (Format[1] == ImmediateFormat && Opcode > AddisCode && Opcode < LoadCode) ? {16'b0, KleinerImmediate} :
                                 (Format[1] == ImmediateFormat) ? {{16{KleinerImmediate[15]}}, KleinerImmediate} :
                                 32'b0;
 
