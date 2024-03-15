@@ -3,6 +3,8 @@
 #if defined(OUTHANS) && defined(VASM_CPU_HANS)
 
 static char *copyright = "vasm Hans output module 1.0 (c) 2024 by Yannik Stamm";
+static const char* dataBlockMarker = "-";
+static const char* dataMarker = "->";
 
 static char int_to_ascii(int number)
 {
@@ -79,13 +81,14 @@ static int is_HA_Reloc(nreloc* rel1, nreloc* rel2)
 
 static void write_output(FILE* file, section* firstSection, symbol* firstSymbol)
 {
-    unsigned char* firstData;
+    char* firstData;
     const char* pcRelativeValue, *highLow;
     int i, j;
     unsigned int byteOffset;
     atom* atom;
     rlist* listEntry;
     section* section;
+    taddr currentAddress;
     symbol* activeSymbol;
 
     fprintf(file, "Symbole:\n");
@@ -99,7 +102,6 @@ static void write_output(FILE* file, section* firstSection, symbol* firstSymbol)
         }
         else if (activeSymbol->type == EXPRESSION)
         {
-            simplify_expr(activeSymbol->expr);
             fprintf(file, ".%s:%i\n", activeSymbol->name, activeSymbol->expr->c.val);
         }
     }
@@ -161,9 +163,9 @@ static void write_output(FILE* file, section* firstSection, symbol* firstSymbol)
                             reloc->mask = 0xFFFF;
                         }
 
-                        fprintf(file, "\t<%u,%u,%u,%i,%i,%s,%s,%s>\n", 
-                        (unsigned)(reloc->byteoffset + byteOffset), (unsigned)reloc->bitoffset,
-                            (unsigned)reloc->size, reloc->mask, reloc->addend, reloc->sym->name,
+                        fprintf(file, "\t<%i,%i,%i,%i,%i,%s,%s,%s>\n", 
+                        reloc->byteoffset + byteOffset, reloc->bitoffset, 
+                            reloc->size, reloc->mask, reloc->addend, reloc->sym->name, 
                             pcRelativeValue, highLow);
                     }
                 }

@@ -339,7 +339,6 @@ dblock* eval_instruction
                     /* external label or label from a different section needs reloc */
                     rlist* reloc = add_extnreloc(&dataBlock->relocs,
                         baseOfImmediate, immediateValue, REL_PC, 6, 26, 0);
-                    ((nreloc*)reloc->reloc)->mask = 67108863;
                 }
             }
             immediateValue -= programCounter + 1;
