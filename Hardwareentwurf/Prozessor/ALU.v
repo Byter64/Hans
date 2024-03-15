@@ -25,8 +25,8 @@ module ALU (
 );
 
 reg[31:0] Radikand; //Wurzel
-reg DivCyc = 0;
-reg DivStb = 0;
+reg DivStb = 0; 
+//assign DivStb = (StartSignal&&~DivisionInArbeit) && (FunktionsCode == IntDivision || FunktionsCode == IntModulo);
 reg[7:0] TakteBisFertig = 0;
 wire[31:0] FloatAdditionDaten2;
 wire[31:0] EinfacheRechnungErgebnis;
@@ -91,14 +91,14 @@ localparam FloatZuUnsignedInt =   6'b101111;
 Goldschmidt_Integer_Divider_Parallel #(
     .P_GDIV_FACTORS_MSB(31), 
     .P_GDIV_FRAC_LENGTH(32),
-    .P_GDIV_ROUND_LVL(3)
+    .P_GDIV_ROUND_LVL(10)
 ) DivisionsModule (
     // Component's clocks and resets
     .i_clk(Clock), // clock
     .i_rst(Reset), // reset
     // Wishbone(Pipeline) Slave Interface
-    .i_wb4s_cyc(DivCyc),     // WB: If high, slave accepts new data, put low again, when finished
-    .i_wb4s_tgc({FunktionsCode[0], 1'b0}),     // WB data tag, 0=quotient, 1=remainder; 0=signed, 1=unsigned
+    .i_wb4s_cyc(1'b1),     // WB: If high, slave accepts new data, put low again, when finished
+    .i_wb4s_tgd({FunktionsCode[0], 1'b0}),     // WB data tag, 0=quotient, 1=remainder; 0=signed, 1=unsigned
     .i_wb4s_stb(DivStb),     // WB stb, valid strobe
     .i_wb4s_data({Daten2, Daten1}),   // WB data 0
     .o_wb4s_stall(DivisionInArbeit), // if high, slave does not take inputs yet.
@@ -236,13 +236,14 @@ always @(posedge Reset or posedge Clock) begin
     if(Reset) begin
         Radikand <= 0;
         TakteBisFertig <= 0;
-        DivCyc <= 0;
         DivStb <= 0;
     end else if(TakteBisFertig != 0) begin
         TakteBisFertig <= TakteBisFertig - 1;
+        DivStb <= 0;
     end
     else if (StartSignal) begin
         Radikand <= Daten1;
+        DivStb <= 0;
         case (FunktionsCode[5:0])
             IntZuFloat : begin
                 TakteBisFertig <= 4;
@@ -251,11 +252,9 @@ always @(posedge Reset or posedge Clock) begin
                 TakteBisFertig <= 4;
             end
             IntDivision: begin
-                DivCyc <= 1;
                 DivStb <= 1;
             end
             IntModulo: begin
-                DivCyc <= 1;
                 DivStb <= 1;
             end
             //Float Arithmetik
@@ -294,14 +293,9 @@ always @(posedge Reset or posedge Clock) begin
                 TakteBisFertig <= 0;
             end
         endcase
-    end else if (DivStb) begin
+    end else begin 
         DivStb <= 0;
-    end else if(~DivisionInArbeit)begin
-        if(DivStb == 0) begin
-            DivCyc <= 0;
-        end
     end
     
 end
-//vlt alle takte -1
 endmodule
