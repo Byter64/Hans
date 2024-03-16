@@ -35,8 +35,8 @@ module Top
  //GPDI
  //assign gpdi_dp = HDMIgpdi_dp;
  //LED
- assign led[2:0] = zustand;
- assign led[7:3] = 0;
+ assign led[6:0] = CPUInstruktionAdresse[6:0];
+ assign led[7] = zustand[2];
  
  //CLOCKS
  wire HauptClock;
@@ -338,7 +338,8 @@ always @(posedge clk_25mhz) begin
             zustand <= LAEUFT;
         end
         LAEUFT: begin
-            
+            loaderReset <= 0;
+            globalerReset <= 0;
         end
         default: zustand <= RESET;
     endcase
