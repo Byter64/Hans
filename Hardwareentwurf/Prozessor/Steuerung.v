@@ -19,9 +19,11 @@ module Steuerung (
     output LoadDatenSignal,
     output StoreDatenSignal,
     output PCSignal,
-    output PCSprungSignal
+    output PCSprungSignal,
+    output [2:0] status
 );
 
+    assign status = current_state;
     localparam FETCH = 3'b000;
     localparam DECODE = 3'b001;
     localparam ALU1 = 3'b010;

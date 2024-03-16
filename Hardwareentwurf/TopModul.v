@@ -35,7 +35,7 @@ module Top
  //GPDI
  //assign gpdi_dp = HDMIgpdi_dp;
  //LED
- assign led[6:0] = CPUInstruktionAdresse[6:0];
+ assign led[6:0] = CPUStatus[2:0];
  assign led[7] = zustand[2];
  
  //CLOCKS
@@ -98,6 +98,7 @@ wire [31:0] CPUDatenAdresse;
 wire CPULeseDaten;
 wire CPUSchreibeDaten;
 wire CPULeseInstruktion;
+wire [2:0] CPUStatus;
 
 //RAM
 //Inputs
@@ -166,7 +167,8 @@ CPU cpu (
     .DatenAdresse(CPUDatenAdresse),
     .LeseDaten(CPULeseDaten),
     .SchreibeDaten(CPUSchreibeDaten),
-    .LeseInstruktion(CPULeseInstruktion)
+    .LeseInstruktion(CPULeseInstruktion),
+    .status(CPUStatus)
 );
 
 RAM #(
