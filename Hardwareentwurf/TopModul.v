@@ -35,9 +35,8 @@ module Top
  //GPDI
  assign gpdi_dp = HDMIgpdi_dp;
  //LED
- assign led[7:5] = zustand;
- assign led[4:0] = SDDebug;
-
+ assign led[2:0] = zustand;
+ 
  //CLOCKS
  wire HauptClock;
  wire [3:0] clocks;
@@ -120,7 +119,7 @@ wire SDBusy;
 wire SDcs;
 wire SDmosi;
 wire[4:0] SDDebug;
-wire[3:0] SDZustand;
+wire[2:0] SDZustand;
 
 //Bildpuffer
 //Inputs
@@ -279,8 +278,8 @@ always @(posedge clk_25mhz) begin
             end
             else if(~SDBusy && loaderWarte == 0) begin
                 loaderLesen <= 1;
-                zustand <= AUFGROESSEWARTEN;
                 loaderWarte <= 1;
+                zustand <= AUFGROESSEWARTEN;
             end
             else begin
                 loaderLesen <= 0;
@@ -301,6 +300,7 @@ always @(posedge clk_25mhz) begin
                 loaderLesen <= 1;
             end
             else begin
+                loaderWarte <= 1;
                 loaderLesen <= 0;
             end
         end
@@ -314,13 +314,13 @@ always @(posedge clk_25mhz) begin
                 loaderLesen <= 1;
                 loaderWarte <= 1;
 
-                loaderDatenMenge = loaderDatenMenge - 1;
                 loaderAdresse <= loaderAdresse + 1;
                 loaderRAMAdresse <= loaderRAMAdresse + 1;
+                loaderDatenMenge <= loaderDatenMenge - 1;
 
                 //Wenn DatenMenge == 0, muss nichts mehr von der SDKarte gelesen werden
                 //Nur noch das letzte Byte muss in den RAM geladen werden
-                if(loaderDatenMenge == 0) begin
+                if(loaderDatenMenge != 0) begin
                     loaderLesen <= 0;
                     zustand <= RAMLADENBEENDEN;
                 end
@@ -328,6 +328,7 @@ always @(posedge clk_25mhz) begin
             else if(SDBusy) begin
                 loaderSchreibeDaten <= 0;
                 loaderLesen <= 0;
+                loaderWarte <= 1;
             end
         end
         RAMLADENBEENDEN: begin

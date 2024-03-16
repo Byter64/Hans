@@ -14,7 +14,7 @@ module SDKarte (
     output reg Fertig, //Daten an [Daten] sind gültig
     output reg Busy, //Wenn oben, können Leseanfragen über [Lesen] gesendet werden
     output [4:0] debug, //Vom SD-Card Controller, für Debugzwecke
-    output [3:0] zustand,
+    output [2:0] zustand,
 
     //SD_controller
     input miso, // Connect to SD_DAT[0].
@@ -42,7 +42,7 @@ module SDKarte (
     wire [31:0] sektorAdresse;
     wire egal;
     
-    reg [3:0] state = IDLE;
+    reg [2:0] state = IDLE;
     reg [8:0] byteZaehler = 0;
 
     assign zustand = state;
