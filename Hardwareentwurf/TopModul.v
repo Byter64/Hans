@@ -153,13 +153,13 @@ reg loaderWarte = 1;
 
 
 CPU cpu (
+    .Clock(HauptClock),
+    .Reset(globalerReset || loaderReset),
     .DatenRein(CPUDatenRein),
     .Instruktion(CPUInstruktion),
     .InstruktionGeladen(1'b1),
     .DatenGeladen(1'b1),
     .DatenGespeichert(1'b1),
-    .Clock(HauptClock),
-    .Reset(globalerReset || loaderReset),
 
     .InstruktionAdresse(CPUInstruktionAdresse),
     .DatenRaus(CPUDatenRaus),
@@ -209,7 +209,7 @@ Bildpuffer bildpuffer (
 );
 
 HDMI_test_DDR hdmi_test_ddr(
-    .clk(clk_25mhz),
+    .clk(clk_25mhz), //Braucht 25 MHz um zu funktionieren
     .pixelData(HDMIPixelData),
     .x(HDMIX),
     .y(HDMIY),
