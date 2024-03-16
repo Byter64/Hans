@@ -22,7 +22,7 @@ module Bildpuffer (
 
   always @(posedge clk) begin
     if (write && y < HEIGHT && x < WIDTH) begin
-      ram[y*WIDTH+x] <= color;
+      ram[y * WIDTH + x] <= color;
     end
   end
 
