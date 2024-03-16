@@ -25,7 +25,6 @@ module CPU (
     output       LeseDaten,
     output       SchreibeDaten,
     output       LeseInstruktion,
-    output[2:0]  status
 );
 
 
@@ -193,7 +192,6 @@ Steuerung Steuerung(
     .PCSprungSignal(PCSprungSignal),
     .PCSignal(PCSignal),
     .DekodierSignal(DekodierSignal),
-    .status(status)
 );
 
 ALU ALU(

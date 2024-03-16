@@ -32,11 +32,8 @@ module Top
  assign sd_d[2] = ONE;
  assign sd_d[3] = SDcs;
  assign sd_cmd = SDmosi;
- //GPDI
- //assign gpdi_dp = HDMIgpdi_dp;
  //LED
- assign led[6:0] = CPUStatus[2:0];
- assign led[7] = zustand[2];
+ assign led = CPUInstruktionAdresse[7:0];
  
  //CLOCKS
  wire HauptClock;
@@ -98,7 +95,6 @@ wire [31:0] CPUDatenAdresse;
 wire CPULeseDaten;
 wire CPUSchreibeDaten;
 wire CPULeseInstruktion;
-wire [2:0] CPUStatus;
 
 //RAM
 //Inputs
@@ -168,7 +164,6 @@ CPU cpu (
     .LeseDaten(CPULeseDaten),
     .SchreibeDaten(CPUSchreibeDaten),
     .LeseInstruktion(CPULeseInstruktion),
-    .status(CPUStatus)
 );
 
 RAM #(
