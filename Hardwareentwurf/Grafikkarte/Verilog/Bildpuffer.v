@@ -18,10 +18,10 @@ module Bildpuffer (
 
   reg [BITSPERPIXEL-1:0] ram[WIDTH*HEIGHT-1:0];
 
-  assign pixelData = (x_data < WIDTH && y_data < HEIGHT)? ram[y_data*WIDTH+x_data] : 8'b0;
+  assign pixelData = (x_data < WIDTH && y_data < HEIGHT)? ram[y_data * WIDTH + x_data] : 8'b0;
 
   always @(posedge clk) begin
-    if (write&&y<HEIGHT&&x<WIDTH) begin
+    if (write && y < HEIGHT && x < WIDTH) begin
       ram[y*WIDTH+x] <= color;
     end
   end

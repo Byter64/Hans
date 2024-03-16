@@ -21,7 +21,7 @@ reg [7:0] ram [160*120-1:0];
 
 HDMI_test_DDR HDMIVideo
 (
-    .pclk(clk_25mhz),
+    .clk(clk_25mhz),
     .pixelData(pixelData),
     .x(x),
     .y(y),

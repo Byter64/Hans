@@ -33,9 +33,10 @@ module Top
  assign sd_d[3] = SDcs;
  assign sd_cmd = SDmosi;
  //GPDI
- assign gpdi_dp = HDMIgpdi_dp;
+ //assign gpdi_dp = HDMIgpdi_dp;
  //LED
  assign led[2:0] = zustand;
+ assign led[7:3] = 0;
  
  //CLOCKS
  wire HauptClock;
@@ -208,11 +209,11 @@ Bildpuffer bildpuffer (
 );
 
 HDMI_test_DDR hdmi_test_ddr(
-    .clk(HauptClock),
+    .clk(clk_25mhz),
     .pixelData(HDMIPixelData),
     .x(HDMIX),
     .y(HDMIY),
-    .gpdi_dp(HDMIgpdi_dp)
+    .gpdi_dp(gpdi_dp)
 );
 
 
