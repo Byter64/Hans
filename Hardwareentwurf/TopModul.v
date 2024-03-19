@@ -2,7 +2,7 @@
 `include "../Prozessor/1_RAM.v"
 `include "../Loader/Loader.v"
 `include "../Grafikkarte/Verilog/Bildpuffer.v"
-`include "../SDKarte/SDKartenLeser.v"
+`include "../SDKarte/SDKarte.v"
 `include "../Grafikkarte/Verilog/HDMI_clock.v"
 `include "../Grafikkarte/Verilog/HDMI_test_DDR.v"
 `include "../Grafikkarte/Verilog/TMDS_encoder.v"
