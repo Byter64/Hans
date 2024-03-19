@@ -202,9 +202,9 @@ assign Ergebnis =   FunktionsCode[5:0] == IntQuadratwurzel ? WurzelErgebnis :
                     FunktionsCode[5:0] == FloatZuUnsignedInt ? {31'b0, FloatZuUnsignedIntErgebnis} :
                     EinfacheRechnungErgebnis;
 
-assign HatFertigGerechnet =     (TakteBisFertig == 0);
+assign HatFertigGerechnet =     (FunktionsCode[5:0]==IntQuadratwurzel)?(WurzelFertig):(TakteBisFertig == 0);
 
-assign IntWurzelReset =         (FunktionsCode[5:0] == IntQuadratwurzel & StartSignal) | Reset;
+assign IntWurzelReset =         ((FunktionsCode[5:0] == IntQuadratwurzel & StartSignal) || FunktionsCode[5:0] != IntQuadratwurzel) | Reset;
 
 assign FloatAdditionDaten2 =    {(FunktionsCode[5:0] != FloatAddition),Daten2[30:0]};
 

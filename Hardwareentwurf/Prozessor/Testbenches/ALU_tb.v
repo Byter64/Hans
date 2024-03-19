@@ -209,7 +209,17 @@ initial begin
     #3200
     if(Ergebnis != 32'b00000000000000001000000000011001)
         $display("Quadratwurzel funktioniert nicht: \n Radikand: %d Ergebnis: %d \n Erwartet: %d\n", Daten1, Ergebnis, 32'b00000000000000001101110111000010);
-    
+    #1000
+            //Sqrt-Befehl testen
+    Daten1 = 32'd400;
+    FunktionsCode = Sqrt;
+    StartSignal = 1;
+    #200
+    StartSignal = 0;
+    #4000
+    if(Ergebnis != 32'd20)
+        $display("Quadratwurzel funktioniert nicht: \n Radikand: %d Ergebnis: %d \n Erwartet: %d\n", Daten1, Ergebnis, 32'd20);
+    #1000
     //Sla-Befehl testen
     Daten1 = 32'b11111111100110010101010101010101;
     Daten2 = 32'b00000000000000000000000000000111;
