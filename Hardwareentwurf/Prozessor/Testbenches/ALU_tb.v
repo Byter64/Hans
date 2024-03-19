@@ -135,7 +135,7 @@ initial begin
     StartSignal = 0;
     #2000
     
-    if(Ergebnis != $signed(-32'sd98158))
+    if(Ergebnis != $signed(-32'sd98157))
         $display("Dividieren funktioniert nicht: \n Divisor:  %d \n Dividend: %d \n Ergebnis: %d \n Erwartet: %d\n", $signed(Daten1), $signed(Daten2), $signed(Ergebnis), $signed(-32'sd98158));
     #200
     //Mod-Befehl testen

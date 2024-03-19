@@ -1,4 +1,3 @@
-`include "../Prozessor/ALUModule/Goldschmidt_Integer_Divider_Parallel-main/source/Goldschmidt_Integer_Divider_Parallel.v"
 `include "../Prozessor/ALUModule/Intsqrt.v"
 `include "../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/add.v"
 `include "../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/mul.v"
@@ -25,8 +24,6 @@ module ALU (
 );
 
 reg[31:0] Radikand; //Wurzel
-reg DivStb = 0; 
-//assign DivStb = (StartSignal&&~DivisionInArbeit) && (FunktionsCode == IntDivision || FunktionsCode == IntModulo);
 reg[7:0] TakteBisFertig = 0;
 wire[31:0] FloatAdditionDaten2;
 wire[31:0] EinfacheRechnungErgebnis;
@@ -87,24 +84,6 @@ localparam FloatGroesser =        6'b101010;
 localparam FloatKleiner =         6'b101011;
 localparam FloatZuInt =           6'b101110;
 localparam FloatZuUnsignedInt =   6'b101111;
-
-Goldschmidt_Integer_Divider_Parallel #(
-    .P_GDIV_FACTORS_MSB(31), 
-    .P_GDIV_FRAC_LENGTH(32),
-    .P_GDIV_ROUND_LVL(10)
-) DivisionsModule (
-    // Component's clocks and resets
-    .i_clk(Clock), // clock
-    .i_rst(Reset), // reset
-    // Wishbone(Pipeline) Slave Interface
-    .i_wb4s_cyc(1'b1),     // WB: If high, slave accepts new data, put low again, when finished
-    .i_wb4s_tgd({FunktionsCode[0], 1'b0}),     // WB data tag, 0=quotient, 1=remainder; 0=signed, 1=unsigned
-    .i_wb4s_stb(DivStb),     // WB stb, valid strobe
-    .i_wb4s_data({Daten2, Daten1}),   // WB data 0
-    .o_wb4s_stall(DivisionInArbeit), // if high, slave does not take inputs yet.
-    .o_wb4s_ack(DivisionFertig),     // WB: If this signal is up, the result is at o_wb4_data
-    .o_wb4s_data(DivisionErgebnis)    // WB data, result
-);
 
 Intsqrt QuadratModul(
     .Clock(Clock),
@@ -186,28 +165,28 @@ single_to_unsigned_int FloatZuUnsignedIntMacher(
     .single_to_unsigned_int_z(FloatZuUnsignedIntErgebnis)
 );
 
-assign EinfacheRechnungErgebnis =   FunktionsCode[5:0] == IntAddition        ? $signed(Daten1) + $signed(Daten2) :
-                                    FunktionsCode[5:0] == IntSubtraktion     ? $signed(Daten1) - $signed(Daten2) :
-                                    FunktionsCode[5:0] == IntMultiplikation  ? $signed(Daten1) * $signed(Daten2) :
-                                    FunktionsCode[5:0] == LinksSchiebenArithm? $signed(Daten1) <<< $signed(Daten2) :
-                                    FunktionsCode[5:0] == RechtsSchiebenArithm? $signed(Daten1) >>> $signed(Daten2) :
-                                    FunktionsCode[5:0] == Gleichheit         ? $signed({31'b0, Daten1 == Daten2})  : 
-                                    FunktionsCode[5:0] == Ungleichheit       ? $signed({31'b0, Daten1 != Daten2})  :
-                                    FunktionsCode[5:0] == Groesser             ? $signed({31'b0, $signed(Daten1) > $signed(Daten2)})  :     
-                                    FunktionsCode[5:0] == Kleiner              ? $signed({31'b0, $signed(Daten1) < $signed(Daten2)})  :
-                                    FunktionsCode[5:0] == GroesserUnsigned? $signed({31'b0, Daten1 > Daten2}) : 
-                                    FunktionsCode[5:0] == KleinerUnsigned? $signed({31'b0, Daten1 < Daten2}) : 
-                                    FunktionsCode[5:0] == Verneinung         ? $signed(~Daten1) : 
-                                    FunktionsCode[5:0] == Und                ? $signed(Daten1 & Daten2) :        
-                                    FunktionsCode[5:0] == Oder               ? $signed(Daten1 | Daten2) :       
-                                    FunktionsCode[5:0] == Ungleich           ? $signed(Daten1 ^ Daten2) :   
-                                    FunktionsCode[5:0] == Gleich             ? $signed(Daten1 ~^ Daten2) :
-                                    FunktionsCode[5:0] == LinksSchiebenLogik ? $signed(Daten1 << $signed(Daten2)) :
-                                    FunktionsCode[5:0] == RechtsSchiebenLogik? $signed(Daten1 >> $signed(Daten2)) : $signed(0);
+assign EinfacheRechnungErgebnis =   FunktionsCode[5:0] == IntAddition           ? $signed(Daten1) + $signed(Daten2) :
+                                    FunktionsCode[5:0] == IntSubtraktion        ? $signed(Daten1) - $signed(Daten2) :
+                                    FunktionsCode[5:0] == IntMultiplikation     ? $signed(Daten1) * $signed(Daten2) :
+                                    FunktionsCode[5:0] == IntDivision           ? $signed(Daten1) / $signed(Daten2) :
+                                    FunktionsCode[5:0] == IntModulo             ? $signed(Daten1) % $signed(Daten2) :
+                                    FunktionsCode[5:0] == LinksSchiebenArithm   ? $signed(Daten1) <<< $signed(Daten2) :
+                                    FunktionsCode[5:0] == RechtsSchiebenArithm  ? $signed(Daten1) >>> $signed(Daten2) :
+                                    FunktionsCode[5:0] == Gleichheit            ? $signed({31'b0, Daten1 == Daten2})  : 
+                                    FunktionsCode[5:0] == Ungleichheit          ? $signed({31'b0, Daten1 != Daten2})  :
+                                    FunktionsCode[5:0] == Groesser              ? $signed({31'b0, $signed(Daten1) > $signed(Daten2)})  :     
+                                    FunktionsCode[5:0] == Kleiner               ? $signed({31'b0, $signed(Daten1) < $signed(Daten2)})  :
+                                    FunktionsCode[5:0] == GroesserUnsigned      ? $signed({31'b0, Daten1 > Daten2}) : 
+                                    FunktionsCode[5:0] == KleinerUnsigned       ? $signed({31'b0, Daten1 < Daten2}) : 
+                                    FunktionsCode[5:0] == Verneinung            ? $signed(~Daten1) : 
+                                    FunktionsCode[5:0] == Und                   ? $signed(Daten1 & Daten2) :        
+                                    FunktionsCode[5:0] == Oder                  ? $signed(Daten1 | Daten2) :       
+                                    FunktionsCode[5:0] == Ungleich              ? $signed(Daten1 ^ Daten2) :   
+                                    FunktionsCode[5:0] == Gleich                ? $signed(Daten1 ~^ Daten2) :
+                                    FunktionsCode[5:0] == LinksSchiebenLogik    ? $signed(Daten1 << $signed(Daten2)) :
+                                    FunktionsCode[5:0] == RechtsSchiebenLogik   ? $signed(Daten1 >> $signed(Daten2)) : $signed(0);
 
 assign Ergebnis =   FunktionsCode[5:0] == IntQuadratwurzel ? WurzelErgebnis :
-                    FunktionsCode[5:0] == IntDivision ? DivisionErgebnis :
-                    FunktionsCode[5:0] == IntModulo ? DivisionErgebnis :
                     FunktionsCode[5:0] == IntZuFloat ? IntZuFloatErgebnis :
                     FunktionsCode[5:0] == UnsignedIntZuFloat ? UnsignedIntZuFloatErgebnis :
                     FunktionsCode[5:0] == FloatAddition ? AdditionFloatErgebnis :
@@ -221,41 +200,30 @@ assign Ergebnis =   FunktionsCode[5:0] == IntQuadratwurzel ? WurzelErgebnis :
                     FunktionsCode[5:0] == FloatKleiner ? {31'b0, FloatKleinerErgebnis} :
                     FunktionsCode[5:0] == FloatZuInt ? {31'b0, FloatZuIntErgebnis} :
                     FunktionsCode[5:0] == FloatZuUnsignedInt ? {31'b0, FloatZuUnsignedIntErgebnis} :
-                                                        EinfacheRechnungErgebnis;
+                    EinfacheRechnungErgebnis;
 
-assign HatFertigGerechnet =     FunktionsCode[5:1] == IntDivision[5:1] ? DivisionFertig:
-                                FunktionsCode[5:0] == IntQuadratwurzel ? WurzelFertig :
-                                (TakteBisFertig == 0);
+assign HatFertigGerechnet =     (TakteBisFertig == 0);
 
-assign IntWurzelReset = (FunktionsCode[5:0] == IntQuadratwurzel & StartSignal) | Reset;
+assign IntWurzelReset =         (FunktionsCode[5:0] == IntQuadratwurzel & StartSignal) | Reset;
 
-assign FloatAdditionDaten2 = {(FunktionsCode[5:0] != FloatAddition),Daten2[30:0]};
+assign FloatAdditionDaten2 =    {(FunktionsCode[5:0] != FloatAddition),Daten2[30:0]};
 
 
 always @(posedge Reset or posedge Clock) begin
     if(Reset) begin
         Radikand <= 0;
         TakteBisFertig <= 0;
-        DivStb <= 0;
     end else if(TakteBisFertig != 0) begin
         TakteBisFertig <= TakteBisFertig - 1;
-        DivStb <= 0;
     end
     else if (StartSignal) begin
         Radikand <= Daten1;
-        DivStb <= 0;
         case (FunktionsCode[5:0])
             IntZuFloat : begin
                 TakteBisFertig <= 4;
             end
             UnsignedIntZuFloat : begin
                 TakteBisFertig <= 4;
-            end
-            IntDivision: begin
-                DivStb <= 1;
-            end
-            IntModulo: begin
-                DivStb <= 1;
             end
             //Float Arithmetik
             //Add.s
@@ -293,9 +261,6 @@ always @(posedge Reset or posedge Clock) begin
                 TakteBisFertig <= 0;
             end
         endcase
-    end else begin 
-        DivStb <= 0;
-    end
-    
+    end    
 end
 endmodule
