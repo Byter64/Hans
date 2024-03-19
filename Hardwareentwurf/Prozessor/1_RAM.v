@@ -13,7 +13,7 @@ module RAM#(
 reg[WORDSIZE - 1:0] Daten[WORDS - 1:0];
 integer idx;
 
-initial begin
+//initial begin
     //Daten[0] = 32'b10000000001000000000000000000001; //Addi R1, R0, #0
     //Daten[1] = 32'b10000011111000000000000000000001; //Addi R31, R0, #1
     //Daten[2] = 32'b10011011111111110000000000011111; //Sli R31, R31, #31
@@ -24,7 +24,7 @@ initial begin
 
     //for (idx = 6; idx < WORDS; idx = idx + 1) 
     //Daten[idx] = 0;
-end
+//end
 
 always @(posedge Clock) begin
     if(SchreibenAn)

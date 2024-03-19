@@ -33,8 +33,9 @@ module Top
  assign sd_d[3] = SDcs;
  assign sd_cmd = SDmosi;
  //LED
- assign led = CPUInstruktionAdresse[7:0];
- 
+ assign led[6:0] = RAMDatenOutput[6:0];
+ assign led[7] = zustand[2];
+
  //CLOCKS
  wire HauptClock;
  wire [3:0] clocks;
@@ -220,9 +221,10 @@ HDMI_test_DDR hdmi_test_ddr(
     assign CPUInstruktion = RAMDatenOutput;
 //RAM
     assign RAMClock = loaderReset ? clk_25mhz : HauptClock;
-    assign RAMSchreibenAn = loaderReset ? loaderSchreibeDaten : ((CPUDatenAdresse[31:16] == 16'b0) ? CPUSchreibeDaten : 0);
+    assign RAMSchreibenAn = (zustand != LAEUFT) ? loaderSchreibeDaten : (0);
     assign RAMDatenInput = loaderReset ? loaderDaten : CPUDatenRaus;
-    assign RAMAdresse = loaderReset ? loaderRAMAdresse : (CPULeseInstruktion ? CPUInstruktionAdresse[15:0] : CPUDatenAdresse[15:0]);
+    //assign RAMAdresse = loaderReset ? loaderRAMAdresse : (CPULeseInstruktion ? CPUInstruktionAdresse[15:0] : CPUDatenAdresse[15:0]);
+    assign RAMAdresse = (zustand != LAEUFT) ? loaderRAMAdresse : (debugRAMAdresse);
 //SDKarte
     assign SDAdresse = loaderAdresse;
     assign SDLesen = loaderLesen;
@@ -249,6 +251,8 @@ localparam LAEUFT = 3'd5;
 reg [9:0] resetTimer = ~0;
 reg globalerReset = 0;
 reg loaderReset = 0;
+reg [15:0] debugRAMAdresse = 0;
+reg [24:0] debugTimer = 1;
 
 always @(posedge clk_25mhz) begin
     case (zustand)
@@ -308,9 +312,9 @@ always @(posedge clk_25mhz) begin
                 loaderLesen <= 0;
             end
             else if(~SDBusy && loaderWarte == 0) begin
+                loaderWarte <= 1;
                 loaderSchreibeDaten <= 1;
                 loaderLesen <= 1;
-                loaderWarte <= 1;
 
                 loaderAdresse <= loaderAdresse + 1;
                 loaderRAMAdresse <= loaderRAMAdresse + 1;
@@ -318,13 +322,12 @@ always @(posedge clk_25mhz) begin
 
                 //Wenn DatenMenge == 0, muss nichts mehr von der SDKarte gelesen werden
                 //Nur noch das letzte Byte muss in den RAM geladen werden
-                if(loaderDatenMenge != 0) begin
-                    loaderLesen <= 0;
+                if(loaderDatenMenge == 0) begin
                     zustand <= RAMLADENBEENDEN;
                 end
             end
             else if(SDBusy) begin
-                loaderSchreibeDaten <= 0;
+                loaderSchreibeDaten <= 1;
                 loaderLesen <= 0;
                 loaderWarte <= 1;
             end
@@ -335,8 +338,14 @@ always @(posedge clk_25mhz) begin
             zustand <= LAEUFT;
         end
         LAEUFT: begin
-            loaderReset <= 0;
+            loaderReset <= 1;
             globalerReset <= 0;
+
+            debugTimer <= debugTimer + 1;
+            if(debugTimer == 0) begin
+                debugRAMAdresse <= debugRAMAdresse + 1;
+            end
+
         end
         default: zustand <= RESET;
     endcase

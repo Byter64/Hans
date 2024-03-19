@@ -19,7 +19,7 @@ module Steuerung (
     output LoadDatenSignal,
     output StoreDatenSignal,
     output PCSignal,
-    output PCSprungSignal,
+    output PCSprungSignal
 );
 
     localparam FETCH = 3'b000;

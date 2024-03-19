@@ -83,7 +83,7 @@ initial begin
 end
 
 always begin
-   #10 Clock = ~Clock; 
+   #1 Clock = ~Clock; 
 end
  
 

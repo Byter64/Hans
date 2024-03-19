@@ -24,7 +24,7 @@ module CPU (
     output[31:0] DatenAdresse,
     output       LeseDaten,
     output       SchreibeDaten,
-    output       LeseInstruktion,
+    output       LeseInstruktion
 );
 
 
@@ -191,7 +191,7 @@ Steuerung Steuerung(
     .StoreDatenSignal(SchreibeDaten),
     .PCSprungSignal(PCSprungSignal),
     .PCSignal(PCSignal),
-    .DekodierSignal(DekodierSignal),
+    .DekodierSignal(DekodierSignal)
 );
 
 ALU ALU(
