@@ -15,8 +15,8 @@
           "id": "8c9a3738-f2c1-45ad-aabe-79268bddc2d4",
           "type": "b3bf395dd20d607ccbc9d6e3f93b905f852a3b89",
           "position": {
-            "x": 1304,
-            "y": 568
+            "x": 2048,
+            "y": 824
           },
           "size": {
             "width": 96,
@@ -49,7 +49,7 @@
                 "size": 32
               },
               "position": {
-                "x": 64,
+                "x": 152,
                 "y": -32
               }
             },
@@ -63,21 +63,8 @@
                 "size": 32
               },
               "position": {
-                "x": -184,
-                "y": 328
-              }
-            },
-            {
-              "id": "a6178528-cf3a-4491-ab88-b77746082b7d",
-              "type": "basic.output",
-              "data": {
-                "name": "BefehlAdresse",
-                "range": "[25:0]",
-                "size": 26
-              },
-              "position": {
-                "x": 2024,
-                "y": 336
+                "x": -448,
+                "y": 152
               }
             },
             {
@@ -89,8 +76,8 @@
                 "size": 32
               },
               "position": {
-                "x": 2024,
-                "y": 376
+                "x": 1984,
+                "y": 264
               }
             },
             {
@@ -102,8 +89,8 @@
                 "size": 32
               },
               "position": {
-                "x": 2024,
-                "y": 416
+                "x": 1232,
+                "y": 312
               }
             },
             {
@@ -113,8 +100,8 @@
                 "name": "LoadBefehlSignal"
               },
               "position": {
-                "x": 2024,
-                "y": 456
+                "x": 744,
+                "y": 424
               }
             },
             {
@@ -124,8 +111,8 @@
                 "name": "LoadDatenSignal"
               },
               "position": {
-                "x": 2024,
-                "y": 496
+                "x": 744,
+                "y": 472
               }
             },
             {
@@ -135,8 +122,21 @@
                 "name": "StoreDatenSignal"
               },
               "position": {
-                "x": 2024,
-                "y": 536
+                "x": 744,
+                "y": 520
+              }
+            },
+            {
+              "id": "a6178528-cf3a-4491-ab88-b77746082b7d",
+              "type": "basic.output",
+              "data": {
+                "name": "BefehlAdresse",
+                "range": "[25:0]",
+                "size": 26
+              },
+              "position": {
+                "x": 2112,
+                "y": 584
               }
             },
             {
@@ -147,8 +147,8 @@
                 "clock": false
               },
               "position": {
-                "x": 464,
-                "y": 840
+                "x": 176,
+                "y": 584
               }
             },
             {
@@ -159,8 +159,8 @@
                 "clock": false
               },
               "position": {
-                "x": 464,
-                "y": 888
+                "x": 176,
+                "y": 640
               }
             },
             {
@@ -171,16 +171,16 @@
                 "clock": false
               },
               "position": {
-                "x": 464,
-                "y": 936
+                "x": 176,
+                "y": 688
               }
             },
             {
               "id": "395f69bf-12c6-469c-908e-cfc077391919",
               "type": "07c3e9937e380a4a69b76ed9acb607d974440968",
               "position": {
-                "x": 40,
-                "y": 120
+                "x": -240,
+                "y": 112
               },
               "size": {
                 "width": 96,
@@ -191,8 +191,8 @@
               "id": "6a191ea9-892f-4c41-bd1d-ce710d24ea47",
               "type": "0980595208e1182fd423fea62d5bf8166a29b47c",
               "position": {
-                "x": 1584,
-                "y": 672
+                "x": 1728,
+                "y": 552
               },
               "size": {
                 "width": 96,
@@ -203,20 +203,20 @@
               "id": "12c8688c-4aca-440a-8f1d-39a524ccd960",
               "type": "d073daebe985cc6e840580d5c126e4b9b741fafd",
               "position": {
-                "x": 792,
-                "y": 432
+                "x": 504,
+                "y": 336
               },
               "size": {
                 "width": 96,
-                "height": 416
+                "height": 384
               }
             },
             {
               "id": "c431a9e4-bfbe-4d83-a71d-b8b0f07c90a0",
               "type": "51b9cf88c750a154b49353272857414fafc78c5e",
               "position": {
-                "x": 824,
-                "y": -16
+                "x": 920,
+                "y": 208
               },
               "size": {
                 "width": 96,
@@ -227,8 +227,8 @@
               "id": "31990c40-3215-480c-a1f5-e77be6861b41",
               "type": "625d79635c0735eb022174bd3b756bc09c6d1186",
               "position": {
-                "x": 1632,
-                "y": 168
+                "x": 1728,
+                "y": 152
               },
               "size": {
                 "width": 96,
@@ -239,7 +239,7 @@
               "id": "ad9ef40d-c49b-42a8-a7fa-5e7eea2266c2",
               "type": "aa9caf8ebcb7b0229e1a641e9bda55962d23528d",
               "position": {
-                "x": 576,
+                "x": 504,
                 "y": -80
               },
               "size": {
@@ -251,8 +251,8 @@
               "id": "84143171-b5b0-438e-a4a0-fe844c0fbc38",
               "type": "1215e7c917c45969312f4d1b2e4c239094400d4c",
               "position": {
-                "x": 352,
-                "y": 624
+                "x": 120,
+                "y": 496
               },
               "size": {
                 "width": 96,
@@ -263,7 +263,7 @@
               "id": "95cc4275-7076-432b-85e0-a4f6402318ea",
               "type": "ef4843571745ee7cf39510612ba7bd08ba00fb02",
               "position": {
-                "x": 1312,
+                "x": 1376,
                 "y": 184
               },
               "size": {
@@ -275,8 +275,8 @@
               "id": "976035e9-d75d-477a-b245-cc03c7cc6329",
               "type": "433ce5316c1247a4e0a16f5007c3b5cf1c56a0e3",
               "position": {
-                "x": 1368,
-                "y": 584
+                "x": 1304,
+                "y": 488
               },
               "size": {
                 "width": 96,
@@ -287,8 +287,8 @@
               "id": "0560a46c-d0ab-428a-bf30-0167bed59c70",
               "type": "26af9a43487ae90923261d1771fd552a03494500",
               "position": {
-                "x": 1416,
-                "y": 56
+                "x": 1160,
+                "y": 48
               },
               "size": {
                 "width": 96,
@@ -306,12 +306,7 @@
                 "block": "12c8688c-4aca-440a-8f1d-39a524ccd960",
                 "port": "03069b59-0bc1-4662-96b6-a9dfc7c22b0f"
               },
-              "vertices": [
-                {
-                  "x": 384,
-                  "y": 488
-                }
-              ]
+              "vertices": []
             },
             {
               "source": {
@@ -322,12 +317,7 @@
                 "block": "12c8688c-4aca-440a-8f1d-39a524ccd960",
                 "port": "1f7015d3-8902-465c-881e-593942403cdf"
               },
-              "vertices": [
-                {
-                  "x": 288,
-                  "y": 552
-                }
-              ]
+              "vertices": []
             },
             {
               "source": {
@@ -338,12 +328,7 @@
                 "block": "12c8688c-4aca-440a-8f1d-39a524ccd960",
                 "port": "8967c841-23d3-4222-8105-c75fc5a893c8"
               },
-              "vertices": [
-                {
-                  "x": 272,
-                  "y": 592
-                }
-              ]
+              "vertices": []
             },
             {
               "source": {
@@ -367,8 +352,16 @@
               },
               "vertices": [
                 {
-                  "x": 1520,
-                  "y": 296
+                  "x": 128,
+                  "y": 184
+                },
+                {
+                  "x": 272,
+                  "y": -152
+                },
+                {
+                  "x": 1536,
+                  "y": 72
                 }
               ],
               "size": 6
@@ -382,12 +375,7 @@
                 "block": "c431a9e4-bfbe-4d83-a71d-b8b0f07c90a0",
                 "port": "a1b808fc-82af-4985-ad41-55f4d95b7a66"
               },
-              "vertices": [
-                {
-                  "x": 688,
-                  "y": 96
-                }
-              ],
+              "vertices": [],
               "size": 6
             },
             {
@@ -399,12 +387,7 @@
                 "block": "c431a9e4-bfbe-4d83-a71d-b8b0f07c90a0",
                 "port": "892206be-caea-4813-b605-445dcd779427"
               },
-              "vertices": [
-                {
-                  "x": 712,
-                  "y": 72
-                }
-              ],
+              "vertices": [],
               "size": 6
             },
             {
@@ -416,12 +399,7 @@
                 "block": "c431a9e4-bfbe-4d83-a71d-b8b0f07c90a0",
                 "port": "37f93bb3-455b-44e4-bd70-a8a59802a415"
               },
-              "vertices": [
-                {
-                  "x": 736,
-                  "y": 160
-                }
-              ],
+              "vertices": [],
               "size": 6
             },
             {
@@ -435,8 +413,12 @@
               },
               "vertices": [
                 {
-                  "x": 384,
-                  "y": 112
+                  "x": 184,
+                  "y": 416
+                },
+                {
+                  "x": 184,
+                  "y": 32
                 }
               ]
             },
@@ -449,6 +431,7 @@
                 "block": "ad9ef40d-c49b-42a8-a7fa-5e7eea2266c2",
                 "port": "95777557-33b9-4fae-8324-55ca8d0ea6c8"
               },
+              "vertices": [],
               "size": 32
             },
             {
@@ -462,12 +445,12 @@
               },
               "vertices": [
                 {
-                  "x": 1600,
-                  "y": -136
+                  "x": 1904,
+                  "y": -104
                 },
                 {
-                  "x": 392,
-                  "y": -128
+                  "x": 312,
+                  "y": -104
                 }
               ],
               "size": 32
@@ -481,6 +464,12 @@
                 "block": "c431a9e4-bfbe-4d83-a71d-b8b0f07c90a0",
                 "port": "d3449a5c-f0dc-4952-9612-04e5eb031b42"
               },
+              "vertices": [
+                {
+                  "x": 680,
+                  "y": 216
+                }
+              ],
               "size": 32
             },
             {
@@ -494,12 +483,12 @@
               },
               "vertices": [
                 {
-                  "x": 1072,
-                  "y": 32
+                  "x": 1104,
+                  "y": 856
                 },
                 {
-                  "x": 440,
-                  "y": -112
+                  "x": 32,
+                  "y": 856
                 }
               ],
               "size": 32
@@ -515,8 +504,8 @@
               },
               "vertices": [
                 {
-                  "x": 616,
-                  "y": 648
+                  "x": 304,
+                  "y": 520
                 }
               ]
             },
@@ -551,12 +540,7 @@
                 "block": "cf671e1c-92b9-4400-b9d7-d5e0b48e3281",
                 "port": "in"
               },
-              "vertices": [
-                {
-                  "x": 1096,
-                  "y": 520
-                }
-              ]
+              "vertices": []
             },
             {
               "source": {
@@ -567,12 +551,7 @@
                 "block": "cebe3cbc-cc8a-4c79-b698-47134e3e498a",
                 "port": "in"
               },
-              "vertices": [
-                {
-                  "x": 1120,
-                  "y": 544
-                }
-              ]
+              "vertices": []
             },
             {
               "source": {
@@ -583,12 +562,7 @@
                 "block": "7dc1a9eb-86ef-4cb1-934d-9863b51aa76f",
                 "port": "in"
               },
-              "vertices": [
-                {
-                  "x": 1144,
-                  "y": 592
-                }
-              ]
+              "vertices": []
             },
             {
               "source": {
@@ -612,8 +586,12 @@
               },
               "vertices": [
                 {
-                  "x": 1232,
-                  "y": 416
+                  "x": 1960,
+                  "y": 464
+                },
+                {
+                  "x": 1360,
+                  "y": 464
                 }
               ],
               "size": 32
@@ -629,8 +607,8 @@
               },
               "vertices": [
                 {
-                  "x": 1072,
-                  "y": 392
+                  "x": 1104,
+                  "y": 536
                 }
               ],
               "size": 32
@@ -646,8 +624,16 @@
               },
               "vertices": [
                 {
-                  "x": 232,
-                  "y": 1008
+                  "x": -8,
+                  "y": 888
+                },
+                {
+                  "x": 1128,
+                  "y": 888
+                },
+                {
+                  "x": 1136,
+                  "y": 568
                 }
               ]
             },
@@ -671,12 +657,7 @@
                 "block": "adfda51a-2a0c-4bf4-9fa6-94f72e266410",
                 "port": "in"
               },
-              "vertices": [
-                {
-                  "x": 1136,
-                  "y": 200
-                }
-              ],
+              "vertices": [],
               "size": 32
             },
             {
@@ -688,12 +669,7 @@
                 "block": "0560a46c-d0ab-428a-bf30-0167bed59c70",
                 "port": "d6c04894-ff4c-4827-b35d-7dbd31a34e4f"
               },
-              "vertices": [
-                {
-                  "x": 1248,
-                  "y": 72
-                }
-              ],
+              "vertices": [],
               "size": 32
             },
             {
@@ -707,8 +683,8 @@
               },
               "vertices": [
                 {
-                  "x": 1120,
-                  "y": 208
+                  "x": -16,
+                  "y": 128
                 }
               ]
             },
@@ -723,8 +699,12 @@
               },
               "vertices": [
                 {
-                  "x": -24,
-                  "y": 1032
+                  "x": 704,
+                  "y": 784
+                },
+                {
+                  "x": -360,
+                  "y": 720
                 }
               ]
             },
@@ -737,12 +717,7 @@
                 "block": "12c8688c-4aca-440a-8f1d-39a524ccd960",
                 "port": "80701733-2c21-4dd6-96ff-ede745745459"
               },
-              "vertices": [
-                {
-                  "x": 360,
-                  "y": 456
-                }
-              ]
+              "vertices": []
             },
             {
               "source": {
@@ -753,12 +728,7 @@
                 "block": "95cc4275-7076-432b-85e0-a4f6402318ea",
                 "port": "3128ddd7-9d74-4768-aa0e-fc956aa0734d"
               },
-              "vertices": [
-                {
-                  "x": 1136,
-                  "y": 200
-                }
-              ],
+              "vertices": [],
               "size": 32
             },
             {
@@ -770,12 +740,7 @@
                 "block": "c431a9e4-bfbe-4d83-a71d-b8b0f07c90a0",
                 "port": "a81bee85-0811-40bf-82a9-dbd224184b4c"
               },
-              "vertices": [
-                {
-                  "x": 904,
-                  "y": 392
-                }
-              ]
+              "vertices": []
             },
             {
               "source": {
@@ -796,12 +761,7 @@
                 "block": "12c8688c-4aca-440a-8f1d-39a524ccd960",
                 "port": "9a1a51a2-fa03-413f-8d49-5b9f7ab59e2e"
               },
-              "vertices": [
-                {
-                  "x": 712,
-                  "y": 880
-                }
-              ]
+              "vertices": []
             },
             {
               "source": {
@@ -825,12 +785,8 @@
               },
               "vertices": [
                 {
-                  "x": 1048,
-                  "y": 448
-                },
-                {
-                  "x": 1240,
-                  "y": 384
+                  "x": 1480,
+                  "y": 376
                 }
               ]
             },
@@ -845,27 +801,10 @@
               },
               "vertices": [
                 {
-                  "x": 648,
-                  "y": 712
+                  "x": 344,
+                  "y": 584
                 }
               ]
-            },
-            {
-              "source": {
-                "block": "395f69bf-12c6-469c-908e-cfc077391919",
-                "port": "c9c248e9-c9d1-45c9-b678-09aa7d4d5a5f"
-              },
-              "target": {
-                "block": "12c8688c-4aca-440a-8f1d-39a524ccd960",
-                "port": "528cacb6-c1be-45d7-adcf-916e31acc1d4"
-              },
-              "vertices": [
-                {
-                  "x": 664,
-                  "y": 384
-                }
-              ],
-              "size": 6
             },
             {
               "source": {
@@ -878,8 +817,8 @@
               },
               "vertices": [
                 {
-                  "x": 408,
-                  "y": 120
+                  "x": 216,
+                  "y": 72
                 }
               ]
             },
@@ -892,12 +831,7 @@
                 "block": "12c8688c-4aca-440a-8f1d-39a524ccd960",
                 "port": "0b4a4a02-3ff6-44c3-b26e-703f1667aae9"
               },
-              "vertices": [
-                {
-                  "x": 408,
-                  "y": 456
-                }
-              ]
+              "vertices": []
             },
             {
               "source": {
@@ -910,12 +844,12 @@
               },
               "vertices": [
                 {
-                  "x": 1920,
-                  "y": -160
+                  "x": 2096,
+                  "y": -128
                 },
                 {
-                  "x": 368,
-                  "y": -136
+                  "x": 280,
+                  "y": -88
                 }
               ],
               "size": 26
@@ -931,8 +865,12 @@
               },
               "vertices": [
                 {
-                  "x": 616,
-                  "y": 1056
+                  "x": 2216,
+                  "y": 368
+                },
+                {
+                  "x": 456,
+                  "y": 976
                 }
               ]
             },
@@ -945,16 +883,7 @@
                 "block": "a6178528-cf3a-4491-ab88-b77746082b7d",
                 "port": "in"
               },
-              "vertices": [
-                {
-                  "x": 1920,
-                  "y": 376
-                },
-                {
-                  "x": 1920,
-                  "y": 376
-                }
-              ],
+              "vertices": [],
               "size": 26
             },
             {
@@ -968,12 +897,12 @@
               },
               "vertices": [
                 {
-                  "x": 1920,
-                  "y": 728
+                  "x": 2096,
+                  "y": 0
                 },
                 {
-                  "x": 1672,
-                  "y": 8
+                  "x": 1056,
+                  "y": 0
                 }
               ],
               "size": 26
@@ -986,7 +915,8 @@
               "target": {
                 "block": "84143171-b5b0-438e-a4a0-fe844c0fbc38",
                 "port": "da29e25a-f215-4ae3-a9a6-7ef8aa9b30bb"
-              }
+              },
+              "vertices": []
             },
             {
               "source": {
@@ -996,7 +926,13 @@
               "target": {
                 "block": "95cc4275-7076-432b-85e0-a4f6402318ea",
                 "port": "081e5dbe-2409-4488-9430-fc8ae8d66ee3"
-              }
+              },
+              "vertices": [
+                {
+                  "x": 1216,
+                  "y": 216
+                }
+              ]
             },
             {
               "source": {
@@ -1007,6 +943,29 @@
                 "block": "95cc4275-7076-432b-85e0-a4f6402318ea",
                 "port": "d7d5b5c0-0edd-452c-a3cb-dd61710939c1"
               },
+              "vertices": [
+                {
+                  "x": 1256,
+                  "y": 176
+                }
+              ],
+              "size": 32
+            },
+            {
+              "source": {
+                "block": "0560a46c-d0ab-428a-bf30-0167bed59c70",
+                "port": "fee8ac0d-c6f4-48ce-a75d-2a904ebd1296"
+              },
+              "target": {
+                "block": "31990c40-3215-480c-a1f5-e77be6861b41",
+                "port": "a44f2dd4-1ea9-4743-b632-e6da11a4ab30"
+              },
+              "vertices": [
+                {
+                  "x": 1504,
+                  "y": 152
+                }
+              ],
               "size": 32
             }
           ]
@@ -1025,29 +984,22 @@
         "graph": {
           "blocks": [
             {
-              "id": "c614052d-8b0e-49f3-97db-f1dc82997efe",
+              "id": "c39adb98-1725-4957-b5ab-b04dac737ffb",
               "type": "basic.output",
               "data": {
-                "name": "QuellReg1",
-                "range": "[5:0]",
-                "size": 6
+                "name": "RelativerSprung",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ]
               },
               "position": {
-                "x": 720,
-                "y": 72
-              }
-            },
-            {
-              "id": "044b0036-8e8b-47c8-a1a9-6c62209dc87b",
-              "type": "basic.output",
-              "data": {
-                "name": "QuellReg2",
-                "range": "[5:0]",
-                "size": 6
-              },
-              "position": {
-                "x": 704,
-                "y": 176
+                "x": 1064,
+                "y": 152
               }
             },
             {
@@ -1062,19 +1014,6 @@
               "position": {
                 "x": -1000,
                 "y": 264
-              }
-            },
-            {
-              "id": "317354c3-5b79-4f8e-a5ca-64033ae5e585",
-              "type": "basic.output",
-              "data": {
-                "name": "ZielReg1",
-                "range": "[5:0]",
-                "size": 6
-              },
-              "position": {
-                "x": 720,
-                "y": 280
               }
             },
             {
@@ -1248,8 +1187,8 @@
                 ]
               },
               "position": {
-                "x": 704,
-                "y": 384
+                "x": 992,
+                "y": 280
               }
             },
             {
@@ -1267,8 +1206,8 @@
                 ]
               },
               "position": {
-                "x": 720,
-                "y": 488
+                "x": 1000,
+                "y": 352
               }
             },
             {
@@ -1312,27 +1251,47 @@
                 ]
               },
               "position": {
-                "x": 712,
-                "y": 592
+                "x": 1000,
+                "y": 424
               }
             },
             {
-              "id": "a7924039-31ca-45c6-8a7b-a4434c8bd6d1",
+              "id": "c614052d-8b0e-49f3-97db-f1dc82997efe",
               "type": "basic.output",
               "data": {
-                "name": "JALBefehl",
-                "virtual": true,
-                "pins": [
-                  {
-                    "index": "0",
-                    "name": "NULL",
-                    "value": "NULL"
-                  }
-                ]
+                "name": "QuellReg1",
+                "range": "[5:0]",
+                "size": 6
               },
               "position": {
-                "x": 720,
-                "y": 696
+                "x": 1048,
+                "y": 600
+              }
+            },
+            {
+              "id": "044b0036-8e8b-47c8-a1a9-6c62209dc87b",
+              "type": "basic.output",
+              "data": {
+                "name": "QuellReg2",
+                "range": "[5:0]",
+                "size": 6
+              },
+              "position": {
+                "x": 1040,
+                "y": 672
+              }
+            },
+            {
+              "id": "317354c3-5b79-4f8e-a5ca-64033ae5e585",
+              "type": "basic.output",
+              "data": {
+                "name": "ZielReg1",
+                "range": "[5:0]",
+                "size": 6
+              },
+              "position": {
+                "x": 1040,
+                "y": 736
               }
             },
             {
@@ -1356,32 +1315,13 @@
               }
             },
             {
-              "id": "c39adb98-1725-4957-b5ab-b04dac737ffb",
-              "type": "basic.output",
-              "data": {
-                "name": "RelativerSprung",
-                "virtual": true,
-                "pins": [
-                  {
-                    "index": "0",
-                    "name": "NULL",
-                    "value": "NULL"
-                  }
-                ]
-              },
-              "position": {
-                "x": 720,
-                "y": 800
-              }
-            },
-            {
               "id": "1b124991-cac3-4201-974f-691e1cc59c16",
               "type": "basic.output",
               "data": {
                 "name": "LoadBefehl"
               },
               "position": {
-                "x": 728,
+                "x": 960,
                 "y": 904
               }
             },
@@ -1392,8 +1332,27 @@
                 "name": "StoreBefehl"
               },
               "position": {
-                "x": 728,
+                "x": 960,
                 "y": 1008
+              }
+            },
+            {
+              "id": "a7924039-31ca-45c6-8a7b-a4434c8bd6d1",
+              "type": "basic.output",
+              "data": {
+                "name": "JALBefehl",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ]
+              },
+              "position": {
+                "x": 968,
+                "y": 1112
               }
             },
             {
@@ -1403,19 +1362,8 @@
                 "name": "UnbedingterSprungBefehl"
               },
               "position": {
-                "x": 752,
-                "y": 1112
-              }
-            },
-            {
-              "id": "a8512379-fdf6-4ba5-a4c4-573450c25069",
-              "type": "basic.output",
-              "data": {
-                "name": "BedingterSprung"
-              },
-              "position": {
-                "x": 744,
-                "y": 1216
+                "x": 944,
+                "y": 1224
               }
             },
             {
@@ -1439,21 +1387,13 @@
               }
             },
             {
-              "id": "51d1842d-e9d7-426f-b46f-45adefc55b91",
+              "id": "a8512379-fdf6-4ba5-a4c4-573450c25069",
               "type": "basic.output",
               "data": {
-                "name": "AbsoluterSprung",
-                "virtual": true,
-                "pins": [
-                  {
-                    "index": "0",
-                    "name": "NULL",
-                    "value": "NULL"
-                  }
-                ]
+                "name": "BedingterSprung"
               },
               "position": {
-                "x": 752,
+                "x": 912,
                 "y": 1320
               }
             },
@@ -1472,8 +1412,27 @@
                 ]
               },
               "position": {
-                "x": 744,
-                "y": 1424
+                "x": 1016,
+                "y": 1376
+              }
+            },
+            {
+              "id": "51d1842d-e9d7-426f-b46f-45adefc55b91",
+              "type": "basic.output",
+              "data": {
+                "name": "AbsoluterSprung",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ]
+              },
+              "position": {
+                "x": 1032,
+                "y": 1432
               }
             },
             {
@@ -1763,8 +1722,8 @@
                 "size": 26
               },
               "position": {
-                "x": 1408,
-                "y": 272
+                "x": 1392,
+                "y": 408
               }
             },
             {
@@ -1840,9 +1799,103 @@
                 "x": 616,
                 "y": 664
               }
+            },
+            {
+              "id": "2ad6618a-0a2d-4ba1-9578-85c3b9cffc0e",
+              "type": "basic.code",
+              "data": {
+                "ports": {
+                  "in": [
+                    {
+                      "name": "NeuerPC",
+                      "range": "[25:0]",
+                      "size": 26
+                    },
+                    {
+                      "name": "SchreibSignal"
+                    },
+                    {
+                      "name": "TaktSignal"
+                    },
+                    {
+                      "name": "Reset"
+                    }
+                  ],
+                  "out": [
+                    {
+                      "name": "AktuellerPc",
+                      "range": "[25:0]",
+                      "size": 26
+                    }
+                  ]
+                },
+                "params": [],
+                "code": "reg[25:0] programmzahler;\nreg[25:0] AktuellerPC;\nalways @(posedge TaktSignal or posedge Reset) begin\n    if(Reset)\n        AktuellerPC <= 25'b0;\n    else begin\n        if(SchreibSignal)\n            AktuellerPC <= NeuerPC + 1'b1;\n        else\n            AktuellerPC <= AktuellerPC + 1'b1;\n    end\nend"
+              },
+              "position": {
+                "x": 840,
+                "y": 416
+              },
+              "size": {
+                "width": 504,
+                "height": 192
+              }
             }
           ],
-          "wires": []
+          "wires": [
+            {
+              "source": {
+                "block": "2ad6618a-0a2d-4ba1-9578-85c3b9cffc0e",
+                "port": "AktuellerPc"
+              },
+              "target": {
+                "block": "43b6acdf-97bc-41a1-93d0-21bc0f4c487c",
+                "port": "in"
+              },
+              "size": 26
+            },
+            {
+              "source": {
+                "block": "1ff29fca-25ea-4fc8-a224-f4fe10a518bd",
+                "port": "out"
+              },
+              "target": {
+                "block": "2ad6618a-0a2d-4ba1-9578-85c3b9cffc0e",
+                "port": "NeuerPC"
+              },
+              "size": 26
+            },
+            {
+              "source": {
+                "block": "ef8e04d2-5d14-4cdb-8c52-beef5541c4c4",
+                "port": "out"
+              },
+              "target": {
+                "block": "2ad6618a-0a2d-4ba1-9578-85c3b9cffc0e",
+                "port": "SchreibSignal"
+              }
+            },
+            {
+              "source": {
+                "block": "17e637ef-d097-4a89-9612-670103f94aa3",
+                "port": "out"
+              },
+              "target": {
+                "block": "2ad6618a-0a2d-4ba1-9578-85c3b9cffc0e",
+                "port": "TaktSignal"
+              }
+            },
+            {
+              "source": {
+                "block": "e3a5e03f-9d03-4db2-94fb-e74ec080c510",
+                "port": "out"
+              },
+              "target": {
+                "block": "2ad6618a-0a2d-4ba1-9578-85c3b9cffc0e",
+                "port": "Reset"
+              }
+            }
+          ]
         }
       }
     },
@@ -1858,49 +1911,15 @@
         "graph": {
           "blocks": [
             {
-              "id": "528cacb6-c1be-45d7-adcf-916e31acc1d4",
+              "id": "0b4a4a02-3ff6-44c3-b26e-703f1667aae9",
               "type": "basic.input",
               "data": {
-                "name": "Funktionscode",
-                "virtual": true,
-                "range": "[5:0]",
-                "pins": [
-                  {
-                    "index": "5",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "4",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "3",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "2",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "1",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "0",
-                    "name": "NULL",
-                    "value": "NULL"
-                  }
-                ],
+                "name": "LoadBefehl",
                 "clock": false
               },
               "position": {
-                "x": 696,
-                "y": -16
+                "x": -112,
+                "y": -104
               }
             },
             {
@@ -1918,8 +1937,20 @@
                 ]
               },
               "position": {
-                "x": 1008,
-                "y": 112
+                "x": 1632,
+                "y": -88
+              }
+            },
+            {
+              "id": "03069b59-0bc1-4662-96b6-a9dfc7c22b0f",
+              "type": "basic.input",
+              "data": {
+                "name": "StoreBefehl",
+                "clock": false
+              },
+              "position": {
+                "x": -104,
+                "y": -24
               }
             },
             {
@@ -1937,43 +1968,8 @@
                 ]
               },
               "position": {
-                "x": 1008,
-                "y": 176
-              }
-            },
-            {
-              "id": "0b4a4a02-3ff6-44c3-b26e-703f1667aae9",
-              "type": "basic.input",
-              "data": {
-                "name": "LoadBefehl",
-                "clock": false
-              },
-              "position": {
-                "x": 688,
-                "y": 208
-              }
-            },
-            {
-              "id": "03069b59-0bc1-4662-96b6-a9dfc7c22b0f",
-              "type": "basic.input",
-              "data": {
-                "name": "StoreBefehl",
-                "clock": false
-              },
-              "position": {
-                "x": 696,
-                "y": 280
-              }
-            },
-            {
-              "id": "9da12b58-a282-43a7-ac77-bc3d2490d94b",
-              "type": "basic.output",
-              "data": {
-                "name": "LoadBefehlSignal"
-              },
-              "position": {
-                "x": 1008,
-                "y": 288
+                "x": 1640,
+                "y": 32
               }
             },
             {
@@ -1992,19 +1988,8 @@
                 "clock": false
               },
               "position": {
-                "x": 696,
-                "y": 344
-              }
-            },
-            {
-              "id": "6427d2c6-40cd-4423-8195-684d285df381",
-              "type": "basic.output",
-              "data": {
-                "name": "LoadDatenSignal"
-              },
-              "position": {
-                "x": 1008,
-                "y": 344
+                "x": -88,
+                "y": 56
               }
             },
             {
@@ -2015,19 +2000,19 @@
                 "clock": false
               },
               "position": {
-                "x": 688,
-                "y": 400
+                "x": -104,
+                "y": 128
               }
             },
             {
-              "id": "c1276045-a74b-455d-908a-edc85242ba90",
+              "id": "9da12b58-a282-43a7-ac77-bc3d2490d94b",
               "type": "basic.output",
               "data": {
-                "name": "StoreDatenSignal"
+                "name": "LoadBefehlSignal"
               },
               "position": {
-                "x": 1016,
-                "y": 448
+                "x": 1640,
+                "y": 152
               }
             },
             {
@@ -2038,8 +2023,19 @@
                 "clock": false
               },
               "position": {
-                "x": 688,
-                "y": 456
+                "x": -112,
+                "y": 208
+              }
+            },
+            {
+              "id": "6427d2c6-40cd-4423-8195-684d285df381",
+              "type": "basic.output",
+              "data": {
+                "name": "LoadDatenSignal"
+              },
+              "position": {
+                "x": 1640,
+                "y": 272
               }
             },
             {
@@ -2050,8 +2046,59 @@
                 "clock": false
               },
               "position": {
-                "x": 688,
-                "y": 512
+                "x": -112,
+                "y": 288
+              }
+            },
+            {
+              "id": "c1276045-a74b-455d-908a-edc85242ba90",
+              "type": "basic.output",
+              "data": {
+                "name": "StoreDatenSignal"
+              },
+              "position": {
+                "x": 1600,
+                "y": 384
+              }
+            },
+            {
+              "id": "3dd214ec-0e77-4f70-9c95-7061ee49399f",
+              "type": "basic.input",
+              "data": {
+                "name": "BefehlGeladen",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ],
+                "clock": false
+              },
+              "position": {
+                "x": -160,
+                "y": 408
+              }
+            },
+            {
+              "id": "9ceb3b45-bdb4-4b49-97b8-2219d8485575",
+              "type": "basic.input",
+              "data": {
+                "name": "DatenGeladen",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ],
+                "clock": false
+              },
+              "position": {
+                "x": -176,
+                "y": 456
               }
             },
             {
@@ -2069,7 +2116,27 @@
                 ]
               },
               "position": {
-                "x": 1016,
+                "x": 1600,
+                "y": 504
+              }
+            },
+            {
+              "id": "9a1a51a2-fa03-413f-8d49-5b9f7ab59e2e",
+              "type": "basic.input",
+              "data": {
+                "name": "DatenGespeichert",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ],
+                "clock": false
+              },
+              "position": {
+                "x": -168,
                 "y": 520
               }
             },
@@ -2089,8 +2156,8 @@
                 "clock": false
               },
               "position": {
-                "x": 688,
-                "y": 552
+                "x": -160,
+                "y": 600
               }
             },
             {
@@ -2108,87 +2175,8 @@
                 ]
               },
               "position": {
-                "x": 1016,
-                "y": 584
-              }
-            },
-            {
-              "id": "3dd214ec-0e77-4f70-9c95-7061ee49399f",
-              "type": "basic.input",
-              "data": {
-                "name": "BefehlGeladen",
-                "virtual": true,
-                "pins": [
-                  {
-                    "index": "0",
-                    "name": "NULL",
-                    "value": "NULL"
-                  }
-                ],
-                "clock": false
-              },
-              "position": {
-                "x": 688,
-                "y": 592
-              }
-            },
-            {
-              "id": "8a617e6e-3f08-4591-9c64-7dccb0cdfca0",
-              "type": "basic.output",
-              "data": {
-                "name": "DekodierSignal",
-                "virtual": true,
-                "pins": [
-                  {
-                    "index": "0",
-                    "name": "NULL",
-                    "value": "NULL"
-                  }
-                ]
-              },
-              "position": {
-                "x": 1016,
-                "y": 648
-              }
-            },
-            {
-              "id": "9ceb3b45-bdb4-4b49-97b8-2219d8485575",
-              "type": "basic.input",
-              "data": {
-                "name": "DatenGeladen",
-                "virtual": true,
-                "pins": [
-                  {
-                    "index": "0",
-                    "name": "NULL",
-                    "value": "NULL"
-                  }
-                ],
-                "clock": false
-              },
-              "position": {
-                "x": 688,
-                "y": 648
-              }
-            },
-            {
-              "id": "9a1a51a2-fa03-413f-8d49-5b9f7ab59e2e",
-              "type": "basic.input",
-              "data": {
-                "name": "DatenGespeichert",
-                "virtual": true,
-                "pins": [
-                  {
-                    "index": "0",
-                    "name": "NULL",
-                    "value": "NULL"
-                  }
-                ],
-                "clock": false
-              },
-              "position": {
-                "x": 688,
-                "y": 712
+                "x": 1584,
+                "y": 624
               }
             },
             {
@@ -2207,8 +2195,27 @@
                 "clock": false
               },
               "position": {
-                "x": 688,
-                "y": 768
+                "x": -136,
+                "y": 680
+              }
+            },
+            {
+              "id": "8a617e6e-3f08-4591-9c64-7dccb0cdfca0",
+              "type": "basic.output",
+              "data": {
+                "name": "DekodierSignal",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ]
+              },
+              "position": {
+                "x": 1600,
+                "y": 744
               }
             },
             {
@@ -2227,12 +2234,295 @@
                 "clock": false
               },
               "position": {
-                "x": 688,
-                "y": 824
+                "x": -144,
+                "y": 760
+              }
+            },
+            {
+              "id": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+              "type": "basic.code",
+              "data": {
+                "ports": {
+                  "in": [
+                    {
+                      "name": "LoadBefehl"
+                    },
+                    {
+                      "name": "StoreBefehl"
+                    },
+                    {
+                      "name": "JALBefehl"
+                    },
+                    {
+                      "name": "UnbedingterSprungBefehl"
+                    },
+                    {
+                      "name": "BedingterSprungBefehl"
+                    },
+                    {
+                      "name": "Bedingung"
+                    },
+                    {
+                      "name": "ALUFertig"
+                    },
+                    {
+                      "name": "BefehlGeladen"
+                    },
+                    {
+                      "name": "DatenGeladen"
+                    },
+                    {
+                      "name": "DatenGespeichert"
+                    },
+                    {
+                      "name": "Clock"
+                    },
+                    {
+                      "name": "Reset"
+                    }
+                  ],
+                  "out": [
+                    {
+                      "name": "RegisterSchreibSignal"
+                    },
+                    {
+                      "name": "ALUStartSignal"
+                    },
+                    {
+                      "name": "LoadBefehlSignal"
+                    },
+                    {
+                      "name": "LoadDatenSignal"
+                    },
+                    {
+                      "name": "StoreDatenSignal"
+                    },
+                    {
+                      "name": "PCSprungSignal"
+                    },
+                    {
+                      "name": "PCSignal"
+                    },
+                    {
+                      "name": "DekodierSignal"
+                    }
+                  ]
+                },
+                "params": [],
+                "code": "  localparam FETCH = 3'b000;\n    localparam DECODE = 3'b001;\n    localparam ALU1 = 3'b010;\n    localparam ALU = 3'b011;\n    localparam WRITEBACK_JUMP = 3'b100;\n    localparam WRITEBACK_STORE = 3'b101;\n    localparam WRITEBACK_LOAD = 3'b110;\n    localparam WRITEBACK_DEFAULT = 3'b111;\n\n    reg [2:0] current_state;\n    reg [2:0] next_state;\n\n    //combinational portion\n    \n    always @(*) begin\n        case(current_state)\n            FETCH: begin\n                if (BefehlGeladen)\n                    next_state <= DECODE;\n                else\n                    next_state <= FETCH;\n            end\n            DECODE:\n                next_state <= ALU1;\n            ALU1: begin\n                if (ALUFertig) begin\n                    if (UnbedingterSprungBefehl || BedingterSprungBefehl)\n                        next_state <= WRITEBACK_JUMP;\n                    else if (StoreBefehl)\n                        next_state <= WRITEBACK_STORE;\n                    else if (LoadBefehl)\n                        next_state <= WRITEBACK_LOAD;\n                    else\n                        next_state <= WRITEBACK_DEFAULT;\n                end\n                else\n                    next_state <= ALU;\n            end\n            ALU: begin\n                if (ALUFertig) begin\n                    if (UnbedingterSprungBefehl || BedingterSprungBefehl)\n                        next_state <= WRITEBACK_JUMP;\n                    else if (StoreBefehl)\n                        next_state <= WRITEBACK_STORE;\n                    else if (LoadBefehl)\n                        next_state <= WRITEBACK_LOAD;\n                    else\n                        next_state <= WRITEBACK_DEFAULT;\n                end\n                else\n                    next_state <= ALU;\n            end\n            WRITEBACK_JUMP:\n                next_state <= FETCH;\n            WRITEBACK_STORE: begin\n                if (DatenGespeichert)\n                    next_state <= FETCH;\n                else\n                    next_state <= WRITEBACK_STORE;\n            end\n            WRITEBACK_LOAD: begin\n                if (DatenGeladen)\n                    next_state <= WRITEBACK_DEFAULT;\n                else\n                    next_state <= WRITEBACK_LOAD;\n            end\n            WRITEBACK_DEFAULT:\n                next_state <= FETCH;\n            default:\n                next_state <= FETCH;\n        endcase\n    end\n    \n    assign LoadBefehlSignal = current_state == FETCH;\n    assign DekodierSignal = current_state == DECODE;\n    assign ALUStartSignal = current_state == ALU1;\n    assign RegisterSchreibSignal = ((current_state == ALU || current_state == ALU1) && JALBefehl) || current_state == WRITEBACK_DEFAULT;\n    assign PCSignal = current_state > ALU;\n    assign StoreDatenSignal = current_state == WRITEBACK_STORE;\n    assign LoadDatenSignal = current_state == WRITEBACK_LOAD;\n\n    assign PCSprungSignal = UnbedingterSprungBefehl || (BedingterSprungBefehl && Bedingung);\n\n    //sequential portion\n\n    always @(posedge Clock) begin\n        if (Reset)\n            current_state <= FETCH;\n        else\n            current_state <= next_state;\n    end"
+              },
+              "position": {
+                "x": 240,
+                "y": -112
+              },
+              "size": {
+                "width": 1200,
+                "height": 944
               }
             }
           ],
-          "wires": []
+          "wires": [
+            {
+              "source": {
+                "block": "0b4a4a02-3ff6-44c3-b26e-703f1667aae9",
+                "port": "out"
+              },
+              "target": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "LoadBefehl"
+              }
+            },
+            {
+              "source": {
+                "block": "03069b59-0bc1-4662-96b6-a9dfc7c22b0f",
+                "port": "out"
+              },
+              "target": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "StoreBefehl"
+              }
+            },
+            {
+              "source": {
+                "block": "80701733-2c21-4dd6-96ff-ede745745459",
+                "port": "out"
+              },
+              "target": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "JALBefehl"
+              }
+            },
+            {
+              "source": {
+                "block": "1f7015d3-8902-465c-881e-593942403cdf",
+                "port": "out"
+              },
+              "target": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "UnbedingterSprungBefehl"
+              }
+            },
+            {
+              "source": {
+                "block": "8967c841-23d3-4222-8105-c75fc5a893c8",
+                "port": "out"
+              },
+              "target": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "BedingterSprungBefehl"
+              }
+            },
+            {
+              "source": {
+                "block": "3773f6b8-a9b2-407e-a459-f27a07b3d59f",
+                "port": "out"
+              },
+              "target": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "Bedingung"
+              }
+            },
+            {
+              "source": {
+                "block": "7d325103-3431-4882-90f4-8d4afc400876",
+                "port": "out"
+              },
+              "target": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "ALUFertig"
+              }
+            },
+            {
+              "source": {
+                "block": "3dd214ec-0e77-4f70-9c95-7061ee49399f",
+                "port": "out"
+              },
+              "target": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "BefehlGeladen"
+              }
+            },
+            {
+              "source": {
+                "block": "9ceb3b45-bdb4-4b49-97b8-2219d8485575",
+                "port": "out"
+              },
+              "target": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "DatenGeladen"
+              }
+            },
+            {
+              "source": {
+                "block": "9a1a51a2-fa03-413f-8d49-5b9f7ab59e2e",
+                "port": "out"
+              },
+              "target": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "DatenGespeichert"
+              }
+            },
+            {
+              "source": {
+                "block": "151db1f8-9820-4afd-955f-90dbb16de40b",
+                "port": "out"
+              },
+              "target": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "Clock"
+              }
+            },
+            {
+              "source": {
+                "block": "b39cb169-c796-417c-9c48-7900b82b7065",
+                "port": "out"
+              },
+              "target": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "Reset"
+              }
+            },
+            {
+              "source": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "RegisterSchreibSignal"
+              },
+              "target": {
+                "block": "1db36b48-c321-4849-bde1-e28f61fec522",
+                "port": "in"
+              }
+            },
+            {
+              "source": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "ALUStartSignal"
+              },
+              "target": {
+                "block": "0ab4bde9-8c23-4f45-8e04-653d9400b648",
+                "port": "in"
+              }
+            },
+            {
+              "source": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "LoadBefehlSignal"
+              },
+              "target": {
+                "block": "9da12b58-a282-43a7-ac77-bc3d2490d94b",
+                "port": "in"
+              }
+            },
+            {
+              "source": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "LoadDatenSignal"
+              },
+              "target": {
+                "block": "6427d2c6-40cd-4423-8195-684d285df381",
+                "port": "in"
+              }
+            },
+            {
+              "source": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "StoreDatenSignal"
+              },
+              "target": {
+                "block": "c1276045-a74b-455d-908a-edc85242ba90",
+                "port": "in"
+              }
+            },
+            {
+              "source": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "PCSprungSignal"
+              },
+              "target": {
+                "block": "5235af3b-edc5-46bf-8f5f-30990f32da81",
+                "port": "in"
+              }
+            },
+            {
+              "source": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "PCSignal"
+              },
+              "target": {
+                "block": "8cf34f50-cd18-4b79-b85e-acbb3bfc9078",
+                "port": "in"
+              }
+            },
+            {
+              "source": {
+                "block": "1c7c9d71-e235-41c0-9473-dbc13bbb4232",
+                "port": "DekodierSignal"
+              },
+              "target": {
+                "block": "8a617e6e-3f08-4591-9c64-7dccb0cdfca0",
+                "port": "in"
+              }
+            }
+          ]
         }
       }
     },
@@ -2247,6 +2537,20 @@
       "design": {
         "graph": {
           "blocks": [
+            {
+              "id": "d3449a5c-f0dc-4952-9612-04e5eb031b42",
+              "type": "basic.input",
+              "data": {
+                "name": "ZielDaten",
+                "range": "[31:0]",
+                "clock": false,
+                "size": 32
+              },
+              "position": {
+                "x": 440,
+                "y": 176
+              }
+            },
             {
               "id": "a1b808fc-82af-4985-ad41-55f4d95b7a66",
               "type": "basic.input",
@@ -2276,30 +2580,16 @@
               }
             },
             {
-              "id": "b8f0d093-53fa-4444-9246-8351c4234bbf",
+              "id": "8bfa2dd1-de46-4329-99d9-ac064d57ce94",
               "type": "basic.output",
               "data": {
-                "name": "QuellDaten1",
+                "name": "QuellDaten2",
                 "range": "[31:0]",
                 "size": 32
               },
               "position": {
-                "x": 1528,
-                "y": 304
-              }
-            },
-            {
-              "id": "d3449a5c-f0dc-4952-9612-04e5eb031b42",
-              "type": "basic.input",
-              "data": {
-                "name": "ZielDaten",
-                "range": "[31:0]",
-                "clock": false,
-                "size": 32
-              },
-              "position": {
-                "x": 440,
-                "y": 352
+                "x": 1576,
+                "y": 384
               }
             },
             {
@@ -2337,16 +2627,16 @@
               }
             },
             {
-              "id": "8bfa2dd1-de46-4329-99d9-ac064d57ce94",
+              "id": "b8f0d093-53fa-4444-9246-8351c4234bbf",
               "type": "basic.output",
               "data": {
-                "name": "QuellDaten2",
+                "name": "QuellDaten1",
                 "range": "[31:0]",
                 "size": 32
               },
               "position": {
-                "x": 1536,
-                "y": 536
+                "x": 1576,
+                "y": 504
               }
             },
             {
@@ -2564,6 +2854,52 @@
         "graph": {
           "blocks": [
             {
+              "id": "cd22b151-94d3-4fb2-8e7f-cbccdf809bf4",
+              "type": "basic.input",
+              "data": {
+                "name": "Funktionscode",
+                "virtual": true,
+                "range": "[5:0]",
+                "pins": [
+                  {
+                    "index": "5",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "4",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "3",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "2",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "1",
+                    "name": "NULL",
+                    "value": "NULL"
+                  },
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ],
+                "clock": false
+              },
+              "position": {
+                "x": 464,
+                "y": -824
+              }
+            },
+            {
               "id": "a44f2dd4-1ea9-4743-b632-e6da11a4ab30",
               "type": "basic.input",
               "data": {
@@ -2773,52 +3109,6 @@
               }
             },
             {
-              "id": "cd22b151-94d3-4fb2-8e7f-cbccdf809bf4",
-              "type": "basic.input",
-              "data": {
-                "name": "Funktionscode",
-                "virtual": true,
-                "range": "[5:0]",
-                "pins": [
-                  {
-                    "index": "5",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "4",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "3",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "2",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "1",
-                    "name": "NULL",
-                    "value": "NULL"
-                  },
-                  {
-                    "index": "0",
-                    "name": "NULL",
-                    "value": "NULL"
-                  }
-                ],
-                "clock": false
-              },
-              "position": {
-                "x": 536,
-                "y": 336
-              }
-            },
-            {
               "id": "821416e3-f3d9-4ed9-8ad7-9f923ca5158a",
               "type": "basic.input",
               "data": {
@@ -2890,148 +3180,9 @@
                 "x": 664,
                 "y": 1920
               }
-            },
-            {
-              "id": "8dcfc08d-f1e6-4590-8448-c8bd942f1822",
-              "type": "basic.code",
-              "data": {
-                "ports": {
-                  "in": [
-                    {
-                      "name": "Daten1",
-                      "range": "[31:0]",
-                      "size": 32
-                    },
-                    {
-                      "name": "Daten2",
-                      "range": "[31:0]",
-                      "size": 32
-                    },
-                    {
-                      "name": "FunktionsCode",
-                      "range": "[5:0]",
-                      "size": 6
-                    },
-                    {
-                      "name": "StartSignal"
-                    },
-                    {
-                      "name": "Reset"
-                    },
-                    {
-                      "name": "Clock"
-                    }
-                  ],
-                  "out": [
-                    {
-                      "name": "HatFertigGerechnet"
-                    },
-                    {
-                      "name": "Ergebnis",
-                      "range": "[31:0]",
-                      "size": 32
-                    }
-                  ]
-                },
-                "params": [],
-                "code": "`include \"../Prozessor/ALUModule/Intsqrt.v\"\n`include \"../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/add.v\"\n`include \"../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/mul.v\"\n`include \"../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/sqrt.v\"\n`include \"../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/div.v\"\n`include \"../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/eq.v\"\n`include \"../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/gt.v\"\n`include \"../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/lt.v\"\n`include \"../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/int_to_single.v\"\n`include \"../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/unsigned_int_to_single.v\"\n`include \"../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/single_to_int.v\"\n`include \"../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/single_to_unsigned_int.v\"\n\n\nreg[31:0] Radikand; //Wurzel\nreg[7:0] TakteBisFertig = 0;\nwire[31:0] FloatAdditionDaten2;\nwire[31:0] EinfacheRechnungErgebnis;\nwire[31:0] DivisionErgebnis; //Div und Mod\nwire[31:0] WurzelErgebnis;\nwire[31:0] IntZuFloatErgebnis;\nwire[31:0] UnsignedIntZuFloatErgebnis;\nwire[31:0] AdditionFloatErgebnis;\nwire[31:0] MultiplikationFloatErgebnis;\nwire[31:0] WurzelFloatErgebnis;\nwire[31:0] DivisionFloatErgebnis;\nwire[31:0] FloatZuIntErgebnis;\nwire[31:0] FloatZuUnsignedIntErgebnis;\nwire FloatGleichheitErgebnis;\nwire FloatGroesserErgebnis;\nwire FloatKleinerErgebnis;\nwire WurzelFertig;\nwire DivisionFertig;\nwire DivisionInArbeit;\nwire IntWurzelReset;\n\n//Int Arithmetik\nlocalparam IntAddition =        6'b000000;\nlocalparam IntSubtraktion =     6'b000001;\nlocalparam IntMultiplikation =  6'b000010;\nlocalparam IntQuadratwurzel =   6'b000011;\nlocalparam IntDivision =        6'b000100;\nlocalparam IntModulo =          6'b000101;\nlocalparam LinksSchiebenArithm =6'b000110;\nlocalparam RechtsSchiebenArithm=6'b000111;\nlocalparam Gleichheit =         6'b001000;\nlocalparam Ungleichheit =       6'b001001;\nlocalparam Groesser =           6'b001010;\nlocalparam Kleiner =            6'b001011;\nlocalparam GroesserUnsigned =   6'b001100;\nlocalparam KleinerUnsigned =    6'b001101;\nlocalparam IntZuFloat =         6'b001110;\nlocalparam UnsignedIntZuFloat = 6'b001111;\n\n//Logik\nlocalparam Verneinung =         6'b010000;\nlocalparam Und =                6'b010001;\nlocalparam Oder =               6'b010010;\nlocalparam Ungleich =           6'b010011;\nlocalparam Gleich =             6'b010100;\nlocalparam LinksSchiebenLogik = 6'b010110;\nlocalparam RechtsSchiebenLogik =6'b010111;\n\n//Float Arithmetik\nlocalparam FloatAddition =        6'b100000;\nlocalparam FloatSubtraktion =     6'b100001;\nlocalparam FloatMultiplikation =  6'b100010;\nlocalparam FloatQuadratwurzel =   6'b100011;\nlocalparam FloatDivision =        6'b100100;\nlocalparam FloatGleichheit =      6'b101000;\nlocalparam FloatUngleichheit =    6'b101001;\nlocalparam FloatGroesser =        6'b101010;\nlocalparam FloatKleiner =         6'b101011;\nlocalparam FloatZuInt =           6'b101110;\nlocalparam FloatZuUnsignedInt =   6'b101111;\n\nIntsqrt QuadratModul(\n    .Clock(Clock),\n    .Reset(IntWurzelReset),\n    .Num_in(Radikand),\n    .Done(WurzelFertig),\n    .Sq_root(WurzelErgebnis)\n);\n\nint_to_single IntZuFloatMacher(\n    .clk(Clock),\n    .int_to_single_a(Daten1),\n    .int_to_single_z(IntZuFloatErgebnis)\n);\n\nunsigned_int_to_single UnsignedIntZuFloatMacher(\n    .clk(Clock),\n    .unsigned_int_to_single_a(Daten1),\n    .unsigned_int_to_single_z(UnsignedIntZuFloatErgebnis)\n);\n\nadd FloatAddierer(\n    .clk(Clock),\n    .add_a(Daten1),\n    .add_b(FloatAdditionDaten2),\n    .add_z(AdditionFloatErgebnis)\n);\n\nmul FloatMultiplizierer(\n    .clk(Clock),\n    .mul_a(Daten1),\n    .mul_b(Daten2),\n    .mul_z(MultiplikationFloatErgebnis)\n);\n\nsqrt FloatWurzeler(\n    .clk(Clock),\n    .sqrt_a(Daten1),\n    .sqrt_z(WurzelFloatErgebnis)\n);\n\ndiv FloatDividierer(\n    .clk(Clock),\n    .div_a(Daten1),\n    .div_b(Daten2),\n    .div_z(DivisionFloatErgebnis)\n);\n\neq FloatVergleicherGleich(\n    .clk(Clock),\n    .eq_a(Daten1),\n    .eq_b(Daten2),\n    .eq_z(FloatGleichheitErgebnis)\n);\n\ngt FloatVergleicherGroesser(\n    .clk(Clock),\n    .gt_a(Daten1),\n    .gt_b(Daten2),\n    .gt_z(FloatGroesserErgebnis)\n);\n\nlt FloatVergleicherKleiner(\n    .clk(Clock),\n    .lt_a(Daten1),\n    .lt_b(Daten2),\n    .lt_z(FloatKleinerErgebnis)\n);\n\nsingle_to_int FloatZuIntMacher(\n    .clk(Clock),\n    .single_to_int_a(Daten1),\n    .single_to_int_z(FloatZuIntErgebnis)\n);\n\nsingle_to_unsigned_int FloatZuUnsignedIntMacher(\n    .clk(Clock),\n    .single_to_unsigned_int_a(Daten1),\n    .single_to_unsigned_int_z(FloatZuUnsignedIntErgebnis)\n);\n\nassign EinfacheRechnungErgebnis =   FunktionsCode[5:0] == IntAddition           ? $signed(Daten1) + $signed(Daten2) :\n                                    FunktionsCode[5:0] == IntSubtraktion        ? $signed(Daten1) - $signed(Daten2) :\n                                    FunktionsCode[5:0] == IntMultiplikation     ? $signed(Daten1) * $signed(Daten2) :\n                                    FunktionsCode[5:0] == IntDivision           ? $signed(Daten1) / $signed(Daten2) :\n                                    FunktionsCode[5:0] == IntModulo             ? $signed(Daten1) % $signed(Daten2) :\n                                    FunktionsCode[5:0] == LinksSchiebenArithm   ? $signed(Daten1) <<< $signed(Daten2) :\n                                    FunktionsCode[5:0] == RechtsSchiebenArithm  ? $signed(Daten1) >>> $signed(Daten2) :\n                                    FunktionsCode[5:0] == Gleichheit            ? $signed({31'b0, Daten1 == Daten2})  : \n                                    FunktionsCode[5:0] == Ungleichheit          ? $signed({31'b0, Daten1 != Daten2})  :\n                                    FunktionsCode[5:0] == Groesser              ? $signed({31'b0, $signed(Daten1) > $signed(Daten2)})  :     \n                                    FunktionsCode[5:0] == Kleiner               ? $signed({31'b0, $signed(Daten1) < $signed(Daten2)})  :\n                                    FunktionsCode[5:0] == GroesserUnsigned      ? $signed({31'b0, Daten1 > Daten2}) : \n                                    FunktionsCode[5:0] == KleinerUnsigned       ? $signed({31'b0, Daten1 < Daten2}) : \n                                    FunktionsCode[5:0] == Verneinung            ? $signed(~Daten1) : \n                                    FunktionsCode[5:0] == Und                   ? $signed(Daten1 & Daten2) :        \n                                    FunktionsCode[5:0] == Oder                  ? $signed(Daten1 | Daten2) :       \n                                    FunktionsCode[5:0] == Ungleich              ? $signed(Daten1 ^ Daten2) :   \n                                    FunktionsCode[5:0] == Gleich                ? $signed(Daten1 ~^ Daten2) :\n                                    FunktionsCode[5:0] == LinksSchiebenLogik    ? $signed(Daten1 << $signed(Daten2)) :\n                                    FunktionsCode[5:0] == RechtsSchiebenLogik   ? $signed(Daten1 >> $signed(Daten2)) : $signed(0);\n\nassign Ergebnis =   FunktionsCode[5:0] == IntQuadratwurzel ? WurzelErgebnis :\n                    FunktionsCode[5:0] == IntZuFloat ? IntZuFloatErgebnis :\n                    FunktionsCode[5:0] == UnsignedIntZuFloat ? UnsignedIntZuFloatErgebnis :\n                    FunktionsCode[5:0] == FloatAddition ? AdditionFloatErgebnis :\n                    FunktionsCode[5:0] == FloatSubtraktion ? AdditionFloatErgebnis :\n                    FunktionsCode[5:0] == FloatMultiplikation ? MultiplikationFloatErgebnis :\n                    FunktionsCode[5:0] == FloatQuadratwurzel ? WurzelFloatErgebnis :\n                    FunktionsCode[5:0] == FloatDivision ? DivisionFloatErgebnis :\n                    FunktionsCode[5:0] == FloatGleichheit ? {31'b0, FloatGleichheitErgebnis} :\n                    FunktionsCode[5:0] == FloatUngleichheit ? {31'b0, ~FloatGleichheitErgebnis} :\n                    FunktionsCode[5:0] == FloatGroesser ? {31'b0, FloatGroesserErgebnis} :\n                    FunktionsCode[5:0] == FloatKleiner ? {31'b0, FloatKleinerErgebnis} :\n                    FunktionsCode[5:0] == FloatZuInt ? {31'b0, FloatZuIntErgebnis} :\n                    FunktionsCode[5:0] == FloatZuUnsignedInt ? {31'b0, FloatZuUnsignedIntErgebnis} :\n                    EinfacheRechnungErgebnis;\n\nassign HatFertigGerechnet =     (FunktionsCode[5:0]==IntQuadratwurzel)?(WurzelFertig):(TakteBisFertig == 0);\n\nassign IntWurzelReset =         ((FunktionsCode[5:0] == IntQuadratwurzel & StartSignal) || FunktionsCode[5:0] != IntQuadratwurzel) | Reset;\n\nassign FloatAdditionDaten2 =    {(FunktionsCode[5:0] != FloatAddition),Daten2[30:0]};\n\n\nalways @(posedge Reset or posedge Clock) begin\n    if(Reset) begin\n        Radikand <= 0;\n        TakteBisFertig <= 0;\n    end else if(TakteBisFertig != 0) begin\n        TakteBisFertig <= TakteBisFertig - 1;\n    end\n    else if (StartSignal) begin\n        Radikand <= Daten1;\n        case (FunktionsCode[5:0])\n            IntZuFloat : begin\n                TakteBisFertig <= 4;\n            end\n            UnsignedIntZuFloat : begin\n                TakteBisFertig <= 4;\n            end\n            //Float Arithmetik\n            //Add.s\n            6'b100000: begin\n                TakteBisFertig <= 6;\n            end\n            //Sub.s \n            6'b100001: begin \n                TakteBisFertig <= 6;\n            end\n            //Mul.s\n            6'b100010    : begin \n                TakteBisFertig <= 8;\n            end\n            //Sqrt.s\n            6'b100011    : begin \n                TakteBisFertig <= 9;\n            end\n            //Div.s\n            6'b100100    : begin \n                TakteBisFertig <= 31;\n            end\n            //Cg.s\n            6'b101010\t: begin\n                TakteBisFertig <= 6;\n            end\n            //Cl.s\n            6'b101011\t: begin\n                TakteBisFertig <= 6;\n            end\n            FloatZuInt : begin\n                TakteBisFertig <= 1;\n            end\n            default : begin\n                TakteBisFertig <= 0;\n            end\n        endcase\n    end  "
-              },
-              "position": {
-                "x": 872,
-                "y": -976
-              },
-              "size": {
-                "width": 1696,
-                "height": 3232
-              }
             }
           ],
-          "wires": [
-            {
-              "source": {
-                "block": "cacc8401-cf85-4130-8ab4-f199bdec6f35",
-                "port": "out"
-              },
-              "target": {
-                "block": "8dcfc08d-f1e6-4590-8448-c8bd942f1822",
-                "port": "Reset"
-              }
-            },
-            {
-              "source": {
-                "block": "71842a6b-f88f-4e17-ad89-bcb5bbd0d523",
-                "port": "out"
-              },
-              "target": {
-                "block": "8dcfc08d-f1e6-4590-8448-c8bd942f1822",
-                "port": "Clock"
-              }
-            },
-            {
-              "source": {
-                "block": "8dcfc08d-f1e6-4590-8448-c8bd942f1822",
-                "port": "HatFertigGerechnet"
-              },
-              "target": {
-                "block": "fafd4392-05f5-4020-8989-c06d7e1bdcb3",
-                "port": "in"
-              }
-            },
-            {
-              "source": {
-                "block": "7a0ad72d-1e1f-4a7d-a98f-8af8dedb49e3",
-                "port": "out"
-              },
-              "target": {
-                "block": "8dcfc08d-f1e6-4590-8448-c8bd942f1822",
-                "port": "Daten2"
-              },
-              "size": 32
-            },
-            {
-              "source": {
-                "block": "cd22b151-94d3-4fb2-8e7f-cbccdf809bf4",
-                "port": "out"
-              },
-              "target": {
-                "block": "8dcfc08d-f1e6-4590-8448-c8bd942f1822",
-                "port": "FunktionsCode"
-              },
-              "size": 6
-            },
-            {
-              "source": {
-                "block": "821416e3-f3d9-4ed9-8ad7-9f923ca5158a",
-                "port": "out"
-              },
-              "target": {
-                "block": "8dcfc08d-f1e6-4590-8448-c8bd942f1822",
-                "port": "StartSignal"
-              }
-            },
-            {
-              "source": {
-                "block": "8dcfc08d-f1e6-4590-8448-c8bd942f1822",
-                "port": "Ergebnis"
-              },
-              "target": {
-                "block": "0450dc41-6526-407d-bce5-a63817a776ed",
-                "port": "in"
-              },
-              "size": 32
-            },
-            {
-              "source": {
-                "block": "a44f2dd4-1ea9-4743-b632-e6da11a4ab30",
-                "port": "out"
-              },
-              "target": {
-                "block": "8dcfc08d-f1e6-4590-8448-c8bd942f1822",
-                "port": "Daten1"
-              },
-              "size": 32
-            }
-          ]
+          "wires": []
         }
       }
     },
@@ -3387,17 +3538,23 @@
         "graph": {
           "blocks": [
             {
-              "id": "0fe5550a-6ffd-4cc7-8fcc-3a62a6c8c2c4",
+              "id": "da29e25a-f215-4ae3-a9a6-7ef8aa9b30bb",
               "type": "basic.input",
               "data": {
-                "name": "Eingang",
-                "range": "[31:0]",
-                "clock": false,
-                "size": 32
+                "name": "GleichNullPrüfen",
+                "virtual": true,
+                "pins": [
+                  {
+                    "index": "0",
+                    "name": "NULL",
+                    "value": "NULL"
+                  }
+                ],
+                "clock": false
               },
               "position": {
-                "x": 616,
-                "y": 104
+                "x": 560,
+                "y": 56
               }
             },
             {
@@ -3415,32 +3572,91 @@
                 ]
               },
               "position": {
-                "x": 1168,
-                "y": 304
+                "x": 1392,
+                "y": 184
               }
             },
             {
-              "id": "da29e25a-f215-4ae3-a9a6-7ef8aa9b30bb",
+              "id": "0fe5550a-6ffd-4cc7-8fcc-3a62a6c8c2c4",
               "type": "basic.input",
               "data": {
-                "name": "GleichNullPrüfen",
-                "virtual": true,
-                "pins": [
-                  {
-                    "index": "0",
-                    "name": "NULL",
-                    "value": "NULL"
-                  }
-                ],
-                "clock": false
+                "name": "Eingang",
+                "range": "[31:0]",
+                "clock": false,
+                "size": 32
               },
               "position": {
-                "x": 616,
-                "y": 312
+                "x": 544,
+                "y": 200
+              }
+            },
+            {
+              "id": "eba3bf00-7fe0-4877-aedc-109fbe3cc403",
+              "type": "basic.code",
+              "data": {
+                "ports": {
+                  "in": [
+                    {
+                      "name": "Eingang",
+                      "range": "[31:0]",
+                      "size": 32
+                    },
+                    {
+                      "name": "GleichNullPruefen"
+                    }
+                  ],
+                  "out": [
+                    {
+                      "name": "Ergebnis"
+                    }
+                  ]
+                },
+                "params": [],
+                "code": "assign Ergebnis = GleichNullPruefen ? Eingang == 32'b0:\n                                      Eingang != 32'b0;"
+              },
+              "position": {
+                "x": 816,
+                "y": 192
+              },
+              "size": {
+                "width": 472,
+                "height": 64
               }
             }
           ],
-          "wires": []
+          "wires": [
+            {
+              "source": {
+                "block": "eba3bf00-7fe0-4877-aedc-109fbe3cc403",
+                "port": "Ergebnis"
+              },
+              "target": {
+                "block": "b0cef370-f1b8-40aa-9372-37c6e08dc3dd",
+                "port": "in"
+              }
+            },
+            {
+              "source": {
+                "block": "da29e25a-f215-4ae3-a9a6-7ef8aa9b30bb",
+                "port": "out"
+              },
+              "target": {
+                "block": "eba3bf00-7fe0-4877-aedc-109fbe3cc403",
+                "port": "GleichNullPruefen"
+              }
+            },
+            {
+              "source": {
+                "block": "0fe5550a-6ffd-4cc7-8fcc-3a62a6c8c2c4",
+                "port": "out"
+              },
+              "target": {
+                "block": "eba3bf00-7fe0-4877-aedc-109fbe3cc403",
+                "port": "Eingang"
+              },
+              "size": 32
+            }
+          ]
         }
       }
     },
@@ -3455,20 +3671,6 @@
       "design": {
         "graph": {
           "blocks": [
-            {
-              "id": "3128ddd7-9d74-4768-aa0e-fc956aa0734d",
-              "type": "basic.input",
-              "data": {
-                "name": "RegisterDaten2",
-                "range": "[31:0]",
-                "clock": false,
-                "size": 32
-              },
-              "position": {
-                "x": 568,
-                "y": 1440
-              }
-            },
             {
               "id": "d7d5b5c0-0edd-452c-a3cb-dd61710939c1",
               "type": "basic.input",
@@ -3641,21 +3843,8 @@
                 "clock": false
               },
               "position": {
-                "x": 568,
-                "y": 1496
-              }
-            },
-            {
-              "id": "7aa4c854-00a8-436d-9729-901eeb493bb7",
-              "type": "basic.output",
-              "data": {
-                "name": "Daten2",
-                "range": "[31:0]",
-                "size": 32
-              },
-              "position": {
-                "x": 1664,
-                "y": 1496
+                "x": 576,
+                "y": 1296
               }
             },
             {
@@ -3675,7 +3864,34 @@
               },
               "position": {
                 "x": 568,
-                "y": 1552
+                "y": 1360
+              }
+            },
+            {
+              "id": "3128ddd7-9d74-4768-aa0e-fc956aa0734d",
+              "type": "basic.input",
+              "data": {
+                "name": "RegisterDaten2",
+                "range": "[31:0]",
+                "clock": false,
+                "size": 32
+              },
+              "position": {
+                "x": 568,
+                "y": 1440
+              }
+            },
+            {
+              "id": "7aa4c854-00a8-436d-9729-901eeb493bb7",
+              "type": "basic.output",
+              "data": {
+                "name": "Daten2",
+                "range": "[31:0]",
+                "size": 32
+              },
+              "position": {
+                "x": 1664,
+                "y": 1496
               }
             },
             {
@@ -3788,21 +4004,8 @@
                 "size": 32
               },
               "position": {
-                "x": 504,
-                "y": -16
-              }
-            },
-            {
-              "id": "a68c98f1-ec9c-4375-ad28-160635fda5c8",
-              "type": "basic.output",
-              "data": {
-                "name": "NeuerPC",
-                "range": "[25:0]",
-                "size": 26
-              },
-              "position": {
-                "x": 1472,
-                "y": 680
+                "x": 392,
+                "y": 448
               }
             },
             {
@@ -3815,8 +4018,21 @@
                 "size": 32
               },
               "position": {
-                "x": 504,
-                "y": 1088
+                "x": 384,
+                "y": 592
+              }
+            },
+            {
+              "id": "a68c98f1-ec9c-4375-ad28-160635fda5c8",
+              "type": "basic.output",
+              "data": {
+                "name": "NeuerPC",
+                "range": "[25:0]",
+                "size": 26
+              },
+              "position": {
+                "x": 1328,
+                "y": 608
               }
             },
             {
@@ -3835,12 +4051,96 @@
                 "clock": false
               },
               "position": {
-                "x": 504,
-                "y": 2216
+                "x": 384,
+                "y": 816
+              }
+            },
+            {
+              "id": "6c0d168d-cf66-45cc-9281-0324440e266a",
+              "type": "basic.code",
+              "data": {
+                "ports": {
+                  "in": [
+                    {
+                      "name": "RelativerPC",
+                      "range": "[31:0]",
+                      "size": 32
+                    },
+                    {
+                      "name": "AbsoluterPC",
+                      "range": "[31:0]",
+                      "size": 32
+                    },
+                    {
+                      "name": "IstAbsolut"
+                    }
+                  ],
+                  "out": [
+                    {
+                      "name": "NeuerPC",
+                      "range": "[25:0]",
+                      "size": 26
+                    }
+                  ]
+                },
+                "params": [],
+                "code": "\n assign NeuerPC = (IstAbsolut)?AbsoluterPC[25:0]:\n                               RelativerPC[25:0];"
+              },
+              "position": {
+                "x": 768,
+                "y": 568
+              },
+              "size": {
+                "width": 440,
+                "height": 224
               }
             }
           ],
-          "wires": []
+          "wires": [
+            {
+              "source": {
+                "block": "6c0d168d-cf66-45cc-9281-0324440e266a",
+                "port": "NeuerPC"
+              },
+              "target": {
+                "block": "a68c98f1-ec9c-4375-ad28-160635fda5c8",
+                "port": "in"
+              },
+              "size": 26
+            },
+            {
+              "source": {
+                "block": "a77b057e-811a-485a-b162-fd25b67e44b2",
+                "port": "out"
+              },
+              "target": {
+                "block": "6c0d168d-cf66-45cc-9281-0324440e266a",
+                "port": "RelativerPC"
+              },
+              "size": 32
+            },
+            {
+              "source": {
+                "block": "32347a79-d57f-4d2c-9522-ea070c5126cd",
+                "port": "out"
+              },
+              "target": {
+                "block": "6c0d168d-cf66-45cc-9281-0324440e266a",
+                "port": "AbsoluterPC"
+              },
+              "size": 32
+            },
+            {
+              "source": {
+                "block": "994bee7c-b7fa-4989-a1a2-e6d7f1e16e5c",
+                "port": "out"
+              },
+              "target": {
+                "block": "6c0d168d-cf66-45cc-9281-0324440e266a",
+                "port": "IstAbsolut"
+              }
+            }
+          ]
         }
       }
     },
@@ -4045,20 +4345,6 @@
               }
             },
             {
-              "id": "d6c04894-ff4c-4827-b35d-7dbd31a34e4f",
-              "type": "basic.input",
-              "data": {
-                "name": "QuellDaten1",
-                "range": "[31:0]",
-                "clock": false,
-                "size": 32
-              },
-              "position": {
-                "x": 488,
-                "y": 368
-              }
-            },
-            {
               "id": "7461aa4d-447c-46cc-92b2-f437b6fb7557",
               "type": "basic.input",
               "data": {
@@ -4076,6 +4362,20 @@
               "position": {
                 "x": 424,
                 "y": 424
+              }
+            },
+            {
+              "id": "d6c04894-ff4c-4827-b35d-7dbd31a34e4f",
+              "type": "basic.input",
+              "data": {
+                "name": "QuellDaten1",
+                "range": "[31:0]",
+                "clock": false,
+                "size": 32
+              },
+              "position": {
+                "x": 432,
+                "y": 488
               }
             },
             {
