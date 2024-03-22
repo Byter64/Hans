@@ -33,7 +33,7 @@ module Top
  assign sd_d[3] = SDcs;
  assign sd_cmd = SDmosi;
  //LED
- assign led[6:0] = RAMDatenOutput[6:0];
+ assign led[6:0] = RAMDatenOutput[22:16];
  assign led[7] = zustand[2];
 
  //CLOCKS
@@ -252,7 +252,7 @@ reg [9:0] resetTimer = ~0;
 reg globalerReset = 0;
 reg loaderReset = 0;
 reg [15:0] debugRAMAdresse = 0;
-reg [24:0] debugTimer = 1;
+reg [25:0] debugTimer = 0;
 
 always @(posedge clk_25mhz) begin
     case (zustand)
@@ -307,11 +307,13 @@ always @(posedge clk_25mhz) begin
             end
         end
         RAMLADEN: begin
-            if(~SDBusy && loaderWarte) begin
+            debugTimer <= debugTimer + 1;
+            if(~SDBusy && debugTimer != 0) begin
                 loaderWarte <= 0;
                 loaderLesen <= 0;
+                loaderSchreibeDaten <= 0;
             end
-            else if(~SDBusy && loaderWarte == 0) begin
+            else if(~SDBusy) begin
                 loaderWarte <= 1;
                 loaderSchreibeDaten <= 1;
                 loaderLesen <= 1;
@@ -327,7 +329,7 @@ always @(posedge clk_25mhz) begin
                 end
             end
             else if(SDBusy) begin
-                loaderSchreibeDaten <= 1;
+                loaderSchreibeDaten <= 0;
                 loaderLesen <= 0;
                 loaderWarte <= 1;
             end
