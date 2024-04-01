@@ -33,8 +33,7 @@ module Top
  assign sd_d[3] = SDcs;
  assign sd_cmd = SDmosi;
  //LED
- assign led[6:0] = RAMDatenOutput[22:16];
- assign led[7] = zustand[2];
+ assign led[7:0] = RAMDatenOutput[7:0];
 
  //CLOCKS
  wire HauptClock;
@@ -141,9 +140,9 @@ wire [3:0] HDMIgpdi_dp;
 
 //Loader (hat nicht für eigenes Modul gereicht)
 wire [31:0] loaderDaten;
+wire [31:0] loaderRAMAdresse;
 reg loaderLesen = 0;
 reg [31:0] loaderAdresse = 0;
-reg [31:0] loaderRAMAdresse = ~0;
 reg [31:0] loaderDatenMenge = 0; //Wie viele Bytes müssen in den RAM geladen werden?
 reg loaderSchreibeDaten = 0;
 reg [2:0] zustand = RESET;
@@ -217,8 +216,8 @@ HDMI_test_DDR hdmi_test_ddr(
 
 //INPUT LOGIK
 //CPU
-    assign CPUDatenRein = RAMDatenOutput;
-    assign CPUInstruktion = RAMDatenOutput;
+    //assign CPUDatenRein = RAMDatenOutput;
+    //assign CPUInstruktion = RAMDatenOutput;
 //RAM
     assign RAMClock = loaderReset ? clk_25mhz : HauptClock;
     assign RAMSchreibenAn = (zustand != LAEUFT) ? loaderSchreibeDaten : (0);
@@ -230,6 +229,7 @@ HDMI_test_DDR hdmi_test_ddr(
     assign SDLesen = loaderLesen;
 //Loader
     assign loaderDaten = SDDaten;
+    assign loaderRAMAdresse = loaderAdresse - 2;
 //Bildpuffer
     assign BildpufferX = CPUDatenAdresse[23:16];
     assign BildpufferY = CPUDatenAdresse[31:24];
@@ -252,7 +252,8 @@ reg [9:0] resetTimer = ~0;
 reg globalerReset = 0;
 reg loaderReset = 0;
 reg [15:0] debugRAMAdresse = 0;
-reg [25:0] debugTimer = 0;
+reg [23:0] debugTimer = 1;
+reg [4:0] counter = 1; //Weil der sd_controller die Daten nicht mehr richtig lädt, wenn die Anfragen zu schnell kommen, existiert dieser Zähler
 
 always @(posedge clk_25mhz) begin
     case (zustand)
@@ -261,9 +262,9 @@ always @(posedge clk_25mhz) begin
             loaderReset <= 1;
 
             loaderAdresse <= 0;
-            loaderRAMAdresse <= ~0;
             loaderLesen <= 0;
-            loaderWarte <= 1;
+            counter <= 1;
+            debugTimer <= 1;
 
             resetTimer <= resetTimer - 1;
 
@@ -274,66 +275,66 @@ always @(posedge clk_25mhz) begin
         end
         GROESSELADEN: begin
             //Sobald SDKartenleser initialisiert, lese das erste Byte
-            if(~SDBusy && loaderWarte) begin
-                loaderWarte <= 0;
-                loaderLesen <= 0;
-            end
-            else if(~SDBusy && loaderWarte == 0) begin
+            if(~SDBusy && counter == 0) begin
+                counter = counter + 1;
                 loaderLesen <= 1;
-                loaderWarte <= 1;
                 zustand <= AUFGROESSEWARTEN;
             end
-            else begin
+            else if(~SDBusy) begin
+                counter = counter + 1;
                 loaderLesen <= 0;
             end
         end
         AUFGROESSEWARTEN: begin
-            if(~SDBusy && loaderWarte) begin
-                loaderWarte <= 0;
-                loaderLesen <= 0;
-            end
-            else if(~SDBusy && loaderWarte == 0) begin
+            //Wenn das erste Byte (= die Datenmenge) da ist, beginne, die Daten zu laden
+            if(~SDBusy && counter == 0) begin
+                counter = counter + 1;
                 loaderDatenMenge <= SDDaten;
                 zustand <= RAMLADEN;
-                loaderWarte <= 1;
 
-                //Beginne, das erste Byte von der SDKarte zu laden
+                //Beginne, das erste Datenbyte von der SDKarte zu laden
                 loaderAdresse <= loaderAdresse + 1;
                 loaderLesen <= 1;
-            end
-            else begin
-                loaderWarte <= 1;
-                loaderLesen <= 0;
-            end
-        end
-        RAMLADEN: begin
-            debugTimer <= debugTimer + 1;
-            if(~SDBusy && debugTimer != 0) begin
-                loaderWarte <= 0;
-                loaderLesen <= 0;
-                loaderSchreibeDaten <= 0;
             end
             else if(~SDBusy) begin
-                loaderWarte <= 1;
-                loaderSchreibeDaten <= 1;
+                counter = counter + 1;
+                loaderLesen <= 0;
+            end
+        end 
+        RAMLADEN: begin
+            //Speicher die Datenbytes in den RAM
+            if(~SDBusy && counter == 0) begin
+                counter = counter + 1;
                 loaderLesen <= 1;
+                loaderSchreibeDaten <= 1;
 
                 loaderAdresse <= loaderAdresse + 1;
-                loaderRAMAdresse <= loaderRAMAdresse + 1;
                 loaderDatenMenge <= loaderDatenMenge - 1;
 
                 //Wenn DatenMenge == 0, muss nichts mehr von der SDKarte gelesen werden
                 //Nur noch das letzte Byte muss in den RAM geladen werden
                 if(loaderDatenMenge == 0) begin
-                    zustand <= RAMLADENBEENDEN;
+                    //zustand <= RAMLADENBEENDEN;
+                    loaderAdresse <= 3;
+                    zustand <= 6;
                 end
             end
-            else if(SDBusy) begin
-                loaderSchreibeDaten <= 0;
+            else if(~SDBusy) begin
+                counter = counter + 1;
                 loaderLesen <= 0;
-                loaderWarte <= 1;
+                loaderSchreibeDaten <= 0;
+            end
+        end 
+        6: begin
+            loaderSchreibeDaten <= 0;
+            loaderLesen <= 0;
+            debugTimer = debugTimer + 1;
+            if(debugTimer == 0) begin
+                
+                //loaderAdresse <= loaderAdresse + 1;
             end
         end
+        /*
         RAMLADENBEENDEN: begin
             loaderSchreibeDaten <= 0;
             loaderReset <= 0;
@@ -348,7 +349,7 @@ always @(posedge clk_25mhz) begin
                 debugRAMAdresse <= debugRAMAdresse + 1;
             end
 
-        end
+        end */
         default: zustand <= RESET;
     endcase
 end

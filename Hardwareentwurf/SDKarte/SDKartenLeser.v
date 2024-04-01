@@ -46,7 +46,7 @@ module SDKarte (
     reg [8:0] byteZaehler = 0;
 
     assign zustand = state;
-    assign sektorAdresse = {Adresse[29:6], 8'b0}; //Adresse wird von 8-Bit auf 32-Bit Bytes konvertiert, für Sektoradresse werden die ersten 9 Bits ignoriert
+    assign sektorAdresse = {Adresse[20:7], 9'b0}; //Adresse wird von 32-Bit auf 8-Bit Bytes konvertiert, für Sektoradresse werden die ersten 9 Bits ignoriert
     // Verbindung zum SD-Controller
     sd_controller sd1 (
         .cs(cs),
@@ -66,19 +66,6 @@ module SDKarte (
         .status(debug)
     );
 
-    always @(posedge Clock or posedge Reset) begin
-        if(Reset)
-            byteZaehler <= 0;
-        else begin
-            if((state != IDLE) && byte_available)
-                byteZaehler <= byteZaehler + 1;
-            else if (state == IDLE) begin
-                byteZaehler <= 0;
-            end
-        end
-
-    end
-
     // Zustandsautomat für den SD-Controller
     always @(posedge Clock) begin
         if (Reset) begin
@@ -87,16 +74,19 @@ module SDKarte (
             state <= INITIALISIEREN;
             rd <= 0;
             Busy <= 1;
+            byteZaehler <= 0;
         end else begin
             case (state)
-                INITIALISIEREN:begin
+                INITIALISIEREN: begin
                     Busy <= 1;
+                    byteZaehler <= 0;
                     if(ready) begin
                         state = IDLE;
                     end
                 end
                 IDLE: begin
                     Busy <= 0;
+                    byteZaehler <= 0;
                     if (Lesen && ready) begin
                         state <= BYTE1;
                         Busy <= 1;
@@ -105,14 +95,18 @@ module SDKarte (
                 end
                 BYTE1: begin
                     Busy <= 1;
-                    if (byteZaehler == (Adresse[6:0] << 2) && byte_available) begin
-                        Daten[31:24] <= dout;
-                        state <= BYTE2;
+                    if(byte_available) begin
+                        byteZaehler <= byteZaehler + 1;
+                        if (byteZaehler == {Adresse[6:0], 2'b00 }) begin
+                            Daten[31:24] <= dout;
+                            state <= BYTE2;
+                        end
                     end
                 end
                 BYTE2: begin
                     Busy <= 1;
                     if (byte_available) begin
+                        byteZaehler <= byteZaehler + 1;
                         Daten[23:16] <= dout;
                         state <= BYTE3;
                     end
@@ -120,6 +114,7 @@ module SDKarte (
                 BYTE3: begin
                     Busy <= 1;
                     if (byte_available) begin
+                        byteZaehler <= byteZaehler + 1;
                         Daten[15:8] <= dout;
                         state <= BYTE4;
                     end
@@ -127,6 +122,7 @@ module SDKarte (
                 BYTE4: begin
                     Busy <= 1;
                     if (byte_available) begin
+                        byteZaehler <= byteZaehler + 1;
                         Daten[7:0] <= dout;
                         rd <= 0;
                         Fertig <= 1;
@@ -134,6 +130,9 @@ module SDKarte (
                     end
                 end
                 SEKTORFERTIGLESEN: begin
+                    if(byte_available) begin
+                        byteZaehler <= byteZaehler + 1;
+                    end
                     if(byteZaehler == 9'd0) begin
                         Busy <= 0;
                         state <= IDLE;
