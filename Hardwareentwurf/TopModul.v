@@ -229,7 +229,7 @@ HDMI_test_DDR hdmi_test_ddr(
     assign SDLesen = loaderLesen;
 //Loader
     assign loaderDaten = SDDaten;
-    assign loaderRAMAdresse = loaderAdresse - 2;
+    assign loaderRAMAdresse = loaderAdresse - 1;
 //Bildpuffer
     assign BildpufferX = CPUDatenAdresse[23:16];
     assign BildpufferY = CPUDatenAdresse[31:24];
@@ -315,7 +315,7 @@ always @(posedge clk_25mhz) begin
                 //Nur noch das letzte Byte muss in den RAM geladen werden
                 if(loaderDatenMenge == 0) begin
                     //zustand <= RAMLADENBEENDEN;
-                    loaderAdresse <= 3;
+                    loaderAdresse <= 1;
                     zustand <= 6;
                 end
             end
@@ -331,7 +331,7 @@ always @(posedge clk_25mhz) begin
             debugTimer = debugTimer + 1;
             if(debugTimer == 0) begin
                 
-                //loaderAdresse <= loaderAdresse + 1;
+                loaderAdresse <= loaderAdresse + 1;
             end
         end
         /*
