@@ -11,7 +11,7 @@ reg[25:0] programmzahler;
 
 always @(posedge TaktSignal or posedge Reset) begin
     if(Reset)
-        AktuellerPC <= 25'b0;
+        AktuellerPC <= 26'b0;
     else begin
         if(SchreibSignal)
             AktuellerPC <= NeuerPC + 1'b1;
