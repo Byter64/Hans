@@ -26,11 +26,14 @@ wire LeseInstruktion;
 wire Zero = 0;
 
 wire[31:0] InstruktionAdresse;
+wire[31:0] RAMAdresse;
+wire[31:0] RAMDatenRaus;
+assign RAMAdresse = LeseInstruktion ? InstruktionAdresse[31:0] : DatenAdresse[31:0];
 
  // Module instance
  CPU CPU (
-    .DatenRein(DatenRein),
-    .Instruktion(Instruktion),
+    .DatenRein(RAMDatenRaus),
+    .Instruktion(RAMDatenRaus),
     .InstruktionGeladen(1'b1),
     .DatenGeladen(1'b1),
     .DatenGespeichert(1'b1),
@@ -48,27 +51,14 @@ wire[31:0] InstruktionAdresse;
 RAM #(
     .WORDSIZE(32),
     .WORDS(256)
-) InstruktionRAM (
-    .SchreibenAn(1'b0),
-    .DatenRein(32'b0),
-    .Adresse(InstruktionAdresse),
-    .Clock(Clock),
-
-    .DatenRaus(Instruktion)
-);
-
-RAM #(
-    .WORDSIZE(32),
-    .WORDS(256)
-) DatenRAM (
+) RAM (
     .SchreibenAn(SchreibeDaten),
     .DatenRein(DatenRaus),
-    .Adresse(DatenAdresse),
+    .Adresse(RAMAdresse),
     .Clock(Clock),
 
-    .DatenRaus(DatenRein)
+    .DatenRaus(RAMDatenRaus)
 );
-
 
 initial begin
     Clock = 1'b0;
@@ -79,21 +69,20 @@ always begin
 end
  
 
-initial begin
+initial begin 
     Reset = 1;
     $dumpvars(0, main_tb);
-    for (integer idx = 0; idx < 256; idx = idx + 1) $dumpvars(0, DatenRAM.Daten[idx]);
+    for (integer idx = 0; idx < 256; idx = idx + 1) $dumpvars(0, RAM.Daten[idx]);
     for (integer idx2 = 0; idx2 < 64; idx2 = idx2 + 1) $dumpvars(0, CPU.Register.registers[idx2]);
-    for (integer idx3 = 0; idx3 < 256; idx3 = idx3 + 1) $dumpvars(0, InstruktionRAM.Daten[idx3]);
 
     //Schreibe Programm auf 
-    $readmemh("program.txt",InstruktionRAM.Daten,0,28);
+    $readmemh("program.txt", RAM.Daten,0,28);
 
     #50
     Reset = 0;
 
     #10000
-    for (integer idx = 0; idx < 10; idx = idx + 1) $display("%b", InstruktionRAM.Daten[idx]);
+    for (integer idx = 0; idx < 10; idx = idx + 1) $display("%b", RAM.Daten[idx]);
     #4000 $display("End of simulation");
     $finish;
 end
