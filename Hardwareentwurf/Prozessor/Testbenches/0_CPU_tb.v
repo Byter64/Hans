@@ -10,7 +10,6 @@ module main_tb
 ;
 
  // Input/Output
-reg[31:0] InstruktionAdresse;
 reg Clock;
 reg Reset;
 
@@ -26,14 +25,7 @@ wire SchreibeDaten;
 wire LeseInstruktion;
 wire Zero = 0;
 
-wire[31:0] w_InstruktionAdresse;
-wire[31:0] InstruktionRAMAdresseJetztAberWirklich;
-reg InstruktionInitialisierung = 1;
-assign InstruktionRAMAdresseJetztAberWirklich = InstruktionInitialisierung == 1 ? InstruktionAdresse : w_InstruktionAdresse;
-
-//InstruktionRAM fuellen
-reg[31:0] InstruktionRAMEingang;
-reg BeschreibeInstruktionRAM;
+wire[31:0] InstruktionAdresse;
 
  // Module instance
  CPU CPU (
@@ -45,7 +37,7 @@ reg BeschreibeInstruktionRAM;
     .Clock(Clock),
     .Reset(Reset),
 
-    .InstruktionAdresse(w_InstruktionAdresse),
+    .InstruktionAdresse(InstruktionAdresse),
     .DatenRaus(DatenRaus),
     .DatenAdresse(DatenAdresse),
     .LeseDaten(LeseDaten),
@@ -57,9 +49,9 @@ RAM #(
     .WORDSIZE(32),
     .WORDS(256)
 ) InstruktionRAM (
-    .SchreibenAn(BeschreibeInstruktionRAM),
-    .DatenRein(InstruktionRAMEingang),
-    .Adresse(InstruktionRAMAdresseJetztAberWirklich),
+    .SchreibenAn(1'b0),
+    .DatenRein(32'b0),
+    .Adresse(InstruktionAdresse),
     .Clock(Clock),
 
     .DatenRaus(Instruktion)
@@ -93,20 +85,15 @@ initial begin
     for (integer idx = 0; idx < 256; idx = idx + 1) $dumpvars(0, DatenRAM.Daten[idx]);
     for (integer idx2 = 0; idx2 < 64; idx2 = idx2 + 1) $dumpvars(0, CPU.Register.registers[idx2]);
     for (integer idx3 = 0; idx3 < 256; idx3 = idx3 + 1) $dumpvars(0, InstruktionRAM.Daten[idx3]);
-    #9
-    BeschreibeInstruktionRAM = 1;
+
     //Schreibe Programm auf 
     $readmemh("program.txt",InstruktionRAM.Daten,0,28);
-    #10
-    BeschreibeInstruktionRAM = 0;
-    InstruktionInitialisierung = 0;
-    //Alles zurücksetzen
-    Reset = 1;
+
     #50
     Reset = 0;
 
     #10000
-    for (integer idx = 0; idx < 10; idx = idx + 1) $display("%b", DatenRAM.Daten[idx]);
+    for (integer idx = 0; idx < 10; idx = idx + 1) $display("%b", InstruktionRAM.Daten[idx]);
     #4000 $display("End of simulation");
     $finish;
 end
