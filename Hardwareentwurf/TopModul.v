@@ -40,6 +40,7 @@ module Top
  wire [3:0] clocks;
  assign HauptClock = clocks[3];
 
+
 //Clock
 `ifdef  IVERILOG
 reg[3:0] __SimulationsClocks;
@@ -75,7 +76,7 @@ ecp5pll
     .out0_hz(40000000),                 .out0_tol_hz(0),
     .out1_hz(50000000), .out1_deg( 90), .out1_tol_hz(0),
     .out2_hz(60000000), .out2_deg(180), .out2_tol_hz(0),
-    .out3_hz(   50000), .out3_deg(300), .out3_tol_hz(0)
+    .out3_hz( 5000000), .out3_deg(300), .out3_tol_hz(0)
 )
 ecp5pll_inst
 (
@@ -179,7 +180,7 @@ RAM #(
     .DatenRaus(RAMDatenOutput)
 );
 
-SDKarte sdkarte(
+/*SDKarte sdkarte(
     .Clock(clk_25mhz),
     .Reset(globalerReset),
     .Adresse(SDAdresse),
@@ -193,9 +194,9 @@ SDKarte sdkarte(
     .sclk(sd_clk),
     .debug(SDDebug),
     .zustand(SDZustand)
-);
+);*/
 
-Bildpuffer bildpuffer (
+/*Bildpuffer bildpuffer (
     .clk(HauptClock),
     .x(BildpufferX),
     .y(BildpufferY),
@@ -204,15 +205,15 @@ Bildpuffer bildpuffer (
     .x_data(BildpufferXData),
     .y_data(BildpufferYData),
     .pixelData(BildpufferPixelData)
-);
+);*/
 
-HDMI_test_DDR hdmi_test_ddr(
+/*HDMI_test_DDR hdmi_test_ddr(
     .clk(clk_25mhz), //Braucht 25 MHz um zu funktionieren
     .pixelData(HDMIPixelData),
     .x(HDMIX),
     .y(HDMIY),
     .gpdi_dp(gpdi_dp)
-);
+);*/
 
 
 //INPUT LOGIK
@@ -273,7 +274,8 @@ always @(posedge clk_25mhz) begin
 
             if(resetTimer == 0) begin
                 globalerReset <= 0;
-                zustand <= GROESSELADEN;
+                //zustand <= GROESSELADEN;
+                zustand = LAEUFT;
             end
         end
         GROESSELADEN: begin
@@ -293,7 +295,7 @@ always @(posedge clk_25mhz) begin
             if(~SDBusy && counter == 0) begin
                 counter <= counter + 1;
                 loaderDatenMenge <= SDDaten;
-                zustand <= RAMLADEN;
+                zustand <= DEBUG;
 
                 //Beginne, das erste Datenbyte von der SDKarte zu laden
                 loaderAdresse <= loaderAdresse + 1;
@@ -332,6 +334,8 @@ always @(posedge clk_25mhz) begin
             loaderReset <= 1;
             zustand <= LAEUFT;
             ledReg <= 0;
+
+            //Fuer debuggen
             /*loaderReset <= 1;
             loaderAdresse <= 0;
             byteNummer <= 0;
@@ -362,10 +366,12 @@ always @(posedge clk_25mhz) begin
             loaderReset <= 0;
             globalerReset <= 0;
 
-            //if(CPUSchreibeDaten && CPUDatenAdresse == 0)
-                //ledReg <= CPUDatenRaus[7:0];
-            ledReg <= CPUInstruktionAdresse[7:0];
-        end 
+            if(CPUSchreibeDaten && CPUDatenAdresse == 0) begin
+                //ledReg[7:2] <= CPUDatenRaus[5:0];
+            end
+
+            ledReg[1:0] <= CPUInstruktionAdresse[1:0];
+        end
         default: zustand <= RESET; 
     endcase
 end
