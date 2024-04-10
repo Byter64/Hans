@@ -32,13 +32,13 @@ assign RAMAdresse = LeseInstruktion ? InstruktionAdresse[31:0] : DatenAdresse[31
 
  // Module instance
  CPU CPU (
+    .Clock(Clock),
+    .Reset(Reset),
     .DatenRein(RAMDatenRaus),
     .Instruktion(RAMDatenRaus),
     .InstruktionGeladen(1'b1),
     .DatenGeladen(1'b1),
     .DatenGespeichert(1'b1),
-    .Clock(Clock),
-    .Reset(Reset),
 
     .InstruktionAdresse(InstruktionAdresse),
     .DatenRaus(DatenRaus),
