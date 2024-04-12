@@ -1,10 +1,10 @@
 `include "../Prozessor/0_CPU.v"
 `include "../Prozessor/1_RAM.v"
-`include "../Grafikkarte/Verilog/Bildpuffer.v"
-`include "../SDKarte/SDKartenLeser.v"
-`include "../Grafikkarte/Verilog/HDMI_clock.v"
-`include "../Grafikkarte/Verilog/HDMI_test_DDR.v"
-`include "../Grafikkarte/Verilog/TMDS_encoder.v"
+//`include "../Grafikkarte/Verilog/Bildpuffer.v"
+//`include "../SDKarte/SDKartenLeser.v"
+//`include "../Grafikkarte/Verilog/HDMI_clock.v"
+//`include "../Grafikkarte/Verilog/HDMI_test_DDR.v"
+//`include "../Grafikkarte/Verilog/TMDS_encoder.v"
 `ifndef IVERILOG
 `include "../ecp5pll/hdl/sv/ecp5pll.sv"
 `endif 
@@ -184,6 +184,7 @@ CPU cpu (
     .zustand(SDZustand)
 );*/
 
+/*
 Bildpuffer bildpuffer (
     .clk(HauptClock),
     .x(BildpufferX),
@@ -202,7 +203,7 @@ HDMI_test_DDR hdmi_test_ddr(
     .y(HDMIY),
     .gpdi_dp(gpdi_dp)
 );
-
+*/
 RAM #(
     .WORDSIZE(32),
     .WORDS(2**10) //2**16
@@ -278,10 +279,6 @@ always @(posedge clk_25mhz) begin
         zustand <= RESET;
     end
     else begin 
-        if(CPUInstruktionAdresse == 0)
-            ledReg[7] <= 1;
-        if(CPUInstruktionAdresse == 1)
-            ledReg[6] <= 1;
         if(CPUSchreibeDaten && CPUDatenAdresse == 0)
             ledReg[5:2] <= CPUDatenRaus[3:0];
         
