@@ -209,6 +209,7 @@ Programmzahler Programmzahler(
     .NeuerPC(NeuerPC),
     .SchreibSignal(PCSprungSignal),
     .TaktSignal(PCSignal),
+    .Clock(Clock),
     .Reset(Reset),
     .AktuellerPC(AktuellerPC)
 );

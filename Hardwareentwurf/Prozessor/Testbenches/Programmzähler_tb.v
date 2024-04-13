@@ -22,6 +22,7 @@ module main_tb
  reg Schreibsignal;
  reg [25:0] NeuerPC_;
  reg clock;
+ reg clockLangsam;
  reg reset;
  wire [25:0] AktuellerPC_;
  wire [25:0] ErhoehterPC_;
@@ -31,12 +32,14 @@ module main_tb
   .SchreibSignal(Schreibsignal),
   .NeuerPC(NeuerPC_),
   .TaktSignal(clock),
+  .Clock(clock),
   .AktuellerPC(AktuellerPC_),
   .erhohterPC(ErhoehterPC_),
   .Reset(reset)
  );
  
- always #1000 clock = ~clock;
+ always #1 clock = ~clock;
+ always #1000 clockLangsam = ~clockLangsam;
 
  initial begin
   $dumpvars(0, main_tb);

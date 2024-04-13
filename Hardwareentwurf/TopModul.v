@@ -154,7 +154,7 @@ reg [7:0] ledReg = 8'b0;
 
 CPU cpu (
     .Clock(HauptClock),
-    .Reset(loaderReset),
+    .Reset(globalerReset),
     .DatenRein(CPUDatenRein),
     .Instruktion(CPUInstruktion),
     .InstruktionGeladen(1'b1),
@@ -239,30 +239,13 @@ end
 
 always @(posedge clk_25mhz) begin
     if(globalerReset) begin
-        loaderReset <= 1;
-    
         ledReg <= 0;
-        loaderAdresse <= 0;
-        loaderLesen <= 0;
-        counter <= 1;
-        debugTimer <= 1;
-        zustand <= RESET;
     end
     else begin 
         if(CPUSchreibeDaten && CPUDatenAdresse == 0)
-            ledReg[5:2] <= CPUDatenRaus[3:0];
+            ledReg[5:4] <= CPUDatenRaus[1:0];
         
-        ledReg[1:0] <= CPUInstruktionAdresse[1:0];
-
-        case (zustand)
-            RESET: begin
-                zustand <= LAEUFT;
-            end
-            LAEUFT: begin
-                loaderReset <= 0;
-            end
-            default: zustand <= RESET;
-        endcase
+        ledReg[3:0] <= CPUInstruktionAdresse[3:0];
     end
 end
 
