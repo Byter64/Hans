@@ -24,7 +24,7 @@ module ALU (
     output[31:0] Ergebnis
 );
 
-reg[31:0] Radikand; //Wurzel
+reg[31:0] Radikand = 0; //Wurzel
 reg DivCyc = 0;
 reg DivStb = 0;
 reg[7:0] TakteBisFertig = 0;

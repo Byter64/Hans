@@ -13,12 +13,12 @@ module Top
 (
     input clk_25mhz,
     
-    output[7:0] led
-    //output[3:0] gpdi_dp,
-    //output sd_cmd,      //mosi
-    //output sd_clk,
+    output[7:0] led,
+    output[3:0] gpdi_dp,
+    output sd_cmd,      //mosi
+    output sd_clk,
     
-    //inout [3:0] sd_d    //miso //cs
+    inout [3:0] sd_d    //miso //cs
 );
 
  //Konstanten
@@ -27,11 +27,11 @@ module Top
 
  // Input/Output
  //SDKARTE
- //assign sd_d[0] = SDmiso;
- //assign sd_d[1] = ONE;
- //assign sd_d[2] = ONE;
- //assign sd_d[3] = SDcs;
- //assign sd_cmd = SDmosi;
+ assign sd_d[0] = SDmiso;
+ assign sd_d[1] = ONE;
+ assign sd_d[2] = ONE;
+ assign sd_d[3] = SDcs;
+ assign sd_cmd = SDmosi;
  //LED
  assign led[7:0] = ledReg[7:0];
 
@@ -61,12 +61,12 @@ end
 
 
 always begin //Tatsächliche Taktrate: 62,5 MHz MHz
-   #10 __SimulationsClocks[2] = ~__SimulationsClocks[2]; 
+   #8 __SimulationsClocks[2] = ~__SimulationsClocks[2]; 
 end
 
 
-always begin //Tatsächliche Taktrate: 5 MHz
-   #10 __SimulationsClocks[3] = ~__SimulationsClocks[3]; 
+always begin //Tatsächliche Taktrate: 1 MHz
+   #500 __SimulationsClocks[3] = ~__SimulationsClocks[3]; 
 end
 
 `else
@@ -102,11 +102,11 @@ wire CPULeseInstruktion;
 wire RAMClock;
 wire RAMSchreibenAn;
 wire [31:0] RAMDatenInput;
-wire [15:0] RAMAdresse;
+wire [31:0] RAMAdresse;
 //Outputs
 wire [31:0] RAMDatenOutput;
 
-/*
+
 //SDKarte
 //Inputs
 wire [31:0] SDAdresse;
@@ -149,12 +149,12 @@ reg [31:0] loaderDatenMenge = 0; //Wie viele Bytes müssen in den RAM geladen we
 reg loaderSchreibeDaten = 0;
 reg [3:0] zustand = RESET;
 reg loaderWarte = 1;
-*/
+
 reg [7:0] ledReg = 8'b0;
 
 CPU cpu (
     .Clock(HauptClock),
-    .Reset(globalerReset || loaderReset),
+    .Reset(loaderReset),
     .DatenRein(CPUDatenRein),
     .Instruktion(CPUInstruktion),
     .InstruktionGeladen(1'b1),
@@ -169,42 +169,6 @@ CPU cpu (
     .LeseInstruktion(CPULeseInstruktion)
 );
 
-/*SDKarte sdkarte(
-    .Clock(clk_25mhz),
-    .Reset(globalerReset),
-    .Adresse(SDAdresse),
-    .Lesen(SDLesen),
-    .Daten(SDDaten),
-    .Fertig(SDFertig),
-    .Busy(SDBusy),
-    .cs(SDcs),
-    .mosi(SDmosi),
-    .miso(SDmiso),
-    .sclk(sd_clk),
-    .debug(SDDebug),
-    .zustand(SDZustand)
-);*/
-
-/*
-Bildpuffer bildpuffer (
-    .clk(HauptClock),
-    .x(BildpufferX),
-    .y(BildpufferY),
-    .color(BildpufferColor),
-    .write(BildpufferWrite),
-    .x_data(BildpufferXData),
-    .y_data(BildpufferYData),
-    .pixelData(BildpufferPixelData)
-);
-
-HDMI_test_DDR hdmi_test_ddr(
-    .clk(clk_25mhz), //Braucht 25 MHz um zu funktionieren
-    .pixelData(HDMIPixelData),
-    .x(HDMIX),
-    .y(HDMIY),
-    .gpdi_dp(gpdi_dp)
-);
-*/
 RAM #(
     .WORDSIZE(32),
     .WORDS(2**10) //2**16
@@ -222,12 +186,17 @@ RAM #(
     assign CPUDatenRein = RAMDatenOutput;
     assign CPUInstruktion = RAMDatenOutput;
 //RAM
-    assign RAMClock = HauptClock;
+    assign RAMClock = loaderReset ? clk_25mhz : HauptClock;
+    //assign RAMSchreibenAn = loaderReset ? loaderSchreibeDaten : ((CPUDatenAdresse[31] == 0) ? CPUSchreibeDaten : 0);
+    assign RAMDatenInput = loaderReset ? loaderDaten : CPUDatenRaus;
+    //assign RAMAdresse = loaderReset ? loaderRAMAdresse : (CPULeseInstruktion ? CPUInstruktionAdresse[15:0] : CPUDatenAdresse[15:0]);
+    
+    //assign RAMClock = HauptClock;
     assign RAMSchreibenAn = (CPUDatenAdresse[31] == 0) ? CPUSchreibeDaten : 0;
-    assign RAMDatenInput = CPUDatenRaus;
-    assign RAMAdresse = (CPULeseInstruktion ? CPUInstruktionAdresse[15:0] : CPUDatenAdresse[15:0]);
+    //assign RAMDatenInput = CPUDatenRaus;
+    assign RAMAdresse = (CPULeseInstruktion ? CPUInstruktionAdresse : CPUDatenAdresse);
 //SDKarte 
-    /*assign SDAdresse = loaderAdresse;
+    assign SDAdresse = loaderAdresse;
     assign SDLesen = loaderLesen;
 //Loader
     assign loaderDaten = SDDaten;
@@ -240,7 +209,7 @@ RAM #(
     assign BildpufferXData = HDMIX;
     assign BildpufferYData = HDMIY;
 //HDMI
-    assign HDMIPixelData = BildpufferPixelData; */
+    assign HDMIPixelData = BildpufferPixelData; 
 
 
 localparam RESET = 4'd0;
@@ -254,10 +223,10 @@ localparam LAEUFT = 4'd8;
 reg [5:0] resetTimer = 0;
 reg globalerReset = 0;
 reg loaderReset = 0;
-//reg [15:0] debugRAMAdresse = 0;
-//reg [25:0] debugTimer = 1;
-//reg [1:0] byteNummer = 0;
-//reg [4:0] counter = 1; //Weil der sd_controller die Daten nicht mehr richtig lädt, wenn die Anfragen zu schnell kommen, existiert dieser Zähler
+reg [15:0] debugRAMAdresse = 0;
+reg [25:0] debugTimer = 1;
+reg [1:0] byteNummer = 0;
+reg [4:0] counter = 1; //Weil der sd_controller die Daten nicht mehr richtig lädt, wenn die Anfragen zu schnell kommen, existiert dieser Zähler
 
 always @(posedge clk_25mhz) begin
     if(resetTimer < 20) begin
@@ -270,15 +239,31 @@ end
 
 always @(posedge clk_25mhz) begin
     if(globalerReset) begin
+        loaderReset <= 1;
+    
         ledReg <= 0;
+        loaderAdresse <= 0;
+        loaderLesen <= 0;
+        counter <= 1;
+        debugTimer <= 1;
+        zustand <= RESET;
     end
     else begin 
         if(CPUSchreibeDaten && CPUDatenAdresse == 0)
-            ledReg[7:2] <= CPUDatenRaus[5:0];
+            ledReg[5:2] <= CPUDatenRaus[3:0];
         
         ledReg[1:0] <= CPUInstruktionAdresse[1:0];
+
+        case (zustand)
+            RESET: begin
+                zustand <= LAEUFT;
+            end
+            LAEUFT: begin
+                loaderReset <= 0;
+            end
+            default: zustand <= RESET;
+        endcase
     end
 end
-
 
 endmodule

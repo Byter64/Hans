@@ -1,5 +1,5 @@
 // Testbench template
-`timescale 1 ns / 1 ps
+`timescale 1 ns / 1 ns
 `include "../TopModul.v"
 `default_nettype none
 
@@ -20,12 +20,12 @@ module main_tb
  );
 
  always begin
-    #1 clk_25mhz = ~clk_25mhz;
+    #20 clk_25mhz = ~clk_25mhz;
  end
  integer idx = 0;
  initial begin
   $dumpvars(0, main_tb);
-    for (idx = 0; idx < 256; idx = idx + 1) $dumpvars(0, main.ram.Daten[idx]);
+    for (idx = 0; idx < 2**10; idx = idx + 1) $dumpvars(0, main.ram.Daten[idx]);
     for (idx = 0; idx < 64;  idx = idx + 1) $dumpvars(0, main.cpu.Register.registers[idx]);
 
     // main.InstruktionRAM.Daten[0] = 32'b10000000010000000000000000001111; //Addi R2, R0, 15
@@ -45,7 +45,7 @@ module main_tb
   //main.InstruktionRAM.Daten[3] = 32'b00000000001000100000000000001110; //Itof F1, R2
   //main.InstruktionRAM.Daten[4] = 32'b01000011111111111111111111111111; //jmp -1
 
-  #5000
+  #100000
   $display("End of simulation");
   $finish;
  end

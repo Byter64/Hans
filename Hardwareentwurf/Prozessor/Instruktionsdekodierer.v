@@ -20,7 +20,7 @@ module Instruktionsdekodierer (
 );
 
 //Aktuell gespeicherte Befehl
-reg [31:0] AktuellerBefehl;
+reg [31:0] AktuellerBefehl = 0;
 
 //Wires für Lesbaren Code
 wire[5:0] Opcode;

@@ -4,10 +4,8 @@ module Programmzahler (
     input TaktSignal,
     input Reset,
 
-    output reg [25:0] AktuellerPC
+    output reg [25:0] AktuellerPC = 0
 );
-
-reg[25:0] programmzahler;
 
 always @(posedge TaktSignal or posedge Reset) begin
     if(Reset)

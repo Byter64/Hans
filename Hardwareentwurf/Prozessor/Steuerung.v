@@ -31,8 +31,8 @@ module Steuerung (
     localparam WRITEBACK_LOAD = 3'b110;
     localparam WRITEBACK_DEFAULT = 3'b111;
 
-    reg [2:0] current_state;
-    reg [2:0] next_state;
+    reg [2:0] current_state = FETCH;
+    reg [2:0] next_state = FETCH;
 
     //combinational portion
     
