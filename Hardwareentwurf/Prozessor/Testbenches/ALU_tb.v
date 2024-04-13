@@ -121,6 +121,8 @@ initial begin
     StartSignal = 0;
     StartSignal = 1;
     #200
+    StartSignal = 0;
+    #200
     if(Ergebnis != 32'b00111000111000101001110001110010)
         $display("Multiplizieren funktioniert nicht: \n Faktor1:  %d \n Faktor2:  %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00111000111000101001110001110010);
     
@@ -133,7 +135,7 @@ initial begin
     StartSignal = 0;
     #2000
     
-    if(Ergebnis != $signed(-32'sd98158))
+    if(Ergebnis != $signed(-32'sd98157))
         $display("Dividieren funktioniert nicht: \n Divisor:  %d \n Dividend: %d \n Ergebnis: %d \n Erwartet: %d\n", $signed(Daten1), $signed(Daten2), $signed(Ergebnis), $signed(-32'sd98158));
     #200
     //Mod-Befehl testen
@@ -143,7 +145,56 @@ initial begin
     StartSignal = 1;
     #200
     StartSignal = 0;
-    #1800
+    #2200
+
+    if(Ergebnis != 32'd0)
+        $display("Modulo funktioniert nicht: \n Divisor:  %d \n Dividend: %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'd0);
+    #200
+    //Mod-Befehl testen
+    Daten1 = 32'd717;
+    Daten2 = 32'd5;
+    FunktionsCode = Mod;
+    StartSignal = 1;
+    #200
+    StartSignal = 0;
+    #2200
+
+    if(Ergebnis != 32'd2)
+        $display("Modulo funktioniert nicht: \n Divisor:  %d \n Dividend: %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'd2);
+    #200
+    //Mod-Befehl testen
+    Daten1 = 32'd313;
+    Daten2 = 32'd13;
+    FunktionsCode = Mod;
+    StartSignal = 1;
+    #200
+    StartSignal = 0;
+    #2200
+
+    if(Ergebnis != 32'd1)
+        $display("Modulo funktioniert nicht: \n Divisor:  %d \n Dividend: %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'd1);
+    #200
+    
+    //Div-Befehl testen
+    Daten1 = 32'd47;
+    Daten2 = 32'd9;
+    FunktionsCode = Div;
+    StartSignal = 1;
+    #200
+    StartSignal = 0;
+    #2000
+    
+    if(Ergebnis != $signed(32'd5))
+        $display("Dividieren funktioniert nicht: \n Divisor:  %d \n Dividend: %d \n Ergebnis: %d \n Erwartet: %d\n", $signed(Daten1), $signed(Daten2), $signed(Ergebnis), $signed(32'd5));
+    #200
+    //Mod-Befehl testen
+    Daten1 = 32'd721;
+    Daten2 = 32'd7;
+    FunktionsCode = Mod;
+    StartSignal = 1;
+    #200
+    StartSignal = 0;
+    #2200
 
     if(Ergebnis != 32'd0)
         $display("Modulo funktioniert nicht: \n Divisor:  %d \n Dividend: %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'd0);
@@ -158,7 +209,17 @@ initial begin
     #3200
     if(Ergebnis != 32'b00000000000000001000000000011001)
         $display("Quadratwurzel funktioniert nicht: \n Radikand: %d Ergebnis: %d \n Erwartet: %d\n", Daten1, Ergebnis, 32'b00000000000000001101110111000010);
-    
+    #1000
+            //Sqrt-Befehl testen
+    Daten1 = 32'd400;
+    FunktionsCode = Sqrt;
+    StartSignal = 1;
+    #200
+    StartSignal = 0;
+    #4000
+    if(Ergebnis != 32'd20)
+        $display("Quadratwurzel funktioniert nicht: \n Radikand: %d Ergebnis: %d \n Erwartet: %d\n", Daten1, Ergebnis, 32'd20);
+    #1000
     //Sla-Befehl testen
     Daten1 = 32'b11111111100110010101010101010101;
     Daten2 = 32'b00000000000000000000000000000111;

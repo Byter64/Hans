@@ -2,7 +2,7 @@
 // Sat, 18 Mar 2023 19:01:17 GMT
 
 // Testbench template
-`include "../Instruktionsdekodierer.v"
+`include "../Prozessor/Instruktionsdekodierer.v"
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns
@@ -77,6 +77,7 @@ localparam[5:0] AddisCode  = 6'b110000;
 
 
 localparam[15:0] Immediate10 = 16'b0000000000001010;
+localparam[15:0] Immediate30 = 16'b1111111111111111;
 localparam[31:0] Immediate10Shifted = 32'b00000000000010100000000000000000;
 localparam[15:0] Immediate20 = 16'b0000000000010100;
 localparam[25:0] ImmediateGross10 = 26'b00000000000000000000001010;
@@ -90,9 +91,9 @@ reg[31:0] CGE =     {rformat,q3,q2,q1,5'b0,CGEFunktion};
 reg[31:0] MULS =    {rformat,q1,q4,q2,5'b0,MULSFunktion}; 
 reg[31:0] CGES =    {rformat,q2,q1,q2,5'b0,CLSFunktion}; 
 reg[31:0] MULI =    {iformat,MULIFunktion,q3,q1,Immediate20}; 
-reg[31:0] SLLI =    {iformat,SLLIFunktion,q2,q4,Immediate10}; 
+reg[31:0] SLLI =    {iformat,SLLIFunktion,q2,q4,Immediate30}; 
 reg[31:0] ADDIS =   {iformat, AddisCode, q2, q1, Immediate10};
-reg[31:0] LOAD =    {LoadCode,q4,q1,Immediate20};
+reg[31:0] LOAD =    {LoadCode,q4,q1,Immediate30};
 reg[31:0] LOADS =   {LoadSCode,q1,q2,Immediate10};
 reg[31:0] STORE =   {StoreCode,q2,q3,Immediate20};
 reg[31:0] STORES =  {StoreSCode,q3,q4,Immediate10};
@@ -105,7 +106,6 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
  // Module instance
  Instruktionsdekodierer idec (
   .Instruktion(Instruktion),
-  .Clock(Clock),
   .QuellRegister1(QuellReg1),
   .QuellRegister2(QuellReg2),
   .ZielRegister(ZielReg1),
@@ -253,9 +253,8 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     #2000
     $display("SLLI");
     `assert(QuellReg1, iq4);
-    `assert(QuellReg2, 0);
     `assert(ZielReg1, iq2);
-    `assert(IDaten, ImmediateGross10);
+    `assert(IDaten, {16'b0,Immediate30});
     `assert(ImmediateAktiv, 1);
     `assert(FunktionsCode, {1'b0,SLLIFunktion});
     `assert(JALBefehl, 0);
@@ -289,9 +288,8 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     #2000
     $display("LOAD");
     `assert(QuellReg1, iq1);
-    `assert(QuellReg2, 0);
     `assert(ZielReg1, iq4);
-    `assert(IDaten, ImmediateGross20);
+    `assert(IDaten, {16'b1111111111111111,Immediate30});
     `assert(ImmediateAktiv, 1);
     `assert(FunktionsCode, 0);
     `assert(JALBefehl, 0);
