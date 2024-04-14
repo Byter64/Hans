@@ -209,7 +209,7 @@ assign IntWurzelReset =         ((FunktionsCode[5:0] == IntQuadratwurzel & Start
 assign FloatAdditionDaten2 =    {(FunktionsCode[5:0] != FloatAddition),Daten2[30:0]};
 
 
-always @(posedge Reset or posedge Clock) begin
+always @(posedge Clock) begin
     if(Reset) begin
         Radikand <= 0;
         TakteBisFertig <= 0;

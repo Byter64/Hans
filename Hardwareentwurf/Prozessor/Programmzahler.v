@@ -8,7 +8,7 @@ module Programmzahler (
     output reg [25:0] AktuellerPC = 0
 );
 
-always @(posedge Clock or posedge Reset) begin
+always @(posedge Clock) begin
     if(Reset)
         AktuellerPC <= 26'b0;
     else begin
