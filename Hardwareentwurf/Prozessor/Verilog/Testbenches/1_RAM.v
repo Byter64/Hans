@@ -18,7 +18,7 @@ reg[WORDSIZE - 1:0] Daten[WORDS - 1:0];
 integer idx;
 
 initial begin
-    Hochzaehlen. Hier sollten LEDs auf DatenRaus 24:17 sein
+    //Hochzaehlen. Hier sollten LEDs auf DatenRaus 24:17 sein
     Daten[0] = 32'b10000000001000000000000000000001; //Addi R1, R0, #0
     Daten[1] = 32'b10000011111000000000000000000001; //Addi R31, R0, #1
     Daten[2] = 32'b10011011111111110000000000011111; //Sli R31, R31, #31
