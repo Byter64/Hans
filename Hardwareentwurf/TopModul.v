@@ -124,7 +124,7 @@ end
 
 always @(posedge Clock) begin
     if(DatenAdresse[31] == 1 && SchreibeDaten == 1) begin
-        ledReg <= DatenRaus[7:0];
+        ledReg <= DatenRaus[24:17];
     end
 end
 
