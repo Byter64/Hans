@@ -2,6 +2,6 @@
 *.out
 *.vcd
 /Hardwareentwurf/Prozessor/abc.history
-/Hardwareentwurf/Prozessor/Ausgabe.json
-/Hardwareentwurf/Prozessor/ulx3s.bit
-/Hardwareentwurf/Prozessor/ulx3s_out.config
+*/Ausgabe.json
+*/ulx3s.bit
+*/ulx3s_out.config
