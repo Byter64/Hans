@@ -8,48 +8,15 @@ module Top
     output[7:0] led
 );
 
- // Input/Output
-reg[31:0] InstruktionAdresse;
+ // Input/Output for FPGA
 reg Reset;
 reg[7:0] ledReg = 7'b0;
+assign led = ledReg;
+
+//Clock Assignment
 wire Clock;
 assign Clock = clocks[3];
-assign led = ledReg;
 wire [3:0] clocks;
-
-wire[31:0] Instruktion;
-wire[31:0] DatenRaus;
-wire[31:0] DatenAdresse;
-wire[31:0] DatenRein;
-wire DatenGeladen;
-wire DatenGespeichert;
-wire InstruktionGeladen;
-wire LeseDaten;
-wire SchreibeDaten;
-wire LeseInstruktion;
-wire Zero;
-
-wire RAMLeseDaten;
-wire RAMSchreibeDaten;
-wire[31:0] RAMDatenRaus;
-wire CPUDatenGeladen;
-wire CPUDatenGespeichert;
-
-assign RAMLeseDaten =       DatenAdresse[31] == 0 ? LeseDaten : 0;
-assign RAMSchreibeDaten =   DatenAdresse[31] == 0 ? SchreibeDaten : 0;
-assign RAMDatenRaus =       DatenAdresse[31] == 0 ? DatenRein : {24'b0, ledReg};
-assign CPUDatenGeladen =    DatenAdresse[31] == 0 ? DatenGeladen : 1;
-assign CPUDatenGespeichert =DatenAdresse[31] == 0 ? DatenGespeichert : 1;
-
-wire[31:0] w_InstruktionAdresse;
-wire[31:0] InstruktionRAMAdresseJetztAberWirklich;
-reg InstruktionInitialisierung = 0;
-assign InstruktionRAMAdresseJetztAberWirklich = InstruktionInitialisierung == 1 ? InstruktionAdresse : w_InstruktionAdresse;
-
-//InstruktionRAM fuellen
-reg[31:0] InstruktionRAMEingang = 0;
-reg BeschreibeInstruktionRAM = 0;
-  
 ecp5pll
 #(
       .in_hz(25000000),
@@ -63,69 +30,129 @@ ecp5pll_inst
     .clk_i(clk_25mhz),
     .clk_o(clocks)
 );
+ //Inputs CPU
+ wire[31:0] CPUDatenRein;
+ wire[31:0] CPUInstruktion;
+ wire CPUInstruktionGeladen;
+ wire CPUDatenGeladen;
+ wire CPUDatenGespeichert;
 
- // Module instance
+ //Outputs CPU
+ wire[31:0] CPUInstruktionAdresse;
+ wire[31:0] CPUDatenRaus;
+ wire[31:0] CPUDatenAdresse;
+ wire CPULeseDaten;
+ wire CPUSchreibeDaten;
+ wire CPULeseInstruktion;
+
+ //CPU Instanzierung
  CPU CPU (
-    .DatenRein(RAMDatenRaus),
-    .Instruktion(Instruktion),
-    .InstruktionGeladen(InstruktionGeladen),
+    .DatenRein(CPUDatenRein),
+    .Instruktion(CPUInstruktion),
+    .InstruktionGeladen(CPUInstruktionGeladen),
     .DatenGeladen(CPUDatenGeladen),
     .DatenGespeichert(CPUDatenGespeichert),
     .Clock(Clock),
     .Reset(Reset),
 
-    .InstruktionAdresse(w_InstruktionAdresse),
-    .DatenRaus(DatenRaus),
-    .DatenAdresse(DatenAdresse),
-    .LeseDaten(LeseDaten),
-    .SchreibeDaten(SchreibeDaten),
-    .LeseInstruktion(LeseInstruktion)
+    .InstruktionAdresse(CPUInstruktionAdresse),
+    .DatenRaus(CPUDatenRaus),
+    .DatenAdresse(CPUDatenAdresse),
+    .LeseDaten(CPULeseDaten),
+    .SchreibeDaten(CPUSchreibeDaten),
+    .LeseInstruktion(CPULeseInstruktion)
  );
 
+//Inputs RAM
+wire RAMLesenAn;
+wire RAMSchreibenAn;
+wire[31:0] RAMDatenRein;
+wire[7:0] RAMAdresse; //auf 31 erhöhen dann
+
+//Outputs RAM
+wire[31:0] RAMDatenRaus;
+wire RAMDatenBereit;
+wire RAMDatenGeschrieben;
+
+//Instanzierung
 RAM #(
     .WORDSIZE(32),
     .WORDS(256)
 ) InstruktionRAM (
-    .LesenAn(LeseInstruktion),
-    .SchreibenAn(BeschreibeInstruktionRAM),
-    .DatenRein(InstruktionRAMEingang),
-    .Adresse(InstruktionRAMAdresseJetztAberWirklich[7:0]),
+    .LesenAn(RAMLesenAn),
+    .SchreibenAn(RAMSchreibenAn),
+    .DatenRein(RAMDatenRein),
+    .Adresse(RAMAdresse),
     .Clock(Clock),
 
-    .DatenRaus(Instruktion),
-    .DatenBereit(InstruktionGeladen),
-    .DatenGeschrieben(Zero)
+    .DatenRaus(RAMDatenRaus),
+    .DatenBereit(RAMDatenBereit),
+    .DatenGeschrieben(RAMDatenGeschrieben)
 );
 
+//Inputs DRAM
+wire DRAMLesenAn;
+wire DRAMSchreibenAn;
+wire[31:0] DRAMDatenRein;
+wire[7:0] DRAMAdresse; //auf 31 erhöhen dann
+
+//Outputs DRAM
+wire[31:0] DRAMDatenRaus;
+wire DRAMDatenBereit;
+wire DRAMDatenGeschrieben;
+
+//Instanzierung
 RAM #(
     .WORDSIZE(32),
     .WORDS(256)
 ) DatenRAM (
-    .LesenAn(RAMLeseDaten),
-    .SchreibenAn(RAMSchreibeDaten),
-    .DatenRein(DatenRaus),
-    .Adresse(DatenAdresse[7:0]),
+    .LesenAn(DRAMLesenAn),
+    .SchreibenAn(DRAMSchreibenAn),
+    .DatenRein(DRAMDatenRein),
+    .Adresse(DRAMAdresse),
     .Clock(Clock),
 
-    .DatenRaus(DatenRein),
-    .DatenBereit(DatenGeladen),
-    .DatenGeschrieben(DatenGespeichert)
+    .DatenRaus(DRAMDatenRaus),
+    .DatenBereit(DRAMDatenBereit),
+    .DatenGeschrieben(DRAMDatenGeschrieben)
 );
 
-integer resetTimer = 10;
+//Input Zuweisungen CPU
+assign CPUDatenRein = DRAMDatenRaus;
+assign CPUInstruktion = RAMDatenRaus;
+assign CPUInstruktionGeladen = RAMDatenBereit;
+assign CPUDatenGeladen = CPUDatenAdresse[31] == 0 ? DRAMDatenBereit : 1;
+assign CPUDatenGespeichert = CPUDatenAdresse[31] == 0 ? DRAMDatenGeschrieben : 1;
+
+//Inputs Zuweisung InstruktionsRAM
+assign RAMLesenAn = CPULeseInstruktion;
+assign RAMSchreibenAn = 0;
+assign RAMDatenRein = 32'b0;
+assign RAMAdresse = CPUInstruktionAdresse[7:0];
+
+//Inputs Zuweisung DatenRAM
+assign DRAMLesenAn = CPUDatenAdresse[31] == 0 ? CPULeseDaten : 0;
+assign DRAMSchreibenAn = CPUDatenAdresse[31] == 0 ? CPUSchreibeDaten : 0;
+assign DRAMDatenRein = CPUDatenRaus;
+assign DRAMAdresse = CPUDatenAdresse;
+
+reg[10:0] resetTimer = 10'b100;
 always @(posedge Clock) begin
-    if(resetTimer > 0)begin
+    if(resetTimer > 1)begin
         Reset <= 1;
         resetTimer <= resetTimer - 1;
     end
-    else if(resetTimer == 0)
+    else if(resetTimer == 1)begin
         Reset <= 0;
+        resetTimer <= resetTimer - 1;
+    end
 end
 
 always @(posedge Clock) begin
-    if(DatenAdresse[31] == 1 && SchreibeDaten == 1) begin
-        ledReg <= DatenRaus[24:17];
+    if(CPUDatenAdresse[31] == 1 && CPUSchreibeDaten == 1) begin
+        ledReg[6:0] <= CPUDatenRaus[23:17];
     end
+    ledReg[7] <= Reset;
 end
 
 endmodule

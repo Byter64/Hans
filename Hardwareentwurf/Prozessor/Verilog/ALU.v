@@ -210,11 +210,8 @@ assign IntWurzelReset = (FunktionsCode[5:0] == IntQuadratwurzel & StartSignal) |
 assign FloatAdditionDaten2 = {(FunktionsCode[5:0] != FloatAddition),Daten2[30:0]};
 
 
-always @(posedge Reset or posedge Clock) begin
-    if(Reset) begin
-        Radikand <= 0;
-        TakteBisFertig <= 0;
-    end else if(TakteBisFertig != 0) begin
+always @(posedge Clock) begin
+    if(TakteBisFertig != 0) begin
         TakteBisFertig <= TakteBisFertig - 1;
     end
     else if (StartSignal) begin
@@ -263,6 +260,9 @@ always @(posedge Reset or posedge Clock) begin
             end
         endcase
     end
-    
+    if(Reset) begin
+        Radikand <= 0;
+        TakteBisFertig <= 0;
+    end
 end
 endmodule
