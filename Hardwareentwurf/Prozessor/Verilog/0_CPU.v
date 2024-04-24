@@ -8,6 +8,7 @@
 `include "Programmzahler.v"
 `include "Register.v"
 `include "Steuerung.v"
+`include "BedingungsPruefer.v"
 
 
 module CPU (
@@ -48,6 +49,7 @@ wire StoreBefehl;
 wire UnbedingterSprungBefehl;
 wire BedingterSprungBefehl;  
 wire AbsoluterSprung;
+wire Sprungbedingung;
 
 //███████████████████████████████████████
 //████Signale von MultiplexerAluDaten████
@@ -79,7 +81,7 @@ wire[31:0] QuellDaten2;
 //███████████████████████████████
 //████Signale von Nullpruefer████
 //███████████████████████████████
-wire Sprungbedingung;
+wire SprungbedingungErgebnis;
 
 //█████████████████████████████
 //████Signale von Steuerung████
@@ -118,7 +120,8 @@ Instruktionsdekodierer Indek(
     .StoreBefehl(StoreBefehl),
     .UnbedingterSprungBefehl(UnbedingterSprungBefehl),
     .BedingterSprungBefehl(BedingterSprungBefehl),
-    .AbsoluterSprung(AbsoluterSprung)
+    .AbsoluterSprung(AbsoluterSprung),
+    .Sprungbedingung(Sprungbedingung)
 );
 
 Register Register(
@@ -163,9 +166,14 @@ MultiplexerAluDaten2 MulAluDaten2(
     .Daten1(AluDaten1)
 );
 
-NullPruefer NullPruefer(
+//NullPruefer NullPruefer(
+//    .Eingang(QuellDaten1),
+//    .Ergebnis(Sprungbedingung)
+//);
+BedingungsPruefer BedingungsPruefer(
     .Eingang(QuellDaten1),
-    .Ergebnis(Sprungbedingung)
+    .Bedingung(Sprungbedingung),
+    .Ergebnis(SprungbedingungErgebnis)
 );
 
 Steuerung Steuerung(
@@ -174,7 +182,7 @@ Steuerung Steuerung(
     .JALBefehl(JALBefehl),
     .UnbedingterSprungBefehl(UnbedingterSprungBefehl),
     .BedingterSprungBefehl(BedingterSprungBefehl),
-    .Bedingung(Sprungbedingung),
+    .Bedingung(SprungbedingungErgebnis),
     .BefehlGeladen(InstruktionGeladen),
     .DatenGeladen(DatenGeladen),
     .DatenGespeichert(DatenGespeichert),
@@ -208,7 +216,8 @@ Programmzahler Programmzahler(
     .SchreibSignal(PCSprungSignal),
     .TaktSignal(PCSignal),
     .Reset(Reset),
-    .AktuellerPC(AktuellerPC)
+    .AktuellerPC(AktuellerPC),
+    .Clock(Clock)
 );
 
 endmodule
