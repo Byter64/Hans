@@ -1,7 +1,8 @@
 `include "../Prozessor/0_CPU.v"
 `include "../Prozessor/1_RAM.v"
+`ifdef SYNTHESIS
 `include "../ecp5pll/hdl/sv/ecp5pll.sv"
-
+`endif
 module Top
 (
     input clk_25mhz,
@@ -15,6 +16,8 @@ assign led = ledReg;
 
 //Clock Assignment
 wire Clock;
+//If in Synthesis
+`ifdef SYNTHESIS
 assign Clock = clocks[3];
 wire [3:0] clocks;
 ecp5pll
@@ -23,13 +26,17 @@ ecp5pll
     .out0_hz(40000000),                 .out0_tol_hz(0),
     .out1_hz(50000000), .out1_deg( 90), .out1_tol_hz(0),
     .out2_hz(60000000), .out2_deg(180), .out2_tol_hz(0),
-    .out3_hz( 5000000), .out3_deg(300), .out3_tol_hz(0)
+    .out3_hz( 4000000), .out3_deg(300), .out3_tol_hz(0)
 )
 ecp5pll_inst
 (
     .clk_i(clk_25mhz),
     .clk_o(clocks)
 );
+`else //if in simulation
+assign Clock = clk_25mhz;
+`endif 
+
  //Inputs CPU
  wire[31:0] CPUDatenRein;
  wire[31:0] CPUInstruktion;
@@ -147,26 +154,10 @@ always @(posedge Clock) begin
         resetTimer <= resetTimer - 1;
     end
 end
-reg[20:0] switchtimer = 0;
-reg switch = 0;
-reg[7:0] DatenSpeicher;
+
 always @(posedge Clock) begin
     if(CPUDatenAdresse[31] == 1 && CPUSchreibeDaten == 1) begin
-        DatenSpeicher <= CPUDatenRaus[7:0];
-    end
-    ledReg[7] <= switch;
-    if(switchtimer==0) begin
-        switchtimer <= switchtimer + 1;
-        if(switch == 0) begin
-            ledReg[6:0] <= DatenSpeicher[6:0];
-            switch <= 1;
-        end else begin
-            switch <= 0;
-            ledReg[6:0] <= RAMAdresse[6:0];
-        end
-    end
-    else begin
-        switchtimer <= switchtimer + 1;
+        ledReg <= CPUDatenRaus[7:0];
     end
 end
 

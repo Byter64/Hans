@@ -16,7 +16,7 @@ module RAM#(
 
 reg[WORDSIZE - 1:0] Daten[WORDS - 1:0];
 integer idx;
-localparam ProgrammNummer = 0;
+localparam ProgrammNummer = 1;
 initial begin
     if(ProgrammNummer == 0) begin
     //Hochzaehlen. Hier sollten LEDs auf DatenRaus 24:17 sein
@@ -38,7 +38,7 @@ initial begin
     Daten[5] = 32'b10000100010000100000000000000001; //Subi R2, R2, 1
     Daten[6] = 32'b00000000011000100000000000001000; //Ce R3, R2, R0
     Daten[7] = 32'b11101000001111110000000000000000; //Store R1, R31, #0
-    Daten[8] = 32'b11110100000000111111111111111010; //Bez R3, -5
+    Daten[8] = 32'b11110100000000111111111111111011; //Bez R3, -5 
     Daten[9] = 32'b01000011111111111111111111111111; //jmp -1
     for (idx = 10; idx < WORDS; idx = idx + 1) 
         Daten[idx] = 0;

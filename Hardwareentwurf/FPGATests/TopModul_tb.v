@@ -21,13 +21,13 @@ module main_tb
  );
 
  always begin
-    #10 clk_25mhz = ~clk_25mhz;
+    #1 clk_25mhz = ~clk_25mhz;
  end
  integer idx = 0;
  initial begin
   $dumpvars(0, main_tb);
-    for (idx = 0; idx < 256; idx = idx + 1) $dumpvars(0, main.InstruktionRAM.Daten[idx]);
-    for (idx = 0; idx < 256; idx = idx + 1) $dumpvars(0, main.DatenRAM.Daten[idx]);
+    //for (idx = 0; idx < 256; idx = idx + 1) $dumpvars(0, main.InstruktionRAM.Daten[idx]);
+    //for (idx = 0; idx < 256; idx = idx + 1) $dumpvars(0, main.DatenRAM.Daten[idx]);
     for (idx = 0; idx < 64;  idx = idx + 1) $dumpvars(0, main.CPU.Register.registers[idx]);
 
     clk_25mhz = 0;
