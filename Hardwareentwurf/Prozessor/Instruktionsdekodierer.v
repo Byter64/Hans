@@ -19,10 +19,10 @@ module Instruktionsdekodierer (
     output AbsoluterSprung,
     output Sprungbedingung
 );
-
+//Der aktuell gespeicherte Befehl
 reg [31:0] AktuellerBefehl;
 
-
+//Variablen
 wire[5:0] Opcode;
 // FORMATE
 wire[1:0] Format;
@@ -83,11 +83,12 @@ localparam[5:0] UIToF       = 6'b001111;
 
 
 always @(posedge Clock) begin
-    if(Reset)
-        AktuellerBefehl <= 32'b00000000000000000000000000000000;
-    else if (DekodierSignal) begin
+    if (DekodierSignal) begin
         AktuellerBefehl <= Instruktion;
     end
+    if(Reset) begin
+        AktuellerBefehl <= 32'b00000000000000000000000000000000;
+    end 
 end
 
 assign QuellRegister1           =   {((Format == RegisterFormat && Kategorie == Gleitkomma) ?   1'b1    :   1'b0),Q1Register};

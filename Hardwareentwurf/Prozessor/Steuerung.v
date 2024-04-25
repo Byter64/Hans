@@ -23,18 +23,22 @@ module Steuerung (
 );
 
     localparam FETCH = 4'b000;
+
     localparam DECODE = 4'b001;
+
     localparam ALU1 = 4'b010;
     localparam ALU = 4'b011;
+
     localparam WRITEBACK_JUMP = 4'b100;
     localparam WRITEBACK_STORE = 4'b101;
     localparam WRITEBACK_LOAD = 4'b110;
     localparam WRITEBACK_DEFAULT = 4'b111;
+    
     localparam WRITEBACK_STORE2 = 4'b1000;
     localparam WRITEBACK_LOAD2 = 4'b1001;
 
-    reg [2:0] current_state;
-    reg [2:0] next_state;
+    reg [3:0] current_state;
+    reg [3:0] next_state;
 
     //combinational portion
     
