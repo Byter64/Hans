@@ -235,7 +235,8 @@ assign HatFertigGerechnet = (FunktionsCode == IntDivision || FunktionsCode == In
 assign IntWurzelReset = (FunktionsCode == IntQuadratwurzel & StartSignal) | Reset;
 
 assign FloatAdditionDaten2 = {(FunktionsCode != FloatAddition),Daten2[30:0]};
-
+//Fehlende Befehle
+//FloatQuadratwurzel
 
 always @(posedge Clock) begin
     if(TakteBisFertig != 0) begin
@@ -245,41 +246,44 @@ always @(posedge Clock) begin
         Radikand <= Daten1;
         case (FunktionsCode[5:0])
             IntZuFloat : begin
-                TakteBisFertig <= 4;
+                TakteBisFertig <= 5;
             end
             UnsignedIntZuFloat : begin
-                TakteBisFertig <= 4;
+                TakteBisFertig <= 5;
             end
             //Float Arithmetik
             //Add.s
-            6'b100000: begin
-                TakteBisFertig <= 6;
+            FloatAddition: begin
+                TakteBisFertig <= 7;
             end
             //Sub.s 
-            6'b100001: begin 
-                TakteBisFertig <= 6;
+            FloatSubtraktion: begin 
+                TakteBisFertig <= 7;
             end
             //Mul.s
-            6'b100010    : begin 
-                TakteBisFertig <= 8;
-            end
-            //Sqrt.s
-            6'b100011    : begin 
+            FloatMultiplikation    : begin 
                 TakteBisFertig <= 9;
             end
+            //Sqrt.s
+            FloatQuadratwurzel    : begin 
+                TakteBisFertig <= 10;
+            end
             //Div.s
-            6'b100100    : begin 
-                TakteBisFertig <= 31;
+            FloatDivision    : begin 
+                TakteBisFertig <= 36;
             end
             //Cg.s
-            6'b101010	: begin
-                TakteBisFertig <= 6;
+            FloatGroesser	: begin
+                TakteBisFertig <= 7;
             end
             //Cl.s
-            6'b101011	: begin
-                TakteBisFertig <= 6;
+            FloatKleiner	: begin
+                TakteBisFertig <= 7;
             end
             FloatZuInt : begin
+                TakteBisFertig <= 1;
+            end
+            FloatZuUnsignedInt : begin
                 TakteBisFertig <= 1;
             end
             default : begin

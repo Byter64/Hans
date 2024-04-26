@@ -406,7 +406,7 @@ initial begin
     StartSignal = 0;
     wait(HatFertigGerechnet) #200
     if(Ergebnis != 32'b01000011000100110110000001000010)//147,376
-        $display("Floats addieren funktioniert nicht: \n Summand1: %f \n Summand2: %f \n Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b01000011000100110110000001000010);
+        $display("Floats addieren funktioniert nicht: \n Summand1: %b \n Summand2: %b \n Ergebnis: %b \n Erwartet: %b\n", Daten1, Daten2, Ergebnis, 32'b01000011000100110110000001000010);
     
     //Sub.s-Befehl testen
     Daten1 = 32'b01000010001101011000000100000110;       // 45,376
@@ -450,7 +450,7 @@ initial begin
     wait(HatFertigGerechnet) #200
     if(Ergebnis != 32'b00111110111000111100010100001101)  //0.4448627531528472900390625
         $display("Floats dividieren funktioniert nicht: \n Divisor:  %b \n Dividend: %b \n Ergebnis: %b \n Erwartet: %b\n", Daten1, Daten2, Ergebnis, 32'b00111110111000111100010100001101);
-
+    #1000
     #200 $display("End of simulation");
     $finish;
 end
