@@ -281,7 +281,7 @@ always @(posedge Clock) begin
                 TakteBisFertig <= 7;
             end
             FloatZuInt : begin
-                TakteBisFertig <= 1;
+                TakteBisFertig <= 2;
             end
             FloatZuUnsignedInt : begin
                 TakteBisFertig <= 1;
