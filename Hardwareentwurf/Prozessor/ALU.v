@@ -1,4 +1,5 @@
 `include "../Prozessor/ALUModule/Intsqrt.v"
+`include "../Prozessor/ALUModule/divfunc.v"
 `include "../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/add.v"
 `include "../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/mul.v"
 `include "../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/sqrt.v"
@@ -27,7 +28,6 @@ reg[31:0] Radikand; //Wurzel
 reg[7:0] TakteBisFertig = 0;
 wire[31:0] FloatAdditionDaten2;
 wire[31:0] EinfacheRechnungErgebnis;
-wire[31:0] DivisionErgebnis; //Div und Mod
 wire[31:0] WurzelErgebnis;
 wire[31:0] IntZuFloatErgebnis;
 wire[31:0] UnsignedIntZuFloatErgebnis;
@@ -41,8 +41,8 @@ wire FloatGleichheitErgebnis;
 wire FloatGroesserErgebnis;
 wire FloatKleinerErgebnis;
 wire WurzelFertig;
-wire DivisionFertig;
-wire DivisionInArbeit;
+wire DivModFertig;
+wire DivModStart;
 wire IntWurzelReset;
 
 //Int Arithmetik
@@ -85,6 +85,31 @@ localparam FloatKleiner =         6'b101011;
 localparam FloatZuInt =           6'b101110;
 localparam FloatZuUnsignedInt =   6'b101111;
 
+
+wire[30:0] DivDaten1;
+wire[30:0] DivDaten2;
+wire[31:0] DivisionErgebnis;
+wire[31:0] ModuloErgebnis;
+wire[30:0] DivisionErgebnisU; //Div und Mod
+wire[30:0] ModuloErgebnisU;
+assign DivDaten1 = (Daten1[31] == 1'b0)?Daten1[30:0]:~Daten1[30:0]+30'b1;
+assign DivDaten2 = (Daten2[31] == 1'b0)?Daten2[30:0]:~Daten2[30:0]+30'b1;
+assign ModuloErgebnis = (Daten1[31] ~^ Daten2[31])?{1'b0,ModuloErgebnisU}:{1'b1,~(ModuloErgebnisU-30'b1)};
+assign DivisionErgebnis = (Daten1[31] ~^ Daten2[31])?{1'b0,DivisionErgebnisU}:{1'b1,~(DivisionErgebnisU-30'b1)};
+divfunc #(  .XLEN(31),
+            .STAGE_LIST(31'b0000001001010101111111111111111))
+        DivisionsModul (
+            .clk(Clock),
+            .rst(Reset),
+            .a(DivDaten1),
+            .b(DivDaten2),
+            .vld(DivModStart),
+            .quo(DivisionErgebnisU),
+            .rem(ModuloErgebnisU),
+            .ack(DivModFertig)
+        );
+
+assign DivModStart = StartSignal && (FunktionsCode == IntDivision || FunktionsCode == IntModulo);
 
 Intsqrt QuadratModul(
     .Clock(Clock),
@@ -169,8 +194,6 @@ single_to_unsigned_int FloatZuUnsignedIntMacher(
 assign EinfacheRechnungErgebnis =   FunktionsCode[5:0] == IntAddition           ? $signed(Daten1) + $signed(Daten2) :
                                     FunktionsCode[5:0] == IntSubtraktion        ? $signed(Daten1) - $signed(Daten2) :
                                     FunktionsCode[5:0] == IntMultiplikation     ? $signed(Daten1) * $signed(Daten2) :
-                                    FunktionsCode[5:0] == IntDivision           ? $signed(Daten1) / $signed(Daten2) :
-                                    FunktionsCode[5:0] == IntModulo             ? $signed(Daten1) % $signed(Daten2) :
                                     FunktionsCode[5:0] == LinksSchiebenArithm   ? $signed(Daten1) <<< $signed(Daten2) :
                                     FunktionsCode[5:0] == RechtsSchiebenArithm  ? $signed(Daten1) >>> $signed(Daten2) :
                                     FunktionsCode[5:0] == Gleichheit            ? $signed({31'b0, Daten1 == Daten2})  : 
@@ -187,27 +210,31 @@ assign EinfacheRechnungErgebnis =   FunktionsCode[5:0] == IntAddition           
                                     FunktionsCode[5:0] == LinksSchiebenLogik    ? $signed(Daten1 << $signed(Daten2)) :
                                     FunktionsCode[5:0] == RechtsSchiebenLogik   ? $signed(Daten1 >> $signed(Daten2)) : $signed(0);
 
-assign Ergebnis =   FunktionsCode[5:0] == IntQuadratwurzel ? WurzelErgebnis :
-                    FunktionsCode[5:0] == IntZuFloat ? IntZuFloatErgebnis :
-                    FunktionsCode[5:0] == UnsignedIntZuFloat ? UnsignedIntZuFloatErgebnis :
-                    FunktionsCode[5:0] == FloatAddition ? AdditionFloatErgebnis :
-                    FunktionsCode[5:0] == FloatSubtraktion ? AdditionFloatErgebnis :
-                    FunktionsCode[5:0] == FloatMultiplikation ? MultiplikationFloatErgebnis :
-                    FunktionsCode[5:0] == FloatQuadratwurzel ? WurzelFloatErgebnis :
-                    FunktionsCode[5:0] == FloatDivision ? DivisionFloatErgebnis :
-                    FunktionsCode[5:0] == FloatGleichheit ? {31'b0, FloatGleichheitErgebnis} :
-                    FunktionsCode[5:0] == FloatUngleichheit ? {31'b0, ~FloatGleichheitErgebnis} :
-                    FunktionsCode[5:0] == FloatGroesser ? {31'b0, FloatGroesserErgebnis} :
-                    FunktionsCode[5:0] == FloatKleiner ? {31'b0, FloatKleinerErgebnis} :
-                    FunktionsCode[5:0] == FloatZuInt ? {31'b0, FloatZuIntErgebnis} :
-                    FunktionsCode[5:0] == FloatZuUnsignedInt ? {31'b0, FloatZuUnsignedIntErgebnis} :
-                                                        EinfacheRechnungErgebnis;
+assign Ergebnis =   FunktionsCode[5:0] == IntQuadratwurzel      ? WurzelErgebnis :
+                    FunktionsCode[5:0] == IntDivision           ? DivisionErgebnis :
+                    FunktionsCode[5:0] == IntModulo             ? ModuloErgebnis :
+                    FunktionsCode[5:0] == IntZuFloat            ? IntZuFloatErgebnis :
+                    FunktionsCode[5:0] == UnsignedIntZuFloat    ? UnsignedIntZuFloatErgebnis :
+                    FunktionsCode[5:0] == FloatAddition         ? AdditionFloatErgebnis :
+                    FunktionsCode[5:0] == FloatSubtraktion      ? AdditionFloatErgebnis :
+                    FunktionsCode[5:0] == FloatMultiplikation   ? MultiplikationFloatErgebnis :
+                    //FunktionsCode[5:0] == FloatQuadratwurzel  ? WurzelFloatErgebnis :
+                    FunktionsCode[5:0] == FloatDivision         ? DivisionFloatErgebnis :
+                    FunktionsCode[5:0] == FloatGleichheit       ? {31'b0, FloatGleichheitErgebnis} :
+                    FunktionsCode[5:0] == FloatUngleichheit     ? {31'b0, ~FloatGleichheitErgebnis} :
+                    FunktionsCode[5:0] == FloatGroesser         ? {31'b0, FloatGroesserErgebnis} :
+                    FunktionsCode[5:0] == FloatKleiner          ? {31'b0, FloatKleinerErgebnis} :
+                    FunktionsCode[5:0] == FloatZuInt            ? {31'b0, FloatZuIntErgebnis} :
+                    FunktionsCode[5:0] == FloatZuUnsignedInt    ? {31'b0, FloatZuUnsignedIntErgebnis} :
+                                                                  EinfacheRechnungErgebnis;
 
-assign HatFertigGerechnet = (TakteBisFertig == 0);
+assign HatFertigGerechnet = (FunktionsCode == IntDivision || FunktionsCode == IntModulo)?(DivModFertig):
+                            (FunktionsCode == IntQuadratwurzel)?(WurzelFertig):
+                            (TakteBisFertig == 0);
 
-assign IntWurzelReset = (FunktionsCode[5:0] == IntQuadratwurzel & StartSignal) | Reset;
+assign IntWurzelReset = (FunktionsCode == IntQuadratwurzel & StartSignal) | Reset;
 
-assign FloatAdditionDaten2 = {(FunktionsCode[5:0] != FloatAddition),Daten2[30:0]};
+assign FloatAdditionDaten2 = {(FunktionsCode != FloatAddition),Daten2[30:0]};
 
 
 always @(posedge Clock) begin

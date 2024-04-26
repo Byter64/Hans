@@ -116,8 +116,8 @@ module Steuerung (
     assign LoadBefehlSignal         = current_state == FETCH;
     assign DekodierSignal           = current_state == DECODE;
     assign ALUStartSignal           = current_state == ALU1;
-    assign RegisterSchreibSignal    = ((current_state == ALU || current_state == ALU1) && JALBefehl) || current_state == WRITEBACK_DEFAULT;
-    assign PCSignal                 = current_state > ALU && current_state < WRITEBACK_STORE2;
+    assign RegisterSchreibSignal    = (current_state == ALU1 && JALBefehl) || current_state == WRITEBACK_DEFAULT;
+    assign PCSignal                 = current_state > ALU && current_state < WRITEBACK_STORE2; //In einen Writeback Zuständen //Darf nur 1 Takt oben sein
     assign StoreDatenSignal         = current_state == WRITEBACK_STORE || current_state == WRITEBACK_STORE2;
     assign LoadDatenSignal          = current_state == WRITEBACK_LOAD  || current_state == WRITEBACK_LOAD2;
     assign PCSprungSignal           = UnbedingterSprungBefehl || (BedingterSprungBefehl && Bedingung);
