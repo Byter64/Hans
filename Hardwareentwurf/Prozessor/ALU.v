@@ -97,7 +97,7 @@ assign DivDaten2 = (Daten2[31] == 1'b0)?Daten2[30:0]:~Daten2[30:0]+30'b1;
 assign ModuloErgebnis = (Daten1[31] ~^ Daten2[31])?{1'b0,ModuloErgebnisU}:{1'b1,~(ModuloErgebnisU-30'b1)};
 assign DivisionErgebnis = (Daten1[31] ~^ Daten2[31])?{1'b0,DivisionErgebnisU}:{1'b1,~(DivisionErgebnisU-30'b1)};
 divfunc #(  .XLEN(31),
-            .STAGE_LIST(31'b0000001001010101111111111111111))
+            .STAGE_LIST(31'b0000010101010101111111111111111))
         DivisionsModul (
             .clk(Clock),
             .rst(Reset),

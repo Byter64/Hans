@@ -2,11 +2,7 @@
 // Fri, 17 Mar 2023 20:18:27 GMT
 
 // Testbench template
-<<<<<<<< HEAD:Hardwareentwurf/Testbenches/NullPruefer_tb.v
-`include "../Prozessor/NullPruefer.v"
-========
-`include "../Bedingungspruefer.v"
->>>>>>>> main:Hardwareentwurf/Prozessor/Testbenches/Bedingungspruefer_tb.v
+`include "../Prozessor/BedingungsPruefer.v"
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns
@@ -25,24 +21,27 @@ localparam Cycle = 2*Halfcycle;
  
  // Input/Output
  reg [31:0] Eingang;
+ reg Bedingung;
  wire Ergebnis;
  
  // Module instance
- Bedingungspruefer main (
+ BedingungsPruefer main (
   .Eingang(Eingang),
+  .Bedingung(Bedingung),
   .Ergebnis(Ergebnis)
  );
  
  initial begin
   $dumpvars(0, main_tb);
-
+  Bedingung = 1;
   Eingang = 00000000000000000000000000000000;
   #(Cycle) `assert(Ergebnis, 1);
   Eingang = 00000000000001111000000000000001;
   #(Cycle) `assert(Ergebnis, 0);
+  Bedingung = 0;
   Eingang = 11111111111111111111111111111111;
-  #(Cycle) `assert(Ergebnis, 0);
-  Eingang = 11110111111111111111111111111110;
+  #(Cycle) `assert(Ergebnis, 1);
+  Eingang = 00000000000000000000000000000000;
   #(Cycle) `assert(Ergebnis, 0);
 
   $display("End of simulation");
