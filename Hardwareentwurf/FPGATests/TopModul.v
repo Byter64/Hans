@@ -128,8 +128,8 @@ RAM #(
 assign CPUDatenRein = DRAMDatenRaus;
 assign CPUInstruktion = RAMDatenRaus;
 assign CPUInstruktionGeladen = RAMDatenBereit;
-assign CPUDatenGeladen = CPUDatenAdresse[31] == 0 ? DRAMDatenBereit : 1;
-assign CPUDatenGespeichert = CPUDatenAdresse[31] == 0 ? DRAMDatenGeschrieben : 1;
+assign CPUDatenGeladen = DRAMDatenBereit;
+assign CPUDatenGespeichert = DRAMDatenGeschrieben;
 
 //Inputs Zuweisung InstruktionsRAM
 assign RAMLesenAn = CPULeseInstruktion;
@@ -138,10 +138,10 @@ assign RAMDatenRein = 32'b0;
 assign RAMAdresse = CPUInstruktionAdresse[7:0];
 
 //Inputs Zuweisung DatenRAM
-assign DRAMLesenAn = CPUDatenAdresse[31] == 0 ? CPULeseDaten : 0;
-assign DRAMSchreibenAn = CPUDatenAdresse[31] == 0 ? CPUSchreibeDaten : 0;
+assign DRAMLesenAn = CPULeseDaten;
+assign DRAMSchreibenAn = CPUSchreibeDaten;
 assign DRAMDatenRein = CPUDatenRaus;
-assign DRAMAdresse = CPUDatenAdresse;
+assign DRAMAdresse = CPUDatenAdresse[7:0];
 
 reg[10:0] resetTimer = 10'b100;
 always @(posedge Clock) begin

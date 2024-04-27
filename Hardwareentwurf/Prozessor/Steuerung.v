@@ -125,10 +125,10 @@ module Steuerung (
     //sequential portion
 
     always @(posedge Clock) begin
-        if (Reset)
+        current_state <= next_state;
+        if (Reset) begin
             current_state <= FETCH;
-        else
-            current_state <= next_state;
+        end
     end
 
 endmodule

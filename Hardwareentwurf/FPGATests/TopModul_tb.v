@@ -28,8 +28,7 @@ module main_tb
   $dumpvars(0, main_tb);
     //for (idx = 0; idx < 256; idx = idx + 1) $dumpvars(0, main.InstruktionRAM.Daten[idx]);
     //for (idx = 0; idx < 256; idx = idx + 1) $dumpvars(0, main.DatenRAM.Daten[idx]);
-    for (idx = 0; idx < 64;  idx = idx + 1) $dumpvars(0, main.CPU.Register.registers[idx]);
-
+    //for (idx = 0; idx < 64;  idx = idx + 1) $dumpvars(0, main.CPU.Register.registers[idx][31:0]);
     clk_25mhz = 0;
 
 

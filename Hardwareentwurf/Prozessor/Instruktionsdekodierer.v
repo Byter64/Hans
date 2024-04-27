@@ -43,7 +43,7 @@ wire[3:0] GleitkommaBefehl;
 //Zuweisungen
 assign Opcode = AktuellerBefehl[31:26];
 assign Format = AktuellerBefehl[31:30];
-assign Kategorie = AktuellerBefehl[5:0];
+assign Kategorie = AktuellerBefehl[5:4];
 assign ZRegister = AktuellerBefehl[25:21];
 assign Q1Register = AktuellerBefehl[20:16];
 assign Q2Register = AktuellerBefehl[15:11];

@@ -292,7 +292,6 @@ always @(posedge Clock) begin
         endcase
     end
     if(Reset) begin
-        Radikand <= 0;
         TakteBisFertig <= 0;
     end
 end
