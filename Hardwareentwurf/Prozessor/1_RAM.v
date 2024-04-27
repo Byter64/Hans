@@ -1,28 +1,42 @@
+
 module RAM#(
     parameter WORDSIZE = 32,
-    parameter WORDS = 256
+    parameter WORDS = 32
 )
 (
+    input LesenAn,
     input SchreibenAn,
     input[WORDSIZE - 1:0] DatenRein,
     input[$clog2(WORDS) - 1:0] Adresse,
     input Clock,
-    output reg[WORDSIZE - 1:0] DatenRaus
-);
 
+    output reg[WORDSIZE - 1:0] DatenRaus,
+    output reg DatenBereit = 0,
+    output reg DatenGeschrieben = 0
+);
+initial begin
+$readmemh("program.txt",Daten);
+end
 reg[WORDSIZE - 1:0] Daten[WORDS - 1:0];
 
-initial begin
-    Daten[0] <= 32'h8020FFFF; //Addi R1, R0, -1
-    Daten[1] <= 32'hE8200000; //Store R1, R0, 0
-    Daten[2] <= 32'h43FFFFFF; //Jmp (dead lock)
+always @(posedge Clock) begin
+    
+    if (LesenAn) begin
+        DatenRaus <= Daten[Adresse];
+        DatenBereit <= 1;
+    end
+    else if(DatenBereit) begin
+        DatenBereit <= 0;
+    end
 end
 
 always @(posedge Clock) begin
-    if(SchreibenAn)
+    if(SchreibenAn) begin
         Daten[Adresse] <= DatenRein;
-    else
-        DatenRaus <= Daten[Adresse];
+        DatenGeschrieben <= 1;
+    end
+    else if(DatenGeschrieben) begin
+        DatenGeschrieben <= 0;
+    end
 end
-
 endmodule

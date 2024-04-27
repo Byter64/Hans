@@ -22,17 +22,23 @@ module Steuerung (
     output PCSprungSignal
 );
 
-    localparam FETCH = 3'b000;
-    localparam DECODE = 3'b001;
-    localparam ALU1 = 3'b010;
-    localparam ALU = 3'b011;
-    localparam WRITEBACK_JUMP = 3'b100;
-    localparam WRITEBACK_STORE = 3'b101;
-    localparam WRITEBACK_LOAD = 3'b110;
-    localparam WRITEBACK_DEFAULT = 3'b111;
+    localparam FETCH = 4'b000;
 
-    reg [2:0] current_state = FETCH;
-    reg [2:0] next_state = FETCH;
+    localparam DECODE = 4'b001;
+
+    localparam ALU1 = 4'b010;
+    localparam ALU = 4'b011;
+
+    localparam WRITEBACK_JUMP = 4'b100;
+    localparam WRITEBACK_STORE = 4'b101;
+    localparam WRITEBACK_LOAD = 4'b110;
+    localparam WRITEBACK_DEFAULT = 4'b111;
+    
+    localparam WRITEBACK_STORE2 = 4'b1000;
+    localparam WRITEBACK_LOAD2 = 4'b1001;
+
+    reg [3:0] current_state;
+    reg [3:0] next_state;
 
     //combinational portion
     
@@ -80,13 +86,25 @@ module Steuerung (
                 if (DatenGespeichert)
                     next_state <= FETCH;
                 else
-                    next_state <= WRITEBACK_STORE;
+                    next_state <= WRITEBACK_STORE2;
+            end
+            WRITEBACK_STORE2: begin
+                if (DatenGespeichert)
+                    next_state <= FETCH;
+                else
+                    next_state <= WRITEBACK_STORE2;
             end
             WRITEBACK_LOAD: begin
                 if (DatenGeladen)
-                    next_state <= WRITEBACK_DEFAULT;
+                    next_state <= FETCH;
                 else
-                    next_state <= WRITEBACK_LOAD;
+                    next_state <= WRITEBACK_LOAD2;
+            end
+            WRITEBACK_LOAD2: begin
+                if (DatenGeladen)
+                    next_state <= FETCH;
+                else
+                    next_state <= WRITEBACK_LOAD2;
             end
             WRITEBACK_DEFAULT:
                 next_state <= FETCH;
@@ -95,23 +113,22 @@ module Steuerung (
         endcase
     end
     
-    assign LoadBefehlSignal = current_state == FETCH;
-    assign DekodierSignal = current_state == DECODE;
-    assign ALUStartSignal = current_state == ALU1;
-    assign RegisterSchreibSignal = ((current_state == ALU || current_state == ALU1) && JALBefehl) || current_state == WRITEBACK_DEFAULT;
-    assign PCSignal = current_state > ALU;
-    assign StoreDatenSignal = current_state == WRITEBACK_STORE;
-    assign LoadDatenSignal = current_state == WRITEBACK_LOAD;
-
-    assign PCSprungSignal = UnbedingterSprungBefehl || (BedingterSprungBefehl && Bedingung);
+    assign LoadBefehlSignal         = current_state == FETCH;
+    assign DekodierSignal           = current_state == DECODE;
+    assign ALUStartSignal           = current_state == ALU1;
+    assign RegisterSchreibSignal    = (current_state == ALU1 && JALBefehl) || current_state == WRITEBACK_DEFAULT;
+    assign PCSignal                 = current_state > ALU && current_state < WRITEBACK_STORE2; //In einen Writeback Zuständen //Darf nur 1 Takt oben sein
+    assign StoreDatenSignal         = current_state == WRITEBACK_STORE || current_state == WRITEBACK_STORE2;
+    assign LoadDatenSignal          = current_state == WRITEBACK_LOAD  || current_state == WRITEBACK_LOAD2;
+    assign PCSprungSignal           = UnbedingterSprungBefehl || (BedingterSprungBefehl && Bedingung);
 
     //sequential portion
 
     always @(posedge Clock) begin
-        if (Reset)
+        current_state <= next_state;
+        if (Reset) begin
             current_state <= FETCH;
-        else
-            current_state <= next_state;
+        end
     end
 
 endmodule

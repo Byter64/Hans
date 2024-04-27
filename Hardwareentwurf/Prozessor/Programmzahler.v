@@ -2,23 +2,25 @@ module Programmzahler (
     input [25:0] NeuerPC,
     input SchreibSignal,
     input TaktSignal,
-    input Clock,
     input Reset,
+    input Clock,
 
-    output reg [25:0] AktuellerPC = 0
+    output reg [25:0] AktuellerPC
 );
 
+reg[25:0] programmzahler;
+
 always @(posedge Clock) begin
-    if(Reset)
-        AktuellerPC <= 26'b0;
-    else begin
-        if(TaktSignal) begin 
-            if(SchreibSignal)
-                AktuellerPC <= NeuerPC + 1'b1;
-            else
-                AktuellerPC <= AktuellerPC + 1'b1;
+    if(TaktSignal)begin
+        if(SchreibSignal) begin
+            AktuellerPC <= NeuerPC + 1'b1;
+        end else begin
+            AktuellerPC <= AktuellerPC + 1'b1;
         end
     end
+    if(Reset) begin
+        AktuellerPC <= 25'b0;
+    end 
 end
 
 endmodule
