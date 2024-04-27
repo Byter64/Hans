@@ -16,7 +16,8 @@ module main_tb
 ;
  
  // Simulation time: 100ns (10 * 10ns)
- parameter DURATION = 10;
+localparam HalfCycle = 5;
+localparam Cycle = 2*HalfCycle;
  
  // Input/Output
  reg [31:0] ALUErgebnis;
@@ -46,24 +47,18 @@ module main_tb
   AktuellerPC = 26'b00011001001100001110010110;
   LoadErgebnis = 32'b00010010000100010000010110001001;
   $display("Start of simulation");
-  #100 JALBefehl = 0; LoadBefehl = 0;
-  #100   
-  if(ZielDaten != ALUErgebnis) begin
-    $display("ZielDaten: %d \n ALUErgebnis: ", ZielDaten, ALUErgebnis);
-  end
-  #100 
+  #(Cycle) JALBefehl = 0; LoadBefehl = 0;
+  #(Cycle)   
+  `assert(ZielDaten == ALUErgebnis,1);
+  #(Cycle) 
   JALBefehl = 0; LoadBefehl = 1;
-  #100 
-  if(ZielDaten != LoadErgebnis) begin
-    $display("ZielDaten: %d \n LoadErgebnis: ", ZielDaten, LoadErgebnis);
-  end
-  #100 
+  #(Cycle) 
+  `assert(ZielDaten == LoadErgebnis,1);
+  #(Cycle) 
   JALBefehl = 1; LoadBefehl = 0;
-  #100 
-  if(ZielDaten != 32'b00000000011001001100001110010110) begin
-    $display("ZielDaten: %d \n Ergebnis: 00000000011001001100001110010110", ZielDaten);
-  end
-  #(DURATION) $display("End of simulation");
+  #(Cycle) 
+  `assert(ZielDaten == 32'b00000000011001001100001110010110,1);
+  #(Cycle) $display("End of simulation");
   $finish;
  end
  

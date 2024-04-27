@@ -29,7 +29,8 @@ module main_tb
  wire [31:0] QuellDaten2;
  
 reg clock;
-
+localparam Halfcycle = 5;
+localparam Cycle = 2*Halfcycle;
 
  // Module instance
  Register MAIN (
@@ -50,7 +51,7 @@ initial begin
 end
 
 always begin
-   #1000 clock = ~clock; 
+   #(Halfcycle) clock = ~clock; 
 end
 
  initial begin
@@ -67,20 +68,20 @@ end
 
   //Reset testen
   Reset = 1'b1;
-  #200
+  #(Halfcycle)
   Reset = 1'b0;
-  #1700
+  #(Halfcycle)
 
   //Speicher Daten in Int-register
   ZielReg = 6'b000100;
   ZielDaten = 32'b10101010101010101010101010101010;
   Schreibsignal = 1'b1;
-  #2000
+  #(Cycle)
   Schreibsignal = 1'b0;
 
   //Lese Daten aus Int-register
   QuellReg1 = 6'b000100;
-  #2000
+  #(Cycle)
   if(QuellDaten1 != 32'b10101010101010101010101010101010)
     $display("Deine Mamer ist fett. Und die gespeicherten Daten über QuellReg1 sind falsch ausgegeben. \n In R4 wurde 2863311530 gespeichert. \n Aus R4 wurd %d ausgegeben", QuellDaten1);
   
@@ -88,18 +89,18 @@ end
   ZielReg = 6'b101100;
   ZielDaten = 32'b10101010101010101010101010101010;
   Schreibsignal = 1'b1;
-  #2000
+  #(Cycle)
   Schreibsignal = 1'b0;
 
   //Lese Daten aus Float-register
   QuellReg2 = 6'b101100;
-  #2000
+  #(Cycle)
   if(QuellDaten2 != 32'b10101010101010101010101010101010)
     $display("Deine Mamer ist fett. Und die gespeicherten Daten über QuellReg2 sind falsch ausgegeben. \n In R44 wurde 2863311530 gespeichert. \n Aus R44 wurd %d ausgegeben", QuellDaten2);
   
   //Lese 0 aus R0
   QuellReg2 = 6'b000000;
-  #2000
+  #(Cycle)
   if(QuellDaten2 != 32'b00000000000000000000000000000000)
     $display("Deine Mamer ist fett... Und das Nullregister funktiontiert nicht. \n Aus R0 wurd %d ausgegeben anstatt 00000000000000000000000000000000", QuellDaten2);
 
@@ -107,12 +108,12 @@ end
   ZielReg = 6'b000000;
   ZielDaten = 32'b10101010101010101010101010101010;
   Schreibsignal = 1'b1;
-  #2000
+  #(Cycle)
   Schreibsignal = 1'b0;
 
   //0 Lesen aus R0
   QuellReg2 = 6'b000000;
-  #2000
+  #(Cycle)
   if(QuellDaten2 != 32'b00000000000000000000000000000000)
     $display("Deine Mamer ist fett... Und das Nullregister seinen Wert nach Beschreibung verändert. \n Aus R0 wurd %d ausgegeben anstatt 00000000000000000000000000000000", QuellDaten2);
 

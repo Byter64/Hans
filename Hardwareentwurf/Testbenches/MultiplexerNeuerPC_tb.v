@@ -16,7 +16,8 @@ module main_tb
 ;
  
  // Simulation time: 100ns (10 * 10ns)
- parameter DURATION = 10;
+localparam Halfcycle = 5;
+localparam Cycle = 2 * Halfcycle;
  
  // Input/Output
  reg [31:0] RelativerPC;
@@ -38,17 +39,13 @@ module main_tb
   AbsoluterPC = 32'b00100001100100100110001101110010;
   IstAbsolut = 0;
   $display("Start of simulation");
-  #100 
-  if(NeuerPC != RelativerPC[25:0])
-    $display("Der relative PC wurde nicht richtig übernommen.\n Relativer PC: %d \n NeuerPC: ", RelativerPC[25:0], NeuerPC);
-
-  #100
+  #(Cycle) 
+  `assert(NeuerPC == RelativerPC[25:0],1);
+  #(Cycle)
   IstAbsolut = 1;
 
-  #100
-  if(NeuerPC != AbsoluterPC[25:0])
-    $display("Der absolute PC wurde nicht richtig übernommen.\n Absoluter PC: %d \n NeuerPC: ", AbsoluterPC[25:0], NeuerPC);
-
+  #(Cycle)
+  `assert(NeuerPC == AbsoluterPC[25:0],1);
   $display("End of simulation");
   $finish;
  end

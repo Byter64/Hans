@@ -15,7 +15,8 @@ module main_tb
 ;
  
  // Simulation time: 100ns (10 * 10ns)
- parameter DURATION = 10;
+localparam Halfcycle = 5;
+localparam Cycle = 2* Halfcycle;
  
 // Input/Output
  reg [31:0] Instruktion;
@@ -122,7 +123,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
  );
  
  
- always #1000 Clock = ~Clock;
+ always #(Halfcycle) Clock = ~Clock;
  initial begin
   $dumpvars(0, main_tb);
   
@@ -132,14 +133,14 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
 
     //Clock
     Clock = 0;
-    #1000
+    #(Halfcycle)
     DekodierSignal = 1'b1;
     Instruktion = 32'b0;
     Reset = 1'b1;
-    #2000
+    #(Cycle)
     Reset = 1'b0;
     Instruktion = ADD;
-    #2000
+    #(Cycle)
     $display("ADD");
     `assert(QuellReg1, iq3);
     `assert(QuellReg2, iq1);
@@ -157,7 +158,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(Sprungbedingung, 1'b0);
 
     Instruktion = MUL;
-    #2000
+    #(Cycle)
     $display("MUL");
     `assert(QuellReg1, iq2);
     `assert(QuellReg2, iq3);
@@ -175,7 +176,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(Sprungbedingung, 0);
 
     Instruktion = CGE;
-    #2000
+    #(Cycle)
     $display("CGE");
     `assert(QuellReg1, iq2);
     `assert(QuellReg2, iq1);
@@ -193,7 +194,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(Sprungbedingung, 0);
 
     Instruktion = MULS;
-    #2000
+    #(Cycle)
     $display("MULS");
     `assert(QuellReg1, sq4);
     `assert(QuellReg2, sq2);
@@ -211,7 +212,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(Sprungbedingung, 0);
 
     Instruktion = CGES;
-    #2000
+    #(Cycle)
     $display("CGES");
     `assert(QuellReg1, sq1);
     `assert(QuellReg2, sq2);
@@ -229,7 +230,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(Sprungbedingung, 0);
 
     Instruktion = MULI;
-    #2000
+    #(Cycle)
     $display("MULI");
     `assert(QuellReg1, iq1);
     `assert(QuellReg2, 0);
@@ -247,7 +248,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(Sprungbedingung, 0);
 
     Instruktion = SLLI;
-    #2000
+    #(Cycle)
     $display("SLLI");
     `assert(QuellReg1, iq4);
     `assert(QuellReg2, 0);
@@ -265,7 +266,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(Sprungbedingung, 0);
 
     Instruktion = LOAD;
-    #2000
+    #(Cycle)
     $display("LOAD");
     `assert(QuellReg1, iq1);
     `assert(QuellReg2, 0);
@@ -283,7 +284,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(Sprungbedingung, 0);
 
     Instruktion = LOADS;
-    #2000
+    #(Cycle)
     $display("LOADS");
     `assert(QuellReg1, iq2);
     `assert(QuellReg2, 0);
@@ -301,7 +302,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(Sprungbedingung, 0);
 
     Instruktion = STORE;
-    #2000
+    #(Cycle)
     $display("STORE");
     `assert(QuellReg1, iq3);
     `assert(QuellReg2, iq2);
@@ -319,7 +320,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(Sprungbedingung, 0);
 
     Instruktion = STORES;
-    #2000
+    #(Cycle)
     $display("STORES");
     `assert(QuellReg1, iq4);
     `assert(QuellReg2, sq3);
@@ -337,7 +338,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(Sprungbedingung, 0);
 
     Instruktion = JREG;
-    #2000
+    #(Cycle)
     $display("JREG");
     `assert(QuellReg1, iq1);
     `assert(QuellReg2, 0); //egal
@@ -355,7 +356,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(Sprungbedingung, 0);
 
     Instruktion = BEZ;
-    #2000
+    #(Cycle)
     $display("BEZ");
     `assert(QuellReg1, iq2);
     `assert(QuellReg2, 0); //egal
@@ -373,7 +374,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(Sprungbedingung, 1);
 
     Instruktion = BNEZ;
-    #2000
+    #(Cycle)
     $display("BNEZ");
     `assert(QuellReg1, iq3);
     `assert(QuellReg2, 0); //egal
@@ -391,7 +392,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(Sprungbedingung, 0);
 
     Instruktion = JAL;
-    #2000
+    #(Cycle)
     $display("JAL");
     `assert(QuellReg1, iq4); //egal
     `assert(QuellReg2, 0); //egal
@@ -409,7 +410,7 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(Sprungbedingung, 0);
 
     Instruktion = JMP;
-    #2000
+    #(Cycle)
     $display("JMP");
     `assert(QuellReg1, 0); //egal
     `assert(QuellReg2, 0); //egal
@@ -425,19 +426,28 @@ reg[31:0] JMP =     {JmpCode,ImmediateGross20};
     `assert(BedingterSprung, 0);
     `assert(AbsoluterSprung, 0);
     `assert(Sprungbedingung, 0);
-      
-   #1000
-
-
-    #(DURATION) $display("End of simulation");
+    DekodierSignal = 0;
+    Instruktion = JAL;
+    #(Cycle)
+    $display("JAL ohne Dekodiersignal -> JMP");
+    `assert(QuellReg1, 0); //egal
+    `assert(QuellReg2, 0); //egal
+    `assert(ZielReg1, 0);  //egal
+    `assert(IDaten, {6'b0,ImmediateGross20});
+    `assert(ImmediateAktiv, 1);
+    `assert(FunktionsCode, 0);
+    `assert(JALBefehl, 0);
+    `assert(RelativerSprung, 1);
+    `assert(LoadBefehl, 0);
+    `assert(StoreBefehl, 0);
+    `assert(UnbedingterSprungBefehl, 1);
+    `assert(BedingterSprung, 0);
+    `assert(AbsoluterSprung, 0);
+    `assert(Sprungbedingung, 0);
+   #(Halfcycle)
+  $display("End of simulation");
   $finish;
  end
- initial
-  begin
-    #10
-    forever
-      #1000 DekodierSignal = !DekodierSignal;
-  end
 
 endmodule
 

@@ -16,7 +16,8 @@ module main_tb
 ;
  
  // Simulation time: 100ns (10 * 10ns)
- parameter DURATION = 10;
+localparam Halfcycle = 5;
+localparam Cycle = 2 * Halfcycle;
  
  // Input/Output
  reg [25:0] AktuellerPC;
@@ -42,19 +43,17 @@ module main_tb
   AktuellerPC = 26'b00011001001100001110010110;
   QuellDaten1 = 32'b00010010000000110000010000001100;
   $display("Start of simulation");
-  #100
+  #(Cycle)
   RelativerSprungBefehl = 0;
-  #100 
-  if(Daten1 != QuellDaten1)
-    $display("Wert in Daten1 ist ungleich QuellDaten1: \n Daten1: %d \n RegisterDaten1: %d", Daten1, QuellDaten1);
+  #(Cycle) 
+  `assert(Daten1 == QuellDaten1,1);
 
-  #100 
+  #(Cycle) 
   RelativerSprungBefehl = 1;
-  #100 
-  if(Daten1 != 32'b00000000011001001100001110010110)
-    $display("Wert in Daten1 ist ungleich 00000000011001001100001110010110: \n Daten1: %d", Daten1);
+  #(Cycle) 
+  `assert(Daten1 == 32'b00000000011001001100001110010110,1);
 
-  #(DURATION) $display("End of simulation");
+  #(Cycle) $display("End of simulation");
   $finish;
  end
  

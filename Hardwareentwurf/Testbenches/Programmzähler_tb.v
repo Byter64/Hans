@@ -15,8 +15,9 @@
 module main_tb
 ;
  
- // Simulation time: 100ns (10 * 10ns)
- parameter DURATION = 10;
+ // Simulation time: 
+ localparam Halfcycle = 5;
+ localparam Cycle = 2*Halfcycle;
  
  // Input/Output
  reg Schreibsignal;
@@ -35,7 +36,7 @@ module main_tb
   .Reset(reset)
  );
  
- always #1000 clock = ~clock;
+ always #(Halfcycle) clock = ~clock;
 
  initial begin
   $dumpvars(0, main_tb);
@@ -46,20 +47,20 @@ module main_tb
   Schreibsignal = 1'b0; NeuerPC_ = 26'b0;
   clock = 1'b0;
   $display("Start of simulation");
-  #900
+  #(Cycle)
   Schreibsignal = 1'b1; NeuerPC_ = 26'b01110;
-  #200
+  #(Cycle)
   assertSignal(AktuellerPC_, 26'b01110);
-  #800
+  #(Cycle)
   Schreibsignal = 1'b0; NeuerPC_ = 26'b01000100000111;
-  #200
+  #(Cycle)
   assertSignal(AktuellerPC_, 26'b01111);
-  #800
+  #(Cycle)
   Schreibsignal = 1'b1; NeuerPC_ = 26'b11111111111111111111111110;
-  #200
+  #(Cycle)
   assertSignal(AktuellerPC_, 26'b11111111111111111111111110);
 
-  #(DURATION) $display("End of simulation");
+  #(Cycle) $display("End of simulation");
   $finish;
  end
  

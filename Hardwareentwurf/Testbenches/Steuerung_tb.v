@@ -11,8 +11,8 @@ module main_tb
 ;
  
  // Simulation time: 100ns (10 * 10ns)
- parameter CLOCKSTEP = 5;
- parameter TIMESTEP = CLOCKSTEP * 2;
+ parameter Halfcycle = 5;
+ parameter Cycle = Halfcycle * 2;
  parameter DECODETIME = 2;
  parameter REGISTERWRITETIME = 1;
  parameter PCWRITETIME = 1;
@@ -67,7 +67,7 @@ module main_tb
  );
  
  always begin
-    #(CLOCKSTEP)
+    #(Halfcycle)
     Clock = ~Clock;
  end
 
@@ -82,8 +82,8 @@ module main_tb
   Clock = 1;
   #1
   Reset = 1;
-  #(TIMESTEP)
-  #(TIMESTEP)
+  #(Cycle)
+  #(Cycle)
   Reset <= 0;
   BefehlGeladen <= 1;
   //Testfall 1: Fetch Zyklus
@@ -97,7 +97,7 @@ module main_tb
   assert(PCSprungSignal, 0, `__LINE__);
 
   // Testfall 2: Decode-Zyklus
-  #(TIMESTEP)
+  #(Cycle)
   BefehlGeladen <= 0;
   assert(LoadBefehlSignal, 0, `__LINE__);
   assert(DekodierSignal, 1, `__LINE__);
@@ -109,7 +109,7 @@ module main_tb
   assert(PCSprungSignal, 0, `__LINE__);
 
   // Testfall 3: ALU-Zyklus
-  #(TIMESTEP)
+  #(Cycle)
   assert(LoadBefehlSignal, 0, `__LINE__);
   assert(DekodierSignal, 0, `__LINE__);
   assert(ALUStartSignal, 1, `__LINE__);
@@ -120,7 +120,7 @@ module main_tb
   assert(PCSprungSignal, 0, `__LINE__);
 
     // Testfall 4: ALU-Zyklus Test 2
-  #(TIMESTEP)
+  #(Cycle)
   assert(LoadBefehlSignal, 0, `__LINE__);
   assert(DekodierSignal, 0, `__LINE__);
   assert(ALUStartSignal, 0, `__LINE__);
@@ -131,7 +131,7 @@ module main_tb
   assert(PCSprungSignal, 0, `__LINE__);
   ALUFertig <= 1;
     // Testfall 5: WRITEBACK
-  #(TIMESTEP)
+  #(Cycle)
   ALUFertig <= 0;
   assert(LoadBefehlSignal, 0, `__LINE__);
   assert(DekodierSignal, 0, `__LINE__);
@@ -143,19 +143,19 @@ module main_tb
   assert(PCSprungSignal, 0, `__LINE__);
   
     // Testfall 1: FETCH
-  #(TIMESTEP)
+  #(Cycle)
   BefehlGeladen <=  1;
   //DECODE
-  #(TIMESTEP)
+  #(Cycle)
   BefehlGeladen <= 0;
   ALUFertig <= 1;
   //ALU
-  #(TIMESTEP)
+  #(Cycle)
 
   BedingterSprungBefehl <= 1;
   Bedingung <= 1;
   //Writeback Jump
-  #(TIMESTEP)
+  #(Cycle)
   assert(LoadBefehlSignal, 0, `__LINE__);
   assert(DekodierSignal, 0, `__LINE__);
   assert(ALUStartSignal, 0, `__LINE__);
@@ -168,18 +168,18 @@ module main_tb
   BedingterSprungBefehl <= 0;
 
   // Testfall 2: FETCH
-  #(TIMESTEP)
+  #(Cycle)
   BefehlGeladen <=  1;
   //DECODE
-  #(TIMESTEP)
+  #(Cycle)
   ALUFertig <= 1;
   BefehlGeladen <= 0;
   //ALU
-  #(TIMESTEP)
+  #(Cycle)
   ALUFertig <= 1;
   UnbedingterSprungBefehl <= 1;
   //Writeback Jump
-  #(TIMESTEP)
+  #(Cycle)
   assert(LoadBefehlSignal, 0, `__LINE__);
   assert(DekodierSignal, 0, `__LINE__);
   assert(ALUStartSignal, 0, `__LINE__);
@@ -192,18 +192,18 @@ module main_tb
   UnbedingterSprungBefehl <= 0;
 
     // Testfall 3: FETCH
-  #(TIMESTEP)
+  #(Cycle)
   BefehlGeladen <=  1;
   //DECODE
-  #(TIMESTEP)
+  #(Cycle)
   ALUFertig <= 1;
   BefehlGeladen <= 0;
   //ALU
-  #(TIMESTEP)
+  #(Cycle)
   ALUFertig <= 1;
   StoreBefehl <= 1;
   //Writeback Store
-  #(TIMESTEP)
+  #(Cycle)
   assert(LoadBefehlSignal, 0, `__LINE__);
   assert(DekodierSignal, 0, `__LINE__);
   assert(ALUStartSignal, 0, `__LINE__);
@@ -217,19 +217,19 @@ module main_tb
   StoreBefehl <= 0;
 
     // Testfall 4: FETCH
-  #(TIMESTEP)
+  #(Cycle)
   DatenGespeichert <= 0;
   BefehlGeladen <=  1;
   //DECODE
-  #(TIMESTEP)
+  #(Cycle)
   ALUFertig <= 1;
   BefehlGeladen <= 0;
   //ALU
-  #(TIMESTEP)
+  #(Cycle)
   ALUFertig <= 1;
   LoadBefehl <= 1;
   //Writeback Load
-  #(TIMESTEP)
+  #(Cycle)
   assert(LoadBefehlSignal, 0, `__LINE__);
   assert(DekodierSignal, 0, `__LINE__);
   assert(ALUStartSignal, 0, `__LINE__);
@@ -244,7 +244,7 @@ module main_tb
 
 
 
-  #(TIMESTEP) $display("End of simulation");
+  #(Cycle) $display("End of simulation");
   $finish;
  end
  

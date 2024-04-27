@@ -51,7 +51,8 @@ localparam FloatKleiner =         6'b101011;
 localparam FloatZuInt =           6'b101110;
 localparam FloatZuUnsignedInt =   6'b101111;
  // Simulation time: 100ns (10 * 10ns)
- parameter DURATION = 10;
+localparam Halfcycle = 5;
+localparam Cycle = 2 * Halfcycle;
  
  // Input/Output
 reg[31:0] Daten1;
@@ -81,7 +82,7 @@ initial begin
 end
 
 always begin
-   #100 Clock = ~Clock; 
+   #(Halfcycle) Clock = ~Clock; 
 end
  
 
@@ -90,17 +91,17 @@ initial begin
  
     //Alles zurücksetzen
     Reset = 1;
-    #150
+    #(Halfcycle)
     Reset = 0;
-
+    #(Halfcycle)
     //Add-Befehl testen
     Daten1 = 32'd705;
     Daten2 = 32'd123;
     FunktionsCode = IntAddition;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'd828)
         $display("Addieren funktioniert nicht: \n Summand1: %d \n Summand2: %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b10000000010000001111111111111111);
     
@@ -109,9 +110,9 @@ initial begin
     Daten2 = 32'd11;
     FunktionsCode = IntSubtraktion;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'd9000)
         $display("Subtrahieren funktioniert nicht: \n Minuend:    %d \n Subtrahent: %d \n Ergebnis:   %d \n Erwartet:   %d\n", Daten1, Daten2, Ergebnis, 32'b00101010011010011010101010101011);
 
@@ -120,9 +121,9 @@ initial begin
     Daten2 = 32'd213;
     FunktionsCode = IntMultiplikation;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'd19625181)
         $display("Multiplizieren funktioniert nicht: \n Faktor1:  %d \n Faktor2:  %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00111000111000101001110001110010);
     
@@ -131,31 +132,31 @@ initial begin
     Daten2 = 32'b00000000000000000010101010101010;
     FunktionsCode = IntDivision;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != $signed(-32'sd98157))
         $display("Dividieren funktioniert nicht: \n Divisor:  %d \n Dividend: %d \n Ergebnis: %d \n Erwartet: %d\n", $signed(Daten1), $signed(Daten2), $signed(Ergebnis), $signed(-32'sd98158));
-    #200
+    #(Cycle)
     //Mod-Befehl testen
     Daten1 = 32'b01000000000110010101010101010101;
     Daten2 = 32'b00000000000000000010101010101010;
     FunktionsCode = IntModulo;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'd105)
         $display("Modulo funktioniert nicht: \n Divisor:  %d \n Dividend: %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'd105);
-    #200
+    #(Cycle)
 
     //Sqrt-Befehl testen
     Daten1 = 32'b01000000000110010101010101010101;
     FunktionsCode = IntQuadratwurzel;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b00000000000000001000000000011001)
         $display("Quadratwurzel funktioniert nicht: \n Radikand: %d Ergebnis: %d \n Erwartet: %d\n", Daten1, Ergebnis, 32'b00000000000000001101110111000010);
     
@@ -164,9 +165,9 @@ initial begin
     Daten2 = 32'd7;
     FunktionsCode = LinksSchiebenArithm;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b00001100101010101010101010000000)
         $display("Links schieben funktioniert nicht: \n Zahl:    %b \n Stellen:  %b \n Ergebnis: %b \n Erwartet: %b\n", Daten1, Daten2, Ergebnis, 32'b00001100101010101010101010000000);
     
@@ -175,9 +176,9 @@ initial begin
     Daten2 = 32'd7;
     FunktionsCode = RechtsSchiebenArithm;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b11111111100100000011001010101010)
         $display("Rechts schieben funktioniert nicht: \n Zahl:    %b \n Stellen:  %b \n Ergebnis: %b \n Erwartet: %b\n", Daten1, Daten2, Ergebnis, 32'b00000001100100000011001010101010);
   
@@ -186,9 +187,9 @@ initial begin
     Daten2 = 32'b00000000000000000000000000000111;
     FunktionsCode = Gleichheit;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b00000000000000000000000000000000)
         $display("Gleichheit funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
     
@@ -196,9 +197,9 @@ initial begin
     Daten2 = 32'b11001000000110010101010101010101;
     FunktionsCode = Gleichheit;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b00000000000000000000000000000001)
         $display("Gleichheit funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
     
@@ -208,9 +209,9 @@ initial begin
     Daten2 = 32'b00000000000000000000000000000111;
     FunktionsCode = Ungleichheit;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b00000000000000000000000000000001)
         $display("Ungleichheit funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
     
@@ -218,9 +219,9 @@ initial begin
     Daten2 = 32'b11001000000110010101010101010101;
     FunktionsCode = Ungleichheit;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b00000000000000000000000000000000)
         $display("Ungleichheit funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
     
@@ -230,9 +231,9 @@ initial begin
     Daten2 = 32'b00000000000000000000000000000111;
     FunktionsCode = Groesser;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b00000000000000000000000000000001)
         $display("Größer funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
     
@@ -240,9 +241,9 @@ initial begin
     Daten2 = 32'b01001000000110010101010101010101;
     FunktionsCode = Groesser;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b00000000000000000000000000000000)
         $display("Größer funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
     
@@ -251,9 +252,9 @@ initial begin
     Daten2 = 32'b11001000000110010101010101010101;
     FunktionsCode = Groesser;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b00000000000000000000000000000000)
         $display("Größer funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
        
@@ -263,9 +264,9 @@ initial begin
     Daten2 = 32'b00000000000000000000000000000111;
     FunktionsCode = Kleiner;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b00000000000000000000000000000000)
         $display("Kleiner funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
     
@@ -273,9 +274,9 @@ initial begin
     Daten2 = 32'b01001000000110010101010101010101;
     FunktionsCode = Kleiner;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b00000000000000000000000000000001)
         $display("Kleiner funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000001);
     
@@ -284,9 +285,9 @@ initial begin
     Daten2 = 32'b11001000000110010101010101010101;
     FunktionsCode = Kleiner;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b00000000000000000000000000000000)
         $display("Kleiner funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00000000000000000000000000000000);
      
@@ -295,18 +296,18 @@ initial begin
     Daten1 = 32'b01001000000110010101010101010101;
     FunktionsCode = Verneinung;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b10110111111001101010101010101010)
         $display("Not funktioniert nicht: \n Zahl1:   %b \n Zahl2:   %b \n Ergebnis: %b \n Erwartet: %b\n", Daten1, Daten2, Ergebnis, 32'b10110111111001101010101010101010);
     
     Daten1 = 32'b11111100000000000000000000000111;
     FunktionsCode = Verneinung;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b00000011111111111111111111111000)
         $display("Not funktioniert nicht: \n Zahl1:   %b \n Zahl2:   %b \n Ergebnis: %b \n Erwartet: %b\n", Daten1, Daten2, Ergebnis, 32'b00000111111111111111111111111000);
     
@@ -316,18 +317,18 @@ initial begin
     Daten2 = 32'b01101010100110010101010101010101;
     FunktionsCode = Und;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b01001000000110010101010101010101)
         $display("And funktioniert nicht: \n Zahl1:   %b \n Zahl2:   %b \n Ergebnis: %b \n Erwartet: %b\n", Daten1, Daten2, Ergebnis, 32'b01001000000110010101010101010101);
     
     Daten1 = 32'b01101010100110010101010101010101;
     FunktionsCode = Und;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b01101010100110010101010101010101)
         $display("And funktioniert nicht: \n Zahl1:   %b \n Zahl2:   %b \n Ergebnis: %b \n Erwartet: %b\n", Daten1, Daten2, Ergebnis, 32'b01101010100110010101010101010101);
     
@@ -337,18 +338,18 @@ initial begin
     Daten2 = 32'b01101010100110010101010101010101;
     FunktionsCode = Oder;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b01101010111110010101010101010101)
         $display("Or funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b01101010111110010101010101010101);
     
     Daten1 = 32'b11111111111111111111111111111111;
     FunktionsCode = Oder;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b11111111111111111111111111111111)
         $display("Or funktioniert nicht: \n Zahl1:   %b \n Zahl2:   %b \n Ergebnis: %b \n Erwartet: %b\n", Daten1, Daten2, Ergebnis, 32'b11111111111111111111111111111111);
     
@@ -358,18 +359,18 @@ initial begin
     Daten2 = 32'b01101010100110010101010101010101;
     FunktionsCode = Ungleich;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b00100010111000000000000000000000)
         $display("Xor funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b00100010111000000000000000000000);
     
     Daten1 = 32'b00000000000000000000000000000000;
     FunktionsCode = Ungleich;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b01101010100110010101010101010101)
         $display("Xor funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b01101010100110010101010101010101);
     
@@ -379,18 +380,18 @@ initial begin
     Daten2 = 32'b01101010100110010101010101010101;
     FunktionsCode = Gleich;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b11011101000111111111111111111111)
         $display("Xnor funktioniert nicht: \n Zahl1:   %b \n Zahl2:   %b \n Ergebnis: %b \n Erwartet: %b\n", Daten1, Daten2, Ergebnis, 32'b11011101000111111111111111111111);
     
     Daten1 = 32'b00000000000000000000000000000000;
     FunktionsCode = Gleich;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b10010101011001101010101010101010)
         $display("Xnor funktioniert nicht: \n Zahl1:   %d \n Zahl2:   %d \n Ergebnis: %d \n Erwartet: %d\n", Daten1, Daten2, Ergebnis, 32'b10010101011001101010101010101010);
     
@@ -402,9 +403,9 @@ initial begin
     Daten2 = 32'b01000010110011000000000000000000;      //102,000
     FunktionsCode = FloatAddition;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b01000011000100110110000001000010)//147,376
         $display("Floats addieren funktioniert nicht: \n Summand1: %b \n Summand2: %b \n Ergebnis: %b \n Erwartet: %b\n", Daten1, Daten2, Ergebnis, 32'b01000011000100110110000001000010);
     
@@ -413,9 +414,9 @@ initial begin
     Daten2 = 32'b01000010110011000000000000000000;       //102,000
     FunktionsCode = FloatSubtraktion;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b11000010011000100111111011111010)//-56,624
         $display("Floats subtrahieren funktioniert nicht: \n Minuend:    %f \n Subtrahent: %f \n Ergebnis:   %f \n Erwartet:   %f\n", Daten1, Daten2, Ergebnis, 32'b11000010011000100111111011111010);
 
@@ -424,9 +425,9 @@ initial begin
     Daten2 = 32'b01000010110011000000000000000000;       //102,000
     FunktionsCode = FloatMultiplikation;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b01000101100100001010001011010001)//4628,352
         $display("Floats multiplizieren funktioniert nicht: \n Faktor1:  %f \n Faktor2:  %f \n Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b01000101100100001010001011010001);    
     
@@ -434,24 +435,23 @@ initial begin
     Daten1 = 32'b01000000000110010101010101010101;        //2,39583325386   
     FunktionsCode = FloatQuadratwurzel;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b00111111110001100001111111100010)  //1,5478479427450230002776786742845
-        $display("Float Quadratwurzel funktioniert nicht: \n Radikand: %f Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b00111111110001100001111111100010);
+        $display("Float Quadratwurzel funktioniert nicht (zurzeit nicht supported): \n Radikand: %f Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b00111111110001100001111111100010);
     
     //Div.s-Befehl testen
     Daten1 = 32'b01000010001101011000000100000110;      // 45,376
     Daten2 = 32'b01000010110011000000000000000000;      //102,000
     FunktionsCode = FloatDivision;
     StartSignal = 1;
-    #200
+    #(Cycle)
     StartSignal = 0;
-    wait(HatFertigGerechnet) #200
+    wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b00111110111000111100010100001101)  //0.4448627531528472900390625
         $display("Floats dividieren funktioniert nicht: \n Divisor:  %b \n Dividend: %b \n Ergebnis: %b \n Erwartet: %b\n", Daten1, Daten2, Ergebnis, 32'b00111110111000111100010100001101);
-    #1000
-    #200 $display("End of simulation");
+    #(Cycle*5) $display("End of simulation");
     $finish;
 end
  

@@ -6,16 +6,18 @@
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns
-`define assert(signal, value, message) \
+`define assert(signal, value) \
         if (signal !== value) begin \
-            $display("Falscher Wert in %m: ", message); \
+            $display("Falscher Wert in %d und %d: ", signal, value); \
+            $finish;
         end
 
 module main_tb
 ;
  
  // Simulation time: 100ns (10 * 10ns)
- parameter DURATION = 10;
+localparam Halfcycle = 5;
+localparam Cycle = 2 * Halfcycle;
  
  // Input/Output
  reg [31:0] RegisterDaten2;
@@ -39,28 +41,23 @@ module main_tb
         Immediate = 32'b00011001001100001110010110;
         ImmediateAktiv = 0;
         $display("Start of simulation");
-        #100
-        if(Daten2 != RegisterDaten2)
-            $display("Wert in Daten2 ist ungleich RegisterDaten2: \n Daten2: %d \n RegisterDaten2: %d", Daten2, RegisterDaten2);
+        #(Cycle)
+        `assert(Daten2 == RegisterDaten2,1);
 
-        #100
+        #(Cycle)
         RegisterDaten2 = 32'b00010010000000110000010000001100;
         Immediate = 32'b11111110011001001100001110010110;
         ImmediateAktiv = 1;
-        #100 
-        if(Daten2 != 32'b11111110011001001100001110010110)
-            $display("Wert in Daten2 ist ungleich Immediate[25:0]: \n Immediate: %d \n RegisterDaten2: %d", Immediate, RegisterDaten2);
-
-        #100
+        #(Cycle) 
+        `assert(Daten2 == 32'b11111110011001001100001110010110,1);
+        #(Cycle)
         Immediate = 32'b11111110000000001100001110010110;
-        #100
-        if(Daten2 != 32'b11111110000000001100001110010110)
-            $display("Wert in Daten2 ist ungleich Immediate[25:0]: \n Immediate: %d \n RegisterDaten2: %d", Immediate, RegisterDaten2);
-        #100
+        #(Cycle)
+        `assert(Daten2 == 32'b11111110000000001100001110010110,1);
+        #(Cycle)
         Immediate = 32'b00000000001100001110010110;
-        #100
-        if(Daten2 != 32'b00000000000000001100001110010110)
-            $display("Wert in Daten2 ist ungleich Immediate[25:0]: \n Immediate: %d \n RegisterDaten2: %d", Immediate, RegisterDaten2);
+        #(Cycle)
+        `assert(Daten2 == 32'b00000000000000001100001110010110,1);
 
         $display("End of simulation");
         $finish;
