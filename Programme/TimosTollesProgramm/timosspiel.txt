@@ -1,0 +1,65 @@
+.section Text
+
+; Define screen dimensions
+.set BILD_BREITE, 160
+.set BILDMINX, 159 ; BILDBREITE -1
+.set BILD_HOEHE, 120
+.set BILDMINY, 119; BILDHOEHE -1
+
+; Define colors
+.set WEISS, 255  ; White
+.set SCHWARZ, 0   ; Black
+
+; Define Game Settings
+.set StartpositionX, 80
+.set StartpositionY, 60
+.set PaddleYOne, 75
+.set PaddleYTwo, 45
+.set BallDirectionX, 2
+.set BallDirectionY, 1
+
+INITIALISE:
+; Registers for storing positions and values
+addi R1, R0, StartpositionX; R1 - Ball X position
+addi R2, R0, StartpositionY; R2 - Ball Y position
+addi R3, R0, PaddleYOne; R3 - Paddle 1 Y position
+addi R4, R0, PaddleYTwo; R4 - Paddle 2 Y position
+addi R5, R0, BallDirectionX; R5 - Ball direction (X)
+addi R6, R0, BallDirectionY; R6 - Ball direction (Y)
+
+MOVEBALL:
+add R1, R1, R5;
+add R2, R2, R6;
+;schaue ob X außerhalb ist
+cli R30, R1, 1; 1: X <= 0, 0: X>0
+cgi R31, R1, BILDMINX; 1: X >= 160, 0: X<160
+bez R30, SkipXEins
+;X <=0 
+add R1, R0, R0; Setzte X auf 0
+sub R5, R0, R5; Invertiere Richtung
+addi R5, R5, 1; Schnellerer Ball
+jmp SkipXZwei; Gehe weiter zu Y
+SkipXEins:
+bez R31, SkipXZwei
+;X >=160 
+addi R1, R0, BILD_BREITE; Setzte X auf 160
+addi R5, R5, 1; Schnellerer Ball
+sub R5, R0, R5; Invertiere Richtung
+SkipXZwei:
+
+;schaue ob Y außerhalb ist
+cli R30, R2, 1; 1: Y <= 0, 0: X>0
+cgi R31, R2, BILDMINY; 1: X >= 160, 0: X<160
+bez R30, SkipYEins
+;Y <=0 
+add R2, R0, R0; Setzte Y auf 0
+sub R6, R0, R6; Invertiere Richtung
+addi R6, R6, 1; Schnellerer Ball
+jmp SkipYZwei; Gehe weiter zu Y
+SkipYEins:
+bez R31, SkipYZwei
+;Y >=120 
+addi R2, R0, BILD_HOEHE; Setzte Y auf 120
+addi R6, R6, 1; Schnellerer Ball
+sub R6, R0, R6; Invertiere Richtung
+SkipYZwei:
