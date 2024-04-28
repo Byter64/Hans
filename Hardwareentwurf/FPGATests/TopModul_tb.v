@@ -32,7 +32,7 @@ module main_tb
     clk_25mhz = 0;
 
 
-  #5000
+  #100000
   $display("End of simulation");
   $finish;
  end

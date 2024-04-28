@@ -217,8 +217,7 @@ Programmzahler Programmzahler(
     .TaktSignal(PCSignal),
     .Clock(Clock),
     .Reset(Reset),
-    .AktuellerPC(AktuellerPC),
-    .Clock(Clock)
+    .AktuellerPC(AktuellerPC)
 );
 
 endmodule
