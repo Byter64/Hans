@@ -1,5 +1,5 @@
 // Testbench template
-`include "TopModul.v"
+`include "../TopModul.v"
 `default_nettype none
 `define DUMPSTR(x) `"x.vcd`"
 `timescale 10 ns / 1 ns

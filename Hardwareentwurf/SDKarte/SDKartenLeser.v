@@ -20,7 +20,7 @@ module SDKarte (
     input miso, // Connect to SD_DAT[0].
     output sclk, // Connect to SD_SCK.
     output cs, // Connect to SD_DAT[3].
-    output mosi, // Connect to SD_CMD.
+    output mosi // Connect to SD_CMD.
                 // For SPI mode, SD_DAT[2] and SD_DAT[1] should be held HIGH. 
                 // SD_RESET should be held LOW.
 );

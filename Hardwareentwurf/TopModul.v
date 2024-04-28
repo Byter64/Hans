@@ -1,18 +1,40 @@
 `include "../Prozessor/0_CPU.v"
 `include "../Prozessor/1_RAM.v"
+//`include "../Grafikkarte/Verilog/Bildpuffer.v"
+//`include "../SDKarte/SDKartenLeser.v"
+//`include "../Grafikkarte/Verilog/HDMI_clock.v"
+//`include "../Grafikkarte/Verilog/HDMI_test_DDR.v"
+//`include "../Grafikkarte/Verilog/TMDS_encoder.v"
 `ifdef SYNTHESIS
 `include "../ecp5pll/hdl/sv/ecp5pll.sv"
 `endif
 module Top
 (
     input clk_25mhz,
-    output[7:0] led
+    
+    output[7:0] led,
+    output[3:0] gpdi_dp,
+    output sd_cmd,      //mosi
+    output sd_clk,
+    
+    inout [3:0] sd_d    //miso //cs
 );
 
- // Input/Output for FPGA
-reg Reset;
+ // Input/Output fuer FPGA
+ //SDkarte
+ assign sd_d[0] = SDmiso;
+ assign sd_d[1] = 1'b1;
+ assign sd_d[2] = 1'b1;
+ assign sd_d[3] = SDcs;
+ assign sd_cmd = SDmosi;
+
+//LEDs
 reg[7:0] ledReg = 7'b0;
 assign led = ledReg;
+
+//Reset
+reg Reset;
+reg[10:0] resetTimer = 0;
 
 //Clock Assignment
 wire Clock;
@@ -71,21 +93,22 @@ assign Clock = clk_25mhz;
  );
 
 //Inputs RAM
+wire RAMClock;
 wire RAMLesenAn;
 wire RAMSchreibenAn;
-wire[31:0] RAMDatenRein;
-wire[7:0] RAMAdresse; //auf 31 erhöhen dann
+wire [31:0] RAMDatenRein;
+wire [31:0] RAMAdresse;
 
 //Outputs RAM
-wire[31:0] RAMDatenRaus;
+wire [31:0] RAMDatenRaus;
 wire RAMDatenBereit;
 wire RAMDatenGeschrieben;
 
 //Instanzierung
 RAM #(
     .WORDSIZE(32),
-    .WORDS(256)
-) InstruktionRAM (
+    .WORDS(256) //2**16
+) ram (
     .LesenAn(RAMLesenAn),
     .SchreibenAn(RAMSchreibenAn),
     .DatenRein(RAMDatenRein),
@@ -97,61 +120,26 @@ RAM #(
     .DatenGeschrieben(RAMDatenGeschrieben)
 );
 
-//Inputs DRAM
-wire DRAMLesenAn;
-wire DRAMSchreibenAn;
-wire[31:0] DRAMDatenRein;
-wire[7:0] DRAMAdresse; //auf 31 erhöhen dann
-
-//Outputs DRAM
-wire[31:0] DRAMDatenRaus;
-wire DRAMDatenBereit;
-wire DRAMDatenGeschrieben;
-
-//Instanzierung
-RAM #(
-    .WORDSIZE(32),
-    .WORDS(256)
-) DatenRAM (
-    .LesenAn(DRAMLesenAn),
-    .SchreibenAn(DRAMSchreibenAn),
-    .DatenRein(DRAMDatenRein),
-    .Adresse(DRAMAdresse),
-    .Clock(Clock),
-
-    .DatenRaus(DRAMDatenRaus),
-    .DatenBereit(DRAMDatenBereit),
-    .DatenGeschrieben(DRAMDatenGeschrieben)
-);
-
 //Input Zuweisungen CPU
-assign CPUDatenRein = DRAMDatenRaus;
+assign CPUDatenRein = RAMDatenRaus;
 assign CPUInstruktion = RAMDatenRaus;
 assign CPUInstruktionGeladen = RAMDatenBereit;
-assign CPUDatenGeladen = DRAMDatenBereit;
-assign CPUDatenGespeichert = DRAMDatenGeschrieben;
+assign CPUDatenGeladen = RAMDatenBereit;
+assign CPUDatenGespeichert = RAMDatenGeschrieben;
 
-//Inputs Zuweisung InstruktionsRAM
-assign RAMLesenAn = CPULeseInstruktion;
-assign RAMSchreibenAn = 0;
-assign RAMDatenRein = 32'b0;
-assign RAMAdresse = CPUInstruktionAdresse[7:0];
+//Inputs Zuweisung RAM
+assign RAMLesenAn = CPULeseInstruktion || CPULeseDaten;
+assign RAMSchreibenAn = CPUSchreibeDaten;
+assign RAMDatenRein = CPUDatenRaus;
+assign RAMAdresse = CPULeseInstruktion ? CPUInstruktionAdresse : CPUDatenAdresse;
 
-//Inputs Zuweisung DatenRAM
-assign DRAMLesenAn = CPULeseDaten;
-assign DRAMSchreibenAn = CPUSchreibeDaten;
-assign DRAMDatenRein = CPUDatenRaus;
-assign DRAMAdresse = CPUDatenAdresse[7:0];
-
-reg[10:0] resetTimer = 10'b100;
 always @(posedge Clock) begin
-    if(resetTimer > 1)begin
+    if(resetTimer < 256)begin
         Reset <= 1;
-        resetTimer <= resetTimer - 1;
+        resetTimer <= resetTimer + 1;
     end
-    else if(resetTimer == 1)begin
+    else begin
         Reset <= 0;
-        resetTimer <= resetTimer - 1;
     end
 end
 
