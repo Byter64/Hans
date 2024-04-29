@@ -15,7 +15,7 @@ module RAM#(
     output reg DatenGeschrieben = 0
 );
 initial begin
-$readmemh("program3.txt",Daten);
+$readmemh("program.txt",Daten);
 end
 reg[WORDSIZE - 1:0] Daten[WORDS - 1:0];
 

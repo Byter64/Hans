@@ -10,7 +10,6 @@ module main_tb
 ;
 
  // Input/Output
-reg[31:0] InstruktionAdresse;
 reg Clock;
 reg Reset;
 
@@ -29,7 +28,7 @@ wire Zero = 0;
 wire[31:0] w_InstruktionAdresse;
 wire[31:0] InstruktionRAMAdresseJetztAberWirklich;
 reg InstruktionInitialisierung = 1;
-assign InstruktionRAMAdresseJetztAberWirklich = InstruktionInitialisierung == 1 ? InstruktionAdresse : w_InstruktionAdresse;
+assign InstruktionRAMAdresseJetztAberWirklich = w_InstruktionAdresse;
 
 //InstruktionRAM fuellen
 reg[31:0] InstruktionRAMEingang;
@@ -96,17 +95,14 @@ end
 
 initial begin
     Reset = 1;
-    InstruktionInitialisierung = 1;
     $dumpvars(0, main_tb);
-    for (integer idx = 0; idx < 256; idx = idx + 1) $dumpvars(0, DatenRAM.Daten[idx]);
-    for (integer idx2 = 0; idx2 < 64; idx2 = idx2 + 1) $dumpvars(0, CPU.Register.registers[idx2]);
     BeschreibeInstruktionRAM = 0;
     InstruktionInitialisierung = 0;
     #(Halfcycle)
 
     //Alles zurücksetzen
     Reset = 1;
-    #30
+    #(Halfcycle)
     Reset = 0;
     //Programm in program.txt gespeichert
 

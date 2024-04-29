@@ -1,4 +1,4 @@
-`ifdef IVERILOG
+`ifndef SYNTHESIS
     `include "../SDKarte/SDControllerSimulation.v"
 `else
     `include "../SDKarte/sd_controller.v"
