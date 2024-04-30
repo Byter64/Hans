@@ -1,46 +1,34 @@
 `include "../Prozessor/0_CPU.v"
 `include "../Prozessor/1_RAM.v"
-//`include "../Grafikkarte/Verilog/Bildpuffer.v"
 `include "../SDKarte/SDKartenLeser.v"
-//`include "../Grafikkarte/Verilog/HDMI_clock.v"
-//`include "../Grafikkarte/Verilog/HDMI_test_DDR.v"
-//`include "../Grafikkarte/Verilog/TMDS_encoder.v"
 `ifdef SYNTHESIS
 `include "../ecp5pll/hdl/sv/ecp5pll.sv"
 `endif
 module Top
 (
     input clk_25mhz,
-    
     output[7:0] led,
-    output[3:0] gpdi_dp,
     output sd_cmd,      //mosi
     output sd_clk,
     
     inout [3:0] sd_d    //miso //cs
 );
+ //Konstanten
+ localparam ONE = 1'b1;
+ localparam ZERO = 1'b0;
 
- // Input/Output fuer FPGA
- //SDkarte
+ // Input/Output for FPGA
+assign led = ledReg;
+
+ //SDKARTE
  assign sd_d[0] = SDmiso;
- assign sd_d[1] = 1'b1;
- assign sd_d[2] = 1'b1;
+ assign sd_d[1] = ONE;
+ assign sd_d[2] = ONE;
  assign sd_d[3] = SDcs;
  assign sd_cmd = SDmosi;
 
-//LEDs
-reg[7:0] ledReg = 7'b0;
-assign led = ledReg;
-
-//Reset
-reg Reset;
-reg[10:0] resetTimer = 0;
-
-//Clock Assignment
-wire Clock;
 //If in Synthesis
 `ifdef SYNTHESIS
-assign Clock = clocks[3];
 wire [3:0] clocks;
 ecp5pll
 #(
@@ -48,7 +36,7 @@ ecp5pll
     .out0_hz(40000000),                 .out0_tol_hz(0),
     .out1_hz(50000000), .out1_deg( 90), .out1_tol_hz(0),
     .out2_hz(60000000), .out2_deg(180), .out2_tol_hz(0),
-    .out3_hz( 4000000), .out3_deg(300), .out3_tol_hz(0)
+    .out3_hz(24000000), .out3_deg(300), .out3_tol_hz(0)
 )
 ecp5pll_inst
 (
@@ -65,8 +53,7 @@ assign Clock = clk_25mhz;
  wire CPUInstruktionGeladen;
  wire CPUDatenGeladen;
  wire CPUDatenGespeichert;
- wire CPUReset;
-
+ wire CPUClock;
  //Outputs CPU
  wire[31:0] CPUInstruktionAdresse;
  wire[31:0] CPUDatenRaus;
@@ -82,8 +69,8 @@ assign Clock = clk_25mhz;
     .InstruktionGeladen(CPUInstruktionGeladen),
     .DatenGeladen(CPUDatenGeladen),
     .DatenGespeichert(CPUDatenGespeichert),
-    .Clock(Clock),
-    .Reset(CPUReset),
+    .Clock(CPUClock),
+    .Reset(loaderReset || globalerReset),
 
     .InstruktionAdresse(CPUInstruktionAdresse),
     .DatenRaus(CPUDatenRaus),
@@ -94,21 +81,20 @@ assign Clock = clk_25mhz;
  );
 
 //Inputs RAM
-wire RAMClock;
 wire RAMLesenAn;
 wire RAMSchreibenAn;
-wire [31:0] RAMDatenRein;
-wire [31:0] RAMAdresse;
-
+wire[31:0] RAMDatenRein;
+wire[31:0] RAMAdresse; //auf 31 erhöhen dann
+wire RAMClock;
 //Outputs RAM
-wire [31:0] RAMDatenRaus;
+wire[31:0] RAMDatenRaus;
 wire RAMDatenBereit;
 wire RAMDatenGeschrieben;
 
 //Instanzierung
 RAM #(
     .WORDSIZE(32),
-    .WORDS(256) //2**16
+    .WORDS(256)
 ) ram (
     .LesenAn(RAMLesenAn),
     .SchreibenAn(RAMSchreibenAn),
@@ -121,11 +107,13 @@ RAM #(
     .DatenGeschrieben(RAMDatenGeschrieben)
 );
 
-//Inputs SDKarte
+//SDKarte
+//Inputs
 wire [31:0] SDAdresse;
 wire SDLesen;
 wire SDmiso;
-//Outputs SDKarte
+wire SDClock;
+//Outputs
 wire [31:0] SDDaten;
 wire SDFertig;
 wire SDBusy;
@@ -134,8 +122,10 @@ wire SDmosi;
 wire[4:0] SDDebug;
 wire[2:0] SDZustand;
 
+//Instanzierung
+
 SDKarte sdkarte(
-    .Clock(Clock),
+    .Clock(SDClock),
     .Reset(globalerReset),
     .Adresse(SDAdresse),
     .Lesen(SDLesen),
@@ -150,42 +140,6 @@ SDKarte sdkarte(
     .zustand(SDZustand)
 );
 
-//Inputs Bildpuffer
-wire [7:0] BildpufferX;
-wire [7:0] BildpufferY;
-wire [7:0] BildpufferColor;
-wire BildpufferWrite;
-wire [7:0] BildpufferXData;
-wire [7:0] BildpufferYData;
-//Outputs Bildpuffer
-wire [7:0] BildpufferPixelData;
-
-/*Bildpuffer bildpuffer (
-    .clk(Clock),
-    .x(BildpufferX),
-    .y(BildpufferY),
-    .color(BildpufferColor),
-    .write(BildpufferWrite),
-    .x_data(BildpufferXData),
-    .y_data(BildpufferYData),
-    .pixelData(BildpufferPixelData)
-);*/
-
-//Inputs HDMI
-wire [7:0] HDMIPixelData;
-//Outputs HDMI
-wire [7:0] HDMIX;
-wire [7:0] HDMIY;
-wire [3:0] HDMIgpdi_dp;
-/*
-HDMI_test_DDR hdmi_test_ddr(
-    .clk(clk_25mhz), //Braucht 25 MHz um zu funktionieren
-    .pixelData(HDMIPixelData),
-    .x(HDMIX),
-    .y(HDMIY),
-    .gpdi_dp(gpdi_dp)
-);*/
-
 //Loader (hat nicht für eigenes Modul gereicht)
 wire [31:0] loaderDaten;
 wire [31:0] loaderRAMAdresse;
@@ -195,7 +149,8 @@ reg [31:0] loaderDatenMenge = 0; //Wie viele Bytes müssen in den RAM geladen we
 reg loaderSchreibeDaten = 0;
 reg [3:0] zustand = RESET;
 reg loaderWarte = 1;
-reg [10:0] counter = 0;
+
+reg [7:0] ledReg;
 
 //Input Zuweisungen CPU
 assign CPUDatenRein = RAMDatenRaus;
@@ -203,40 +158,27 @@ assign CPUInstruktion = RAMDatenRaus;
 assign CPUInstruktionGeladen = RAMDatenBereit;
 assign CPUDatenGeladen = RAMDatenBereit;
 assign CPUDatenGespeichert = RAMDatenGeschrieben;
-assign CPUReset = Reset || zustand != LAEUFT;
+assign CPUClock = clocks[3];
+//Inputs Zuweisung InstruktionsRAM
+assign RAMLesenAn       = loaderReset ? 1 : (CPULeseInstruktion || CPULeseDaten);
+assign RAMSchreibenAn   = loaderReset ? loaderSchreibeDaten 
+                            : CPULeseInstruktion ? 0 
+                            : CPUSchreibeDaten;
+assign RAMDatenRein     = loaderReset ? loaderDaten : CPUDatenRaus;
+assign RAMAdresse       = loaderReset ? loaderRAMAdresse
+                            : CPULeseInstruktion ? CPUInstruktionAdresse 
+                            : CPUDatenAdresse[31] ? 32'b0 - 1 
+                            : CPUDatenAdresse;
+assign RAMClock = loaderReset ? SDClock : CPUClock;
 
-//Inputs Zuweisung RAM
-assign RAMClock = Clock;
-assign RAMLesenAn = zustand != LAEUFT ? 0 : CPULeseInstruktion || CPULeseDaten;
-assign RAMSchreibenAn = zustand != LAEUFT ? loaderSchreibeDaten : ((CPUDatenAdresse[31] == 0) ? CPUSchreibeDaten : 0);
-assign RAMDatenRein = zustand != LAEUFT ? loaderDaten : CPUDatenRaus;
-assign RAMAdresse = zustand != LAEUFT ? loaderRAMAdresse : (CPULeseInstruktion ? CPUInstruktionAdresse : CPUDatenAdresse);
+//Inputs SDKarte
+    assign SDAdresse = loaderAdresse;
+    assign SDLesen = loaderLesen;
+    assign SDClock = clocks[2];
+//Inputs Loader
+    assign loaderDaten = SDDaten;
+    assign loaderRAMAdresse = loaderAdresse;
 
-//Inputs Zuweisung SDKarte
-assign SDAdresse = loaderAdresse;
-assign SDLesen = loaderLesen;
-//Inputs Zuweisung Loader
-assign loaderDaten = SDDaten;
-assign loaderRAMAdresse = loaderAdresse - 1;
-//Inputs Zuweisung Bildpuffer
-assign BildpufferX = CPUDatenAdresse[23:16];
-assign BildpufferY = CPUDatenAdresse[31:24];
-assign BildpufferColor = CPUDatenRaus[7:0];
-assign BildpufferWrite = (CPUDatenAdresse[31] == 1) ? CPUSchreibeDaten : 0; 
-assign BildpufferXData = HDMIX;
-assign BildpufferYData = HDMIY;
-//Inputs Zuweisung HDMI
-assign HDMIPixelData = BildpufferPixelData;
-
-always @(posedge Clock) begin
-    if(resetTimer < 256)begin
-        Reset <= 1;
-        resetTimer <= resetTimer + 1;
-    end
-    else begin
-        Reset <= 0;
-    end
-end
 
 localparam RESET = 4'd0;
 localparam GROESSELADEN = 4'd1;
@@ -246,102 +188,129 @@ localparam RAMLADENBEENDEN = 4'd4;
 localparam DEBUG = 4'd6;
 localparam LAEUFT = 4'd8;
 
-reg [20:0] debugTimer = 0;
+reg [9:0] resetTimer = ~0;
+reg globalerReset = 0;
+reg loaderReset = 0;
+reg [15:0] debugRAMAdresse = 0;
+reg [25:0] debugTimer = 1;
 reg [1:0] byteNummer = 0;
+reg [4:0] counter = 1; //Weil der sd_controller die Daten nicht mehr richtig lädt, wenn die Anfragen zu schnell kommen, existiert dieser Zähler
 
-always @(posedge Clock) begin
-    if(Reset) begin    
-        ledReg <= 0;
-        loaderAdresse <= 0;
-        loaderLesen <= 0;
-        counter <= 1;
-        zustand <= RESET;
-    end
-    else begin
-        ledReg[7:4] <= zustand;
-        case (zustand)
-            RESET: begin
+always @(posedge RAMClock) begin
+    case (zustand)
+        RESET: begin
+            ledReg <= 8'b00100100;
+            globalerReset <= 1;
+            loaderReset <= 1;
+
+            ledReg <= 0;
+            loaderAdresse <= 0;
+            loaderLesen <= 0;
+            counter <= 1;
+            debugTimer <= 1;
+
+            resetTimer <= resetTimer - 1;
+
+            if(resetTimer == 0) begin
+                globalerReset <= 0;
                 zustand <= GROESSELADEN;
-            end            
-            GROESSELADEN: begin
-                //Sobald SDKartenleser initialisiert, lese das erste Byte
-                if(~SDBusy && counter == 0) begin
-                    counter <= counter + 1;
-                    loaderLesen <= 1;
-                    zustand <= AUFGROESSEWARTEN;
-                end
-                else if(~SDBusy) begin
-                    counter <= counter + 1;
-                    loaderLesen <= 0;
-                end
             end
-            AUFGROESSEWARTEN: begin
-                //Wenn das erste Byte (= die Datenmenge) da ist, beginne, die Daten zu laden
-                if(~SDBusy && counter == 0) begin
-                    counter <= counter + 1;
-                    ledReg[3:0] <= SDDaten;
-                    loaderDatenMenge <= SDDaten;
-                    zustand <= RAMLADEN;
-    
-                    //Beginne, das erste Datenbyte von der SDKarte zu laden
-                    loaderAdresse <= loaderAdresse + 1;
-                    loaderLesen <= 1;
-                end
-                else if(~SDBusy) begin
-                    counter <= counter + 1;
-                    loaderLesen <= 0;
-                end
-            end 
-            RAMLADEN: begin
-                //ledReg <= loaderDaten[7:0];
-                //Speicher die Datenbytes in den RAM
-                if(~SDBusy && counter == 0) begin
-                    counter <= counter + 1;
-                    loaderLesen <= 1;
-                    loaderSchreibeDaten <= 1;
-    
-                    loaderAdresse <= loaderAdresse + 1;
-                    loaderDatenMenge <= loaderDatenMenge - 1;
-    
-                    //Wenn DatenMenge == 0, muss nichts mehr von der SDKarte gelesen werden
-                    //Nur noch das letzte Byte muss in den RAM geladen werden
-                    if(loaderDatenMenge == 0) begin
-                        zustand <= DEBUG;
-                    end
-                end
-                else if(~SDBusy) begin
-                    counter <= counter + 1;
-                    loaderLesen <= 0;
-                    loaderSchreibeDaten <= 0;
-                end
-            end 
-            RAMLADENBEENDEN: begin
-                loaderSchreibeDaten <= 0;
-                zustand <= LAEUFT;
-                //ledReg <= 0;
+        end
+        GROESSELADEN: begin
+            ledReg <= 8'b01001001;
+            //Sobald SDKartenleser initialisiert, lese das erste Byte
+            if(~SDBusy && counter == 0) begin
+                counter <= counter + 1;
+                loaderLesen <= 1;
+                zustand <= AUFGROESSEWARTEN;
             end
-            LAEUFT: begin
-            end
-            default: zustand <= RESET; 
-            DEBUG: begin    
-                loaderSchreibeDaten <= 0;
+            else if(~SDBusy) begin
+                counter <= counter + 1;
                 loaderLesen <= 0;
-                debugTimer <= debugTimer + 1;
-                if(debugTimer == 0) begin
-                    byteNummer <= byteNummer - 1;
-                    if(byteNummer == 3)
-                        loaderAdresse <= loaderAdresse + 1;
-                end
-    
-                /*case (byteNummer) 
-                    3: ledReg <= RAMDatenRaus[31:24];
-                    2: ledReg <= RAMDatenRaus[23:16];
-                    1: ledReg <= RAMDatenRaus[15:8];
-                    0: ledReg <= RAMDatenRaus[7:0];
-                endcase*/
             end
-        endcase
-    end
+        end
+        AUFGROESSEWARTEN: begin
+            ledReg <= 8'b01101101;
+            //Wenn das erste Byte (= die Datenmenge) da ist, beginne, die Daten zu laden
+            if(~SDBusy && counter == 0) begin
+                counter <= counter + 1;
+                loaderDatenMenge <= SDDaten;
+                zustand <= RAMLADEN;
+
+                //Beginne, das erste Datenbyte von der SDKarte zu laden
+                loaderAdresse <= loaderAdresse + 1;
+                loaderLesen <= 1;
+            end
+            else if(~SDBusy) begin
+                counter <= counter + 1;
+                loaderLesen <= 0;
+            end
+        end 
+        RAMLADEN: begin
+            ledReg <= 8'b10010010;
+            //Speicher die Datenbytes in den RAM
+            if(~SDBusy && counter == 0) begin
+                counter <= counter + 1;
+                loaderLesen <= 1;
+                loaderSchreibeDaten <= 1;
+
+                loaderAdresse <= loaderAdresse + 1;
+                loaderDatenMenge <= loaderDatenMenge - 1;
+
+                //Wenn DatenMenge == 0, muss nichts mehr von der SDKarte gelesen werden
+                //Nur noch das letzte Byte muss in den RAM geladen werden
+                if(loaderDatenMenge == 0) begin
+                    zustand <= RAMLADENBEENDEN;
+                end
+            end
+            else if(~SDBusy) begin
+                counter <= counter + 1;
+                loaderLesen <= 0;
+                loaderSchreibeDaten <= 0;
+            end
+        end 
+        RAMLADENBEENDEN: begin
+            ledReg <= 8'b10110110;
+            /*loaderSchreibeDaten <= 0;
+            loaderReset <= 1;
+            zustand <= LAEUFT;
+            ledReg <= 0;*/
+            loaderReset <= 1;
+            loaderAdresse <= 0;
+            byteNummer <= 0;
+            debugTimer <= ~0;
+            zustand = LAEUFT;
+        end
+        DEBUG: begin
+            loaderReset <= 1;
+            globalerReset <= 0;
+
+            loaderSchreibeDaten <= 0;
+            loaderLesen <= 0;
+            debugTimer <= debugTimer + 1;
+            if(debugTimer == 0) begin
+                byteNummer = byteNummer - 1;
+                if(byteNummer == 3)
+                    loaderAdresse <= loaderAdresse + 1;
+            end
+
+            case (byteNummer) 
+                3: ledReg <= RAMDatenRaus[31:24];
+                2: ledReg <= RAMDatenRaus[23:16];
+                1: ledReg <= RAMDatenRaus[15:8];
+                0: ledReg <= RAMDatenRaus[7:0];
+            endcase
+        end
+        LAEUFT: begin
+            loaderReset <= 0;
+            globalerReset <= 0;
+
+            if(CPUDatenAdresse[31] == 1 && CPUSchreibeDaten == 1) begin
+                ledReg <= CPUDatenRaus[7:0];
+            end
+        end 
+        default: zustand <= RESET; 
+    endcase
 end
 
 endmodule
