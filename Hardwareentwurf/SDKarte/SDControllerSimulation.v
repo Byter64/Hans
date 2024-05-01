@@ -35,14 +35,60 @@ assign ready = ~reset && zustand == IDLE;
 assign sekAdresse = address[31:9];
 
 initial begin
-    daten[0] <= 8'd10;
-    daten[1] <= 8'd250;
-    daten[2] <= 8'd0;
-    daten[3] <= 8'd33;
-    daten[4] <= 8'd2;
-    daten[5] <= 8'd148;
-    daten[6] <= 8'd227;
-    daten[7] <= 8'd1;
+    daten[0] <= 8'h00;
+    daten[1] <= 8'h00;
+    daten[2] <= 8'h00;
+    daten[3] <= 8'h0F;
+
+    daten[4] <= 8'h80;
+    daten[5] <= 8'h40;
+    daten[6] <= 8'h00;
+    daten[7] <= 8'h0F;
+
+    daten[8] <= 8'h00;
+    daten[9] <= 8'h20;
+    daten[10] <= 8'h00;
+    daten[11] <= 8'h00;
+
+    daten[12] <= 8'h83;
+    daten[13] <= 8'hE0;
+    daten[14] <= 8'h00;
+    daten[15] <= 8'h01;
+    
+    daten[16] <= 8'h9B;
+    daten[17] <= 8'hFF;
+    daten[18] <= 8'h00;
+    daten[19] <= 8'h1F;
+
+    daten[20] <= 8'h00;
+    daten[21] <= 8'h21;
+    daten[22] <= 8'h10;
+    daten[23] <= 8'h00;
+
+    daten[24] <= 8'h84;
+    daten[25] <= 8'h42;
+    daten[26] <= 8'h00;
+    daten[27] <= 8'h01;
+
+    daten[28] <= 8'h00;
+    daten[29] <= 8'h62;
+    daten[30] <= 8'h00;
+    daten[31] <= 8'h08;
+    
+    daten[32] <= 8'hE8;
+    daten[33] <= 8'h3F;
+    daten[34] <= 8'h00;
+    daten[35] <= 8'h00;
+
+    daten[36] <= 8'hF4;
+    daten[37] <= 8'h03;
+    daten[38] <= 8'hFF;
+    daten[39] <= 8'hFB;
+    
+    daten[40] <= 8'h43;
+    daten[41] <= 8'hFF;
+    daten[42] <= 8'hFF;
+    daten[43] <= 8'hFF;
 end
 
 always @(posedge clk) begin

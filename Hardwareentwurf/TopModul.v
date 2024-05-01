@@ -44,6 +44,11 @@ ecp5pll_inst
     .clk_o(clocks)
 );
 `else //if in simulation
+wire[3:0] clocks;
+assign clocks[0] = clk_25mhz;
+assign clocks[1] = clk_25mhz;
+assign clocks[2] = clk_25mhz;
+assign clocks[3] = clk_25mhz;
 assign Clock = clk_25mhz;
 `endif 
 
@@ -157,7 +162,7 @@ assign CPUDatenRein = RAMDatenRaus;
 assign CPUInstruktion = RAMDatenRaus;
 assign CPUInstruktionGeladen = RAMDatenBereit;
 assign CPUDatenGeladen = RAMDatenBereit;
-assign CPUDatenGespeichert = RAMDatenGeschrieben;
+assign CPUDatenGespeichert =  CPUDatenAdresse[31] == 1 ? 1 :RAMDatenGeschrieben;
 assign CPUClock = clocks[3];
 //Inputs Zuweisung InstruktionsRAM
 assign RAMLesenAn       = (zustand < RAMLADENBEENDEN) ? 1 : (CPULeseInstruktion || CPULeseDaten);
