@@ -1,17 +1,27 @@
 `include "../Prozessor/0_CPU.v"
 `include "../Prozessor/1_RAM.v"
 `include "../SDKarte/SDKartenLeser.v"
+`include "../Grafikkarte/Verilog/Bildpuffer.v"
+`include "../Grafikkarte/Verilog/HDMI_clock.v"
+`include "../Grafikkarte/Verilog/HDMI_test_DDR.v"
+`include "../Grafikkarte/Verilog/TMDS_encoder.v"
 `ifdef SYNTHESIS
 `include "../ecp5pll/hdl/sv/ecp5pll.sv"
 `endif
 module Top
 (
     input clk_25mhz,
+    //LED
     output[7:0] led,
+    //HDMI
+    output[3:0] gpdi_dp,
+    //SDCard
     output sd_cmd,      //mosi
     output sd_clk,
-    input[6:0] btn,
-    inout [3:0] sd_d    //miso //cs
+    inout [3:0] sd_d,    //miso //cs
+    //Buttons
+    input[6:0] btn
+
 );
  //Konstanten
  localparam ONE = 1'b1;
@@ -27,6 +37,9 @@ assign led = ledReg;
  assign sd_d[3] = SDcs;
  assign sd_cmd = SDmosi;
 
+//HDMI
+assign gpdi_dp = HDMIgpdi_dp;
+
 //If in Synthesis
 `ifdef SYNTHESIS
 wire [3:0] clocks;
@@ -35,7 +48,7 @@ ecp5pll
       .in_hz(25000000),
     .out0_hz(40000000),                 .out0_tol_hz(0),
     .out1_hz(50000000), .out1_deg( 90), .out1_tol_hz(0),
-    .out2_hz(60000000), .out2_deg(180), .out2_tol_hz(0),
+    .out2_hz(25000000), .out2_deg(180), .out2_tol_hz(0),
     .out3_hz(24000000), .out3_deg(300), .out3_tol_hz(0)
 )
 ecp5pll_inst
@@ -49,7 +62,6 @@ assign clocks[0] = clk_25mhz;
 assign clocks[1] = clk_25mhz;
 assign clocks[2] = clk_25mhz;
 assign clocks[3] = clk_25mhz;
-assign Clock = clk_25mhz;
 `endif 
 
  //Inputs CPU
@@ -99,7 +111,7 @@ wire RAMDatenGeschrieben;
 //Instanzierung
 RAM #(
     .WORDSIZE(32),
-    .WORDS(256)
+    .WORDS(2**15)
 ) ram (
     .LesenAn(RAMLesenAn),
     .SchreibenAn(RAMSchreibenAn),
@@ -157,6 +169,48 @@ reg loaderWarte = 1;
 
 reg [7:0] ledReg;
 
+/////////////////BILDPUFFER UND CO //////////////////////////////
+
+//Inputs Bildpuffer
+wire BPClock;
+wire [7:0] BildpufferX;
+wire [7:0] BildpufferY;
+wire [7:0] BildpufferColor;
+wire BildpufferWrite;
+wire [7:0] BildpufferXData;
+wire [7:0] BildpufferYData;
+//Outputs Bildpuffer
+wire HDMIClock;
+wire [7:0] BildpufferPixelData;
+
+Bildpuffer bildpuffer (
+    .clk(BPClock),
+    .x(BildpufferX),
+    .y(BildpufferY),
+    .color(BildpufferColor),
+    .write(BildpufferWrite),
+    .x_data(BildpufferXData),
+    .y_data(BildpufferYData),
+    .pixelData(BildpufferPixelData)
+);
+
+//Inputs HDMI
+wire [7:0] HDMIPixelData;
+//Outputs HDMI
+wire [7:0] HDMIX;
+wire [7:0] HDMIY;
+wire [3:0] HDMIgpdi_dp;
+
+HDMI_test_DDR hdmi_test_ddr(
+    .clk(HDMIClock), //Braucht 25 MHz um zu funktionieren
+    .pixelData(HDMIPixelData),
+    .x(HDMIX),
+    .y(HDMIY),
+    .gpdi_dp(gpdi_dp)
+);
+
+/////////////////////////////////////////////////////////////////
+
 //Input Zuweisungen CPU
 assign CPUDatenRein = RAMDatenRaus;
 assign CPUInstruktion = RAMDatenRaus;
@@ -174,14 +228,27 @@ assign RAMAdresse       = (zustand < RAMLADENBEENDEN) ? loaderRAMAdresse
                             : CPUDatenAdresse;
 assign RAMClock = CPUClock;
 
-//Inputs SDKarte
+//Inputs Zuweisung SDKarte
     assign SDAdresse = loaderAdresse;
     assign SDLesen = loaderLesen;
     assign SDClock = CPUClock;
-//Inputs Loader
+
+//Inputs Zuweisung Loader
     assign loaderDaten = SDDaten;
     assign loaderRAMAdresse = loaderAdresse - 2;
 
+//Inputs Zuweisung Bildpuffer
+    assign BPClock = CPUClock;
+    assign BildpufferX = CPUDatenAdresse[15:8];
+    assign BildpufferY = CPUDatenAdresse[7:0];
+    assign BildpufferColor = CPUDatenRaus[7:0];
+    assign BildpufferWrite = (CPUDatenAdresse[31] == 1) ? CPUSchreibeDaten : 0; 
+    assign BildpufferXData = HDMIX;
+    assign BildpufferYData = HDMIY;
+
+//Inputs Zuweisung HDMI
+    assign HDMIPixelData = BildpufferPixelData;
+    assign HDMIClock = clocks[2];
 
 localparam RESET = 4'd0;
 localparam GROESSELADEN = 4'd1;
