@@ -4,10 +4,11 @@
 `include "../Prozessor/MultiplexerAluDaten2.v"
 `include "../Prozessor/MultiplexerNeuerPC.v"
 `include "../Prozessor/MultiplexerZielDaten.v"
-`include "../Prozessor/Bedingungspruefer.v"
+`include "../Prozessor/NullPruefer.v"
 `include "../Prozessor/Programmzahler.v"
 `include "../Prozessor/Register.v"
 `include "../Prozessor/Steuerung.v"
+`include "../Prozessor/BedingungsPruefer.v"
 
 
 module CPU (
@@ -39,7 +40,7 @@ wire[5:0] QuellRegister1;
 wire[5:0] QuellRegister2; 
 wire[5:0] ZielRegister;   
 wire[31:0] IDaten;       
-wire ImmediateAktiv;   
+wire ImmediateAktiv;  
 wire[5:0] FunktionsCode;  
 wire JALBefehl;              
 wire RelativerSprungBefehl;               
@@ -77,10 +78,10 @@ wire[31:0] AluDaten1;
 wire[31:0] QuellDaten1;
 wire[31:0] QuellDaten2;
 
-//█████████████████████████████████████
-//████Signale von Bedingungspruefer████
-//█████████████████████████████████████
-wire IstBedingungErfuellt;
+//███████████████████████████████
+//████Signale von Nullpruefer████
+//███████████████████████████████
+wire SprungbedingungErgebnis;
 
 //█████████████████████████████
 //████Signale von Steuerung████
@@ -165,10 +166,14 @@ MultiplexerAluDaten2 MulAluDaten2(
     .Daten1(AluDaten1)
 );
 
-Bedingungspruefer Bedingungspruefer(
+//NullPruefer NullPruefer(
+//    .Eingang(QuellDaten1),
+//    .Ergebnis(Sprungbedingung)
+//);
+BedingungsPruefer BedingungsPruefer(
     .Eingang(QuellDaten1),
-    .GleichNullPruefen(Sprungbedingung),
-    .Ergebnis(IstBedingungErfuellt)
+    .Bedingung(Sprungbedingung),
+    .Ergebnis(SprungbedingungErgebnis)
 );
 
 Steuerung Steuerung(
@@ -177,7 +182,7 @@ Steuerung Steuerung(
     .JALBefehl(JALBefehl),
     .UnbedingterSprungBefehl(UnbedingterSprungBefehl),
     .BedingterSprungBefehl(BedingterSprungBefehl),
-    .Bedingung(IstBedingungErfuellt),
+    .Bedingung(SprungbedingungErgebnis),
     .BefehlGeladen(InstruktionGeladen),
     .DatenGeladen(DatenGeladen),
     .DatenGespeichert(DatenGespeichert),
@@ -210,6 +215,7 @@ Programmzahler Programmzahler(
     .NeuerPC(NeuerPC),
     .SchreibSignal(PCSprungSignal),
     .TaktSignal(PCSignal),
+    .Clock(Clock),
     .Reset(Reset),
     .AktuellerPC(AktuellerPC)
 );
