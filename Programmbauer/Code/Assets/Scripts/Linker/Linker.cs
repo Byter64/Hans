@@ -12,6 +12,7 @@ namespace Linker
     {
         private const string resultFileNameBinary = "program.bin";
         private const string resultFileNameHex = "program.txt";
+        private const string firstSectionName = "Start";
 
         private string[] lennyFaces = { "(▀̿Ĺ̯▀̿ ̿)", "ʕ•ᴥ•ʔ", "(づ｡◕‿‿◕｡)づ", "(ง'̀-'́)ง", 
             "(☞ﾟヮﾟ)☞ ☜(ﾟヮﾟ☜)", "♪~ ᕕ(ᐛ)ᕗ", "(~˘▾˘)~", "（╯°□°）╯︵( .o.)", "ᕙ(⇀‸↼‶)ᕗ", "ᕦ(ò_óˇ)ᕤ" };
@@ -23,6 +24,7 @@ namespace Linker
 #endif
             List<ObjectFileData> objectFileData = ParseFiles(path);
             List<Symbol> symbols = new();
+            List<Section> sections = new();
             int absoluteProgramOffset = 0;
 
             foreach (ObjectFileData fileData in objectFileData)
@@ -35,6 +37,8 @@ namespace Linker
                     fileData.sections[i] = section;
                     absoluteProgramOffset += section.data.Length / 4;
                     AddSymbols(symbols, section.symbols);
+
+                    sections.Add(section);
                 }
             }
 
@@ -144,7 +148,6 @@ namespace Linker
                     if (symbol.value == null)
                         throw new LinkerException($"Symbol {symbol.name} is nowhere defined but used in file {fileData.file}");
 
-                    int byteOffset = (relocation.byteOffset + section.StartAdress) * 4; //Convert from 32-Bit Bytes to 8-Bit Bytes
 
                     int relocValue = symbol.value.Value;
 
@@ -173,6 +176,7 @@ namespace Linker
                     }
 
                     int bitMask = (1 << relocation.amountOfBits) - 1;
+                    int byteOffset = relocation.byteOffset * 4; //Convert from 32-Bit Bytes to 8-Bit Bytes
 
                     for (int i = 0; i < 4; i++)
                     {

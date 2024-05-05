@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Linker
 {
     [DebuggerDisplay("{name}, Adress = {StartAdress}")]
-    public struct Section
+    public class Section
     {
         public int StartAdress { get; private set; }
         public string name;
