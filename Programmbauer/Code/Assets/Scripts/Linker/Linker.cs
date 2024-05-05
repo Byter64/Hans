@@ -50,11 +50,12 @@ namespace Linker
                 section.SetStartAdress(absoluteProgramOffset);
 				AddSymbols(symbols, section.symbols);
 				absoluteProgramOffset += section.data.Length / 4;
-            }    
+            }
 
             ResolveRelocations(sections, symbols);
 
-            byte[] programCode = CreateProgramCode(sections);
+            List<byte> programCode = CreateProgramCode(sections);
+
 
             WriteProgram(pathForResult, programCode, ButtonAllocator.outputToggle.value);
 
@@ -201,7 +202,7 @@ namespace Linker
             }
         }
 
-        private static byte[] CreateProgramCode(List<Section> sections)
+        private static List<byte> CreateProgramCode(List<Section> sections)
         {
             List<byte> programCode = new();
 
@@ -210,10 +211,10 @@ namespace Linker
                 programCode.AddRange(section.data);
             }
 
-            return programCode.ToArray();
+            return programCode;
         }
 
-        private static void WriteProgram(string path, byte[] programCode, bool asHex)
+        private static void WriteProgram(string path, List<byte> programCode, bool asHex)
         {
             path += Path.DirectorySeparatorChar + (asHex ? resultFileNameHex : resultFileNameBinary);
              
@@ -221,11 +222,20 @@ namespace Linker
             {
                 File.Delete(path);
             }
+            int programSize = programCode.Count / 4;
+
+            for(int i = 0; i < 4; i++)
+            {
+                byte size = Convert.ToByte((programSize >> (i * 8)) & 255);
+                programCode.Insert(0, size);
+            }
+
+            byte[] bytes = programCode.ToArray();
 
             if (asHex)
-                File.WriteAllText(path, BitConverter.ToString(programCode).Replace("-", string.Empty));
+                File.WriteAllText(path, BitConverter.ToString(bytes).Replace("-", string.Empty));
             else
-                File.WriteAllBytes(path, programCode);
+                File.WriteAllBytes(path, bytes);
         }
         
         /// <summary>
