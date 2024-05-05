@@ -120,7 +120,9 @@ namespace Linker
                 i++;
 
                 string sectionData = i < parts.Length ? parts[i] : string.Empty;
-                sections.Add(new Section(name, sectionData, relocations, sectionSymbols));
+                Section section = new Section(name, sectionData, relocations, sectionSymbols);
+                section.fileData = this;
+				sections.Add(section);
                 i++;
             }
             #endregion 

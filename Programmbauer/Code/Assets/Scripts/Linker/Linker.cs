@@ -25,7 +25,6 @@ namespace Linker
             List<ObjectFileData> objectFileData = ParseFiles(path);
             List<Symbol> symbols = new();
             List<Section> sections = new();
-            int absoluteProgramOffset = 0;
 
             foreach (ObjectFileData fileData in objectFileData)
             {
@@ -33,21 +32,29 @@ namespace Linker
                 for (int i = 0; i < fileData.sections.Count; i++)
                 {
                     Section section = fileData.sections[i];
-                    section.SetStartAdress(absoluteProgramOffset);
-                    fileData.sections[i] = section;
-                    absoluteProgramOffset += section.data.Length / 4;
-                    AddSymbols(symbols, section.symbols);
-
                     sections.Add(section);
                 }
             }
 
-            foreach (ObjectFileData filaData in objectFileData)
+            int absoluteProgramOffset = 0;
+            Section startSection = sections.Where(section => { return section.name == firstSectionName; }).FirstOrDefault();
+            if(startSection != null)
             {
-                ResolveRelocations(filaData, symbols);
+                sections.Remove(startSection);
+                sections.Insert(0, startSection);
             }
 
-            byte[] programCode = CreateProgramCode(objectFileData);
+		    absoluteProgramOffset = 0;
+            foreach (Section section in sections)
+            {
+                section.SetStartAdress(absoluteProgramOffset);
+				AddSymbols(symbols, section.symbols);
+				absoluteProgramOffset += section.data.Length / 4;
+            }    
+
+            ResolveRelocations(sections, symbols);
+
+            byte[] programCode = CreateProgramCode(sections);
 
             WriteProgram(pathForResult, programCode, ButtonAllocator.outputToggle.value);
 
@@ -134,9 +141,9 @@ namespace Linker
             return objectFileDatas;
         }
 
-        private void ResolveRelocations(ObjectFileData fileData, List<Symbol> symbols)
+        private void ResolveRelocations(List<Section> sections, List<Symbol> symbols)
         {
-            foreach (Section section in fileData.sections)
+            foreach (Section section in sections)
             {
                 foreach (Relocation relocation in section.relocations)
                 {
@@ -146,14 +153,14 @@ namespace Linker
                     Symbol symbol = symbolList.First();
 
                     if (symbol.value == null)
-                        throw new LinkerException($"Symbol {symbol.name} is nowhere defined but used in file {fileData.file}");
+                        throw new LinkerException($"Symbol {symbol.name} is nowhere defined but used in file {section.fileData.file}");
 
 
                     int relocValue = symbol.value.Value;
 
                     //Add pc if pc relative
                     if (relocation.isPCRelative)
-                        relocValue -= (relocation.byteOffset + section.StartAdress);
+                        relocValue -= (relocation.byteOffset + section.StartAdress) + 1;
                     
                     //Use high 16 bits if @h or @ha
                     if (relocation.type is Relocation.Type.HighAlgebraic or Relocation.Type.High)
@@ -194,16 +201,13 @@ namespace Linker
             }
         }
 
-        private static byte[] CreateProgramCode(List<ObjectFileData> objectFileData)
+        private static byte[] CreateProgramCode(List<Section> sections)
         {
             List<byte> programCode = new();
 
-            foreach(ObjectFileData fileData in objectFileData)
+            foreach (Section section in sections)
             {
-                foreach(Section section in fileData.sections)
-                {
-                    programCode.AddRange(section.data);
-                }
+                programCode.AddRange(section.data);
             }
 
             return programCode.ToArray();
