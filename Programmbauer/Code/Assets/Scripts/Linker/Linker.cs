@@ -184,7 +184,7 @@ namespace Linker
                         int invertedByteMask = ~byteMask & 255;
                         int oldValue = section.data[byteOffset + i];
 
-                        section.data[byteOffset + i] |= Convert.ToByte((oldValue & invertedByteMask) | (byteValue & byteMask));
+                        section.data[byteOffset + i] = Convert.ToByte((oldValue & invertedByteMask) | (byteValue & byteMask));
                     }
                 }
             }
