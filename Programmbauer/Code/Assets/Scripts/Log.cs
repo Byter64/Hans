@@ -28,6 +28,7 @@ public class Log : MonoBehaviour
     void Start()
     {
         logText = ButtonAllocator.root.Query<VisualElement>("Log").First().Query<Label>("Text").First();
+        logText.parseEscapeSequences = false;
         buffer = new Queue<char>();
         StartCoroutine(PrintLog());
     }
