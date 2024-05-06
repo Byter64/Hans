@@ -1,11 +1,12 @@
 `include "../Prozessor/0_CPU.v"
 `include "../Prozessor/1_RAM.v"
 `include "../SDKarte/SDKartenLeser.v"
+
+`ifdef SYNTHESIS
 `include "../Grafikkarte/Verilog/Bildpuffer.v"
 `include "../Grafikkarte/Verilog/HDMI_clock.v"
 `include "../Grafikkarte/Verilog/HDMI_test_DDR.v"
 `include "../Grafikkarte/Verilog/TMDS_encoder.v"
-`ifdef SYNTHESIS
 `include "../ecp5pll/hdl/sv/ecp5pll.sv"
 `endif
 module Top
@@ -37,11 +38,12 @@ assign led = ledReg;
  assign sd_d[3] = SDcs;
  assign sd_cmd = SDmosi;
 
-//HDMI
-assign gpdi_dp = HDMIgpdi_dp;
 
 //If in Synthesis
 `ifdef SYNTHESIS
+//HDMI
+assign gpdi_dp = HDMIgpdi_dp;
+
 wire [3:0] clocks;
 ecp5pll
 #(
@@ -170,7 +172,7 @@ reg loaderWarte = 1;
 reg [7:0] ledReg;
 
 /////////////////BILDPUFFER UND CO //////////////////////////////
-
+`ifdef SYNTHESIS
 //Inputs Bildpuffer
 wire BPClock;
 wire [7:0] BildpufferX;
@@ -208,7 +210,7 @@ HDMI_test_DDR hdmi_test_ddr(
     .y(HDMIY),
     .gpdi_dp(gpdi_dp)
 );
-
+`endif 
 /////////////////////////////////////////////////////////////////
 //Knöpfe 
 reg [20:0] KnopfdruckTimer0 = 21'b0;
@@ -299,7 +301,7 @@ assign RAMClock = CPUClock;
 //Inputs Zuweisung Loader
     assign loaderDaten = SDDaten;
     assign loaderRAMAdresse = loaderAdresse - 2;
-
+`ifdef SYNTHESIS
 //Inputs Zuweisung Bildpuffer
     assign BPClock = CPUClock;
     assign BildpufferX = CPUDatenAdresse[15:8];
@@ -312,7 +314,7 @@ assign RAMClock = CPUClock;
 //Inputs Zuweisung HDMI
     assign HDMIPixelData = BildpufferPixelData;
     assign HDMIClock = clocks[2];
-
+`endif
 localparam RESET = 4'd0;
 localparam GROESSELADEN = 4'd1;
 localparam AUFGROESSEWARTEN = 4'd2;
@@ -325,7 +327,7 @@ reg [9:0] resetTimer = ~0;
 reg globalerReset = 0;
 reg loaderReset = 0;
 reg [15:0] debugRAMAdresse = 0;
-reg [20:0] debugTimer = 1;
+reg [22:0] debugTimer = 1;
 reg [2:0] byteNummer = 0;
 reg [4:0] counter = 1; //Weil der sd_controller die Daten nicht mehr richtig lädt, wenn die Anfragen zu schnell kommen, existiert dieser Zähler
 reg[31:0] CPUDatenRausReg;
@@ -446,12 +448,12 @@ always @(posedge RAMClock) begin
         end
         LAEUFT: begin
             loaderReset <= 0;
-            if(CPUDatenAdresse[31] == 1 && CPUSchreibeDaten) begin
-                ledReg <= CPUDatenRaus[7:0];
+            if(CPUDatenAdresse[29] == 1 && CPUSchreibeDaten) begin
+                ledReg <= Buttons;
             end
-                if(btn[0])begin
-                    zustand <= DEBUG;
-                end
+            if(btn[1])begin
+                zustand <= DEBUG;
+            end
         end 
     endcase
 end

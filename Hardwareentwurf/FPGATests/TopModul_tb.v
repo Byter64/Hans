@@ -18,10 +18,10 @@ module main_tb
  Top main (
   .clk_25mhz(clk_25mhz),
   .led(led),
-  .btn(7'b0)
+  .btn(btn)
 
  );
-
+reg[6:0] btn = 6'b0;
  always begin
     #1 clk_25mhz = ~clk_25mhz;
  end
@@ -34,7 +34,9 @@ module main_tb
     clk_25mhz = 0;
 
 
-  #50000
+  #25000
+  btn[6:0] = 7'b0101110;
+  #25000
   $display("End of simulation");
   $finish;
  end

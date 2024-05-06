@@ -38,47 +38,47 @@ initial begin
     daten[0] <= 8'h00;
     daten[1] <= 8'h00;
     daten[2] <= 8'h00;
-    daten[3] <= 8'h0F;
+    daten[3] <= 8'h08;
 
     daten[4] <= 8'h80;
-    daten[5] <= 8'h40;
+    daten[5] <= 8'h20;
     daten[6] <= 8'h00;
-    daten[7] <= 8'h0F;
+    daten[7] <= 8'h01;
 
-    daten[8] <= 8'h00;
-    daten[9] <= 8'h20;
+    daten[8] <= 8'hD8;
+    daten[9] <= 8'h21;
     daten[10] <= 8'h00;
-    daten[11] <= 8'h00;
+    daten[11] <= 8'h1D;
 
-    daten[12] <= 8'h83;
-    daten[13] <= 8'hE0;
+    daten[12] <= 8'h80;
+    daten[13] <= 8'h40;
     daten[14] <= 8'h00;
     daten[15] <= 8'h01;
     
-    daten[16] <= 8'h9B;
-    daten[17] <= 8'hFF;
+    daten[16] <= 8'hD8;
+    daten[17] <= 8'h41;
     daten[18] <= 8'h00;
-    daten[19] <= 8'h1F;
+    daten[19] <= 8'h1E;
 
-    daten[20] <= 8'h00;
-    daten[21] <= 8'h21;
-    daten[22] <= 8'h10;
+    daten[20] <= 8'h80;
+    daten[21] <= 8'h60;
+    daten[22] <= 8'h00;
     daten[23] <= 8'h00;
 
-    daten[24] <= 8'h84;
-    daten[25] <= 8'h42;
+    daten[24] <= 8'hE0;
+    daten[25] <= 8'h62;
     daten[26] <= 8'h00;
-    daten[27] <= 8'h01;
+    daten[27] <= 8'h00;
 
-    daten[28] <= 8'h00;
-    daten[29] <= 8'h62;
+    daten[28] <= 8'hE8;
+    daten[29] <= 8'h61;
     daten[30] <= 8'h00;
-    daten[31] <= 8'h08;
+    daten[31] <= 8'h00;
     
-    daten[32] <= 8'hE8;
-    daten[33] <= 8'h3F;
-    daten[34] <= 8'h00;
-    daten[35] <= 8'h00;
+    daten[32] <= 8'h43;
+    daten[33] <= 8'hFF;
+    daten[34] <= 8'hFF;
+    daten[35] <= 8'hFD;
 
     daten[36] <= 8'hF4;
     daten[37] <= 8'h03;
