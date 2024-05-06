@@ -275,7 +275,7 @@ end
 
 
 //Input Zuweisungen CPU
-assign CPUDatenRein = (CPUInstruktion[31:26] == 111000 && CPUDatenAdresse[30] == 1) {25'b0,Buttons} : RAMDatenRaus;
+assign CPUDatenRein = (CPUInstruktion[31:26] == 111000 && CPUDatenAdresse[30] == 1) ? {25'b0,Buttons} : RAMDatenRaus;
 assign CPUInstruktion = RAMDatenRaus;
 assign CPUInstruktionGeladen = RAMDatenBereit;
 assign CPUDatenGeladen = RAMDatenBereit;
