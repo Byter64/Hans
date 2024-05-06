@@ -192,12 +192,12 @@ int parse_operand(char* start, int len, operand* operand, int requiredOperandTyp
     case Immediate16Plus1:
         if (*start == '#')
             start = skip(start + 1);  /* skip optional '#' */
-        operand->exp = make_expr(ADD, number_expr(1), parse_expr(&start));
+        operand->exp = make_expr(ADD, parse_expr(&start), number_expr(1));
         return PO_MATCH;
     case Immediate16Minus1:
         if (*start == '#')
             start = skip(start + 1);  /* skip optional '#' */
-        operand->exp = make_expr(ADD, number_expr(-1), parse_expr(&start));
+        operand->exp = make_expr(SUB, parse_expr(&start), number_expr(1));
         return PO_MATCH;
     }
     
