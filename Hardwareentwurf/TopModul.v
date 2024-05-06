@@ -49,7 +49,7 @@ ecp5pll
     .out0_hz(40000000),                 .out0_tol_hz(0),
     .out1_hz(50000000), .out1_deg( 90), .out1_tol_hz(0),
     .out2_hz(25000000), .out2_deg(180), .out2_tol_hz(0),
-    .out3_hz(24000000), .out3_deg(300), .out3_tol_hz(0)
+    .out3_hz(20000000), .out3_deg(300), .out3_tol_hz(0)
 )
 ecp5pll_inst
 (
@@ -210,9 +210,72 @@ HDMI_test_DDR hdmi_test_ddr(
 );
 
 /////////////////////////////////////////////////////////////////
+//Knöpfe 
+reg [20:0] KnopfdruckTimer0 = 21'b0;
+reg [20:0] KnopfdruckTimer1 = 21'b0;
+reg [20:0] KnopfdruckTimer2 = 21'b0;
+reg [20:0] KnopfdruckTimer3 = 21'b0;
+reg [20:0] KnopfdruckTimer4 = 21'b0;
+reg [20:0] KnopfdruckTimer5 = 21'b0;
+reg [20:0] KnopfdruckTimer6 = 21'b0;
+reg[6:0] Buttons = 7'b0;
+
+always @(posedge CPUClock) begin
+    if(KnopfdruckTimer0 == 0 && (Buttons[0]!=btn[0])) begin
+        Buttons[0] = ~Buttons[0];
+        KnopfdruckTimer0 = 1;
+    end
+    else if(KnopfdruckTimer0!=0)begin
+        KnopfdruckTimer0 <= KnopfdruckTimer0 + 1;
+    end
+    if(KnopfdruckTimer1 == 0 && (Buttons[1]!=btn[1])) begin
+        Buttons[1] = ~Buttons[1];
+        KnopfdruckTimer1 = 1;
+    end
+    else if(KnopfdruckTimer1!=0)begin
+        KnopfdruckTimer1 <= KnopfdruckTimer1 + 1;
+    end
+    if(KnopfdruckTimer2 == 0 && (Buttons[2]!=btn[2])) begin
+        Buttons[2] = ~Buttons[2];
+        KnopfdruckTimer2 = 1;
+    end
+    else if(KnopfdruckTimer2!=0)begin
+        KnopfdruckTimer2 <= KnopfdruckTimer2 + 1;
+    end
+    if(KnopfdruckTimer3 == 0 && (Buttons[3]!=btn[3])) begin
+        Buttons[3] = ~Buttons[3];
+        KnopfdruckTimer3 = 1;
+    end
+    else if(KnopfdruckTimer3!=0)begin
+        KnopfdruckTimer3 <= KnopfdruckTimer3 + 1;
+    end
+    if(KnopfdruckTimer4 == 0 && (Buttons[4]!=btn[4])) begin
+        Buttons[4] = ~Buttons[4];
+        KnopfdruckTimer4 = 1;
+    end
+    else if(KnopfdruckTimer4!=0)begin
+        KnopfdruckTimer4 <= KnopfdruckTimer4 + 1;
+    end
+    if(KnopfdruckTimer5 == 0 && (Buttons[5]!=btn[5])) begin
+        Buttons[5] = ~Buttons[5];
+        KnopfdruckTimer5 = 1;
+    end
+    else if(KnopfdruckTimer5!=0)begin
+        KnopfdruckTimer5 <= KnopfdruckTimer5 + 1;
+    end
+    if(KnopfdruckTimer6 == 0 && (Buttons[6]!=btn[6])) begin
+        Buttons[6] = ~Buttons[6];
+        KnopfdruckTimer6 = 1;
+    end
+    else if(KnopfdruckTimer6!=0)begin
+        KnopfdruckTimer6 <= KnopfdruckTimer6 + 1;
+    end
+end
+
+
 
 //Input Zuweisungen CPU
-assign CPUDatenRein = RAMDatenRaus;
+assign CPUDatenRein = (CPUInstruktion[31:26] == 111000 && CPUDatenAdresse[30] == 1) ? {25'b0,Buttons} : RAMDatenRaus;
 assign CPUInstruktion = RAMDatenRaus;
 assign CPUInstruktionGeladen = RAMDatenBereit;
 assign CPUDatenGeladen = RAMDatenBereit;
@@ -262,7 +325,7 @@ reg [9:0] resetTimer = ~0;
 reg globalerReset = 0;
 reg loaderReset = 0;
 reg [15:0] debugRAMAdresse = 0;
-reg [23:0] debugTimer = 1;
+reg [20:0] debugTimer = 1;
 reg [2:0] byteNummer = 0;
 reg [4:0] counter = 1; //Weil der sd_controller die Daten nicht mehr richtig lädt, wenn die Anfragen zu schnell kommen, existiert dieser Zähler
 reg[31:0] CPUDatenRausReg;
@@ -377,9 +440,6 @@ always @(posedge RAMClock) begin
                 0: ledReg <= RAMDatenRaus[7:0];
                 default: ledReg <= {2'b10,loaderRAMAdresse[5:0]};
             endcase
-                if(btn[6])begin
-                    zustand <= DEBUG;
-                end
                 if(btn[5])begin
                     zustand <= LAEUFT;
                 end
@@ -389,11 +449,8 @@ always @(posedge RAMClock) begin
             if(CPUDatenAdresse[31] == 1 && CPUSchreibeDaten) begin
                 ledReg <= CPUDatenRaus[7:0];
             end
-                if(btn[6])begin
+                if(btn[0])begin
                     zustand <= DEBUG;
-                end
-                if(btn[5])begin
-                    zustand <= LAEUFT;
                 end
         end 
     endcase
