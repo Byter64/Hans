@@ -35,7 +35,7 @@ reg[6:0] btn = 6'b0;
 
 
   #25000
-  btn[6:0] = 7'b0101110;
+  btn[6:0] = 7'b0101100;
   #25000
   $display("End of simulation");
   $finish;

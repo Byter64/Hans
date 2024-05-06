@@ -281,12 +281,12 @@ assign CPUDatenRein = (CPUInstruktion[31:26] == 111000 && CPUDatenAdresse[30] ==
 assign CPUInstruktion = RAMDatenRaus;
 assign CPUInstruktionGeladen = RAMDatenBereit;
 assign CPUDatenGeladen = RAMDatenBereit;
-assign CPUDatenGespeichert =  CPUDatenAdresse[31] == 1 ? 1 :RAMDatenGeschrieben;
+assign CPUDatenGespeichert =  CPUDatenAdresse[31:29] > 0 ? 1 :RAMDatenGeschrieben;
 assign CPUClock = clocks[3];
 //Inputs Zuweisung InstruktionsRAM
 assign RAMLesenAn       = (zustand < RAMLADENBEENDEN) ? 1 : (CPULeseInstruktion || CPULeseDaten);
 assign RAMSchreibenAn   = (zustand < RAMLADENBEENDEN) ? loaderSchreibeDaten
-                            : CPUDatenAdresse[31] == 1 ? 0 : CPUSchreibeDaten;
+                            : CPUDatenAdresse[31:29] > 0 ? 0 : CPUSchreibeDaten;
 assign RAMDatenRein     = (zustand < RAMLADENBEENDEN) ? loaderDaten : CPUDatenRaus;
 assign RAMAdresse       = (zustand < RAMLADENBEENDEN) ? loaderRAMAdresse
                             : CPULeseInstruktion ? CPUInstruktionAdresse 
@@ -368,7 +368,7 @@ always @(posedge RAMClock) begin
             //Wenn das erste Byte (= die Datenmenge) da ist, beginne, die Daten zu laden
             if(~SDBusy && counter == 0) begin
                 counter <= counter + 1;
-                loaderDatenMenge <= SDDaten;
+                loaderDatenMenge <= SDDaten + 1;
                 zustand <= RAMLADEN;
 
                 //Beginne, das erste Datenbyte von der SDKarte zu laden
