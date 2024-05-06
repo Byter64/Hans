@@ -100,6 +100,8 @@ static void write_output(FILE* file, section* firstSection, symbol* firstSymbol)
         else if (activeSymbol->type == EXPRESSION)
         {
             simplify_expr(activeSymbol->expr);
+            if (activeSymbol->expr->type != NUM)
+                output_error(21, activeSymbol->name);
             fprintf(file, ".%s:%i\n", activeSymbol->name, activeSymbol->expr->c.val);
         }
     }
@@ -148,8 +150,6 @@ static void write_output(FILE* file, section* firstSection, symbol* firstSymbol)
                             }
                             else
                                 highLow = "@h";
-
-                            reloc->mask = 0xFFFF;
                         }
                         else if (reloc->mask == 0xFFFF)
                         {
@@ -158,7 +158,6 @@ static void write_output(FILE* file, section* firstSection, symbol* firstSymbol)
                         else
                         {
                             highLow = "none";
-                            reloc->mask = 0xFFFF;
                         }
 
                         fprintf(file, "\t<%u,%u,%u,%i,%i,%s,%s,%s>\n", 

@@ -12,6 +12,7 @@ namespace Linker
     {
         private const string resultFileNameBinary = "program.bin";
         private const string resultFileNameHex = "program.txt";
+        private const string firstSectionName = "Start";
 
         private string[] lennyFaces = { "(▀̿Ĺ̯▀̿ ̿)", "ʕ•ᴥ•ʔ", "(づ｡◕‿‿◕｡)づ", "(ง'̀-'́)ง", 
             "(☞ﾟヮﾟ)☞ ☜(ﾟヮﾟ☜)", "♪~ ᕕ(ᐛ)ᕗ", "(~˘▾˘)~", "（╯°□°）╯︵( .o.)", "ᕙ(⇀‸↼‶)ᕗ", "ᕦ(ò_óˇ)ᕤ" };
@@ -23,7 +24,7 @@ namespace Linker
 #endif
             List<ObjectFileData> objectFileData = ParseFiles(path);
             List<Symbol> symbols = new();
-            int absoluteProgramOffset = 0;
+            List<Section> sections = new();
 
             foreach (ObjectFileData fileData in objectFileData)
             {
@@ -31,19 +32,30 @@ namespace Linker
                 for (int i = 0; i < fileData.sections.Count; i++)
                 {
                     Section section = fileData.sections[i];
-                    section.SetStartAdress(absoluteProgramOffset);
-                    fileData.sections[i] = section;
-                    absoluteProgramOffset += section.data.Length / 4;
-                    AddSymbols(symbols, section.symbols);
+                    sections.Add(section);
                 }
             }
 
-            foreach (ObjectFileData filaData in objectFileData)
+            int absoluteProgramOffset = 0;
+            Section startSection = sections.Where(section => { return section.name == firstSectionName; }).FirstOrDefault();
+            if(startSection != null)
             {
-                ResolveRelocations(filaData, symbols);
+                sections.Remove(startSection);
+                sections.Insert(0, startSection);
             }
 
-            byte[] programCode = CreateProgramCode(objectFileData);
+		    absoluteProgramOffset = 0;
+            foreach (Section section in sections)
+            {
+                section.SetStartAdress(absoluteProgramOffset);
+				AddSymbols(symbols, section.symbols);
+				absoluteProgramOffset += section.data.Length / 4;
+            }
+
+            ResolveRelocations(sections, symbols);
+
+            List<byte> programCode = CreateProgramCode(sections);
+
 
             WriteProgram(pathForResult, programCode, ButtonAllocator.outputToggle.value);
 
@@ -130,9 +142,9 @@ namespace Linker
             return objectFileDatas;
         }
 
-        private void ResolveRelocations(ObjectFileData fileData, List<Symbol> symbols)
+        private void ResolveRelocations(List<Section> sections, List<Symbol> symbols)
         {
-            foreach (Section section in fileData.sections)
+            foreach (Section section in sections)
             {
                 foreach (Relocation relocation in section.relocations)
                 {
@@ -142,15 +154,14 @@ namespace Linker
                     Symbol symbol = symbolList.First();
 
                     if (symbol.value == null)
-                        throw new LinkerException($"Symbol {symbol.name} is nowhere defined but used in file {fileData.file}");
+                        throw new LinkerException($"Symbol {symbol.name} is nowhere defined but used in file {section.fileData.file}");
 
-                    int byteOffset = (relocation.byteOffset + section.StartAdress) * 4; //Convert from 32-Bit Bytes to 8-Bit Bytes
 
                     int relocValue = symbol.value.Value;
 
                     //Add pc if pc relative
                     if (relocation.isPCRelative)
-                        relocValue -= (relocation.byteOffset + section.StartAdress);
+                        relocValue -= (relocation.byteOffset + section.StartAdress) + 1;
                     
                     //Use high 16 bits if @h or @ha
                     if (relocation.type is Relocation.Type.HighAlgebraic or Relocation.Type.High)
@@ -166,15 +177,18 @@ namespace Linker
                         relocValue++;
                     }
 
-                    if(relocation.type is Relocation.Type.Default && (relocValue < -0x8000 || relocValue > 0x7FFF))
+                    if(relocation.type is Relocation.Type.Default && (relocValue < -0x8000 || relocValue > 0xFFFF))
                     {
                         Log.Instance.Print($"WARNING in section {section.name}: value does not fit into immediate. Allowed range is [-3276:32767]. \n" +
                             $"Symbol is {relocation.symbolName} and has value {relocValue}.");
                     }
 
+                    int bitMask = (1 << relocation.amountOfBits) - 1;
+                    int byteOffset = relocation.byteOffset * 4; //Convert from 32-Bit Bytes to 8-Bit Bytes
+
                     for (int i = 0; i < 4; i++)
                     {
-                        int byteMask = relocation.bitMask & (255 << ((3 - i) * 8));
+                        int byteMask = bitMask & (255 << ((3 - i) * 8));
                         byteMask >>= (3 - i) * 8;
                         int byteValue = relocValue        & (255 << ((3 - i) * 8));
                         byteValue >>= (3 - i) * 8;
@@ -182,28 +196,25 @@ namespace Linker
                         int invertedByteMask = ~byteMask & 255;
                         int oldValue = section.data[byteOffset + i];
 
-                        section.data[byteOffset + i] |= Convert.ToByte((oldValue & invertedByteMask) | (byteValue & byteMask));
+                        section.data[byteOffset + i] = Convert.ToByte((oldValue & invertedByteMask) | (byteValue & byteMask));
                     }
                 }
             }
         }
 
-        private static byte[] CreateProgramCode(List<ObjectFileData> objectFileData)
+        private static List<byte> CreateProgramCode(List<Section> sections)
         {
             List<byte> programCode = new();
 
-            foreach(ObjectFileData fileData in objectFileData)
+            foreach (Section section in sections)
             {
-                foreach(Section section in fileData.sections)
-                {
-                    programCode.AddRange(section.data);
-                }
+                programCode.AddRange(section.data);
             }
 
-            return programCode.ToArray();
+            return programCode;
         }
 
-        private static void WriteProgram(string path, byte[] programCode, bool asHex)
+        private static void WriteProgram(string path, List<byte> programCode, bool asHex)
         {
             path += Path.DirectorySeparatorChar + (asHex ? resultFileNameHex : resultFileNameBinary);
              
@@ -211,11 +222,20 @@ namespace Linker
             {
                 File.Delete(path);
             }
+            int programSize = programCode.Count / 4;
+
+            for(int i = 0; i < 4; i++)
+            {
+                byte size = Convert.ToByte((programSize >> (i * 8)) & 255);
+                programCode.Insert(0, size);
+            }
+
+            byte[] bytes = programCode.ToArray();
 
             if (asHex)
-                File.WriteAllText(path, BitConverter.ToString(programCode).Replace("-", string.Empty));
+                File.WriteAllText(path, BitConverter.ToString(bytes).Replace("-", string.Empty));
             else
-                File.WriteAllBytes(path, programCode);
+                File.WriteAllBytes(path, bytes);
         }
         
         /// <summary>

@@ -17,8 +17,12 @@ mnemonic mnemonics[] = {
   "cne",     { TargetReg,SourceReg1,SourceReg2 },  { FORMR(9) },
   "cg",      { TargetReg,SourceReg1,SourceReg2 },  { FORMR(10) },
   "cl",      { TargetReg,SourceReg1,SourceReg2 },  { FORMR(11) },
-  "cg",      { TargetReg,SourceReg1,SourceReg2 },  { FORMR(12) },
-  "cl",      { TargetReg,SourceReg1,SourceReg2 },  { FORMR(13) },
+  "cgu",     { TargetReg,SourceReg1,SourceReg2 },  { FORMR(12) },
+  "clu",     { TargetReg,SourceReg1,SourceReg2 },  { FORMR(13) },
+  "cgeu",    { TargetReg,SourceReg2,SourceReg1 },  { FORMR(13) },
+  "cleu",    { TargetReg,SourceReg2,SourceReg1 },  { FORMR(12) },
+  "cge",     { TargetReg,SourceReg2,SourceReg1 },  { FORMR(11) },
+  "cle",     { TargetReg,SourceReg2,SourceReg1 },  { FORMR(10) },
   "itof",    { TargetFloatReg,SourceReg1 },        { FORMR(14) },
   "uitof",   { TargetFloatReg,SourceReg1 },        { FORMR(15) },
   "not",     { TargetReg,SourceReg1 },             { FORMR(16) },
@@ -31,14 +35,16 @@ mnemonic mnemonics[] = {
   "add.s",   { TargetFloatReg,SourceFloatReg1,SourceFloatReg2 },  { FORMR(32) },
   "sub.s",   { TargetFloatReg,SourceFloatReg1,SourceFloatReg2 },  { FORMR(33) },
   "mul.s",   { TargetFloatReg,SourceFloatReg1,SourceFloatReg2 },  { FORMR(34) },
-  "squrt.s", { TargetFloatReg,SourceFloatReg1 },                  { FORMR(35) },
+  "sqrt.s", { TargetFloatReg,SourceFloatReg1 },                  { FORMR(35) },
   "div.s",   { TargetFloatReg,SourceFloatReg1,SourceFloatReg2 },  { FORMR(36) },
   "ce.s",    { TargetReg,SourceFloatReg1,SourceFloatReg2 },       { FORMR(40) },
   "cne.s",   { TargetReg,SourceFloatReg1,SourceFloatReg2 },       { FORMR(41) },
   "cg.s",    { TargetReg,SourceFloatReg1,SourceFloatReg2 },       { FORMR(42) },
   "cl.s",    { TargetReg,SourceFloatReg1,SourceFloatReg2 },       { FORMR(43) },
+  "cge.s",    { TargetReg,SourceFloatReg2,SourceFloatReg1 },       { FORMR(43) },
+  "cle.s",    { TargetReg,SourceFloatReg2,SourceFloatReg1 },       { FORMR(42) },
   "ftoi",    { TargetReg,SourceFloatReg1 },                       { FORMR(46) },
-  "cl.s",    { TargetReg,SourceFloatReg1 },                       { FORMR(47) },
+  "ftoui",    { TargetReg,SourceFloatReg1 },                       { FORMR(47) },
   "addi",    { TargetReg,SourceReg1,Immediate16 },  { FORMI(0) },
   "subi",    { TargetReg,SourceReg1,Immediate16 },  { FORMI(1) },
   "muli",    { TargetReg,SourceReg1,Immediate16 },  { FORMI(2) },
@@ -50,8 +56,12 @@ mnemonic mnemonics[] = {
   "cnei",    { TargetReg,SourceReg1,Immediate16 },  { FORMI(9) },
   "cgi",     { TargetReg,SourceReg1,Immediate16 },  { FORMI(10) },
   "cli",     { TargetReg,SourceReg1,Immediate16 },  { FORMI(11) },
+  "cgei",    { TargetReg,SourceReg1,Immediate16Minus1 },  { FORMI(10) },
+  "clei",    { TargetReg,SourceReg1,Immediate16Plus1 },  { FORMI(11) },
   "cgui",    { TargetReg,SourceReg1,Immediate16 },  { FORMI(12) },
   "clui",    { TargetReg,SourceReg1,Immediate16 },  { FORMI(13) },
+  "cgeui",   { TargetReg,SourceReg1,Immediate16Minus1 },  { FORMI(12) },
+  "cleui",   { TargetReg,SourceReg1,Immediate16Plus1 },  { FORMI(13) },
   "addis",   { TargetReg,SourceReg1,Immediate16 },  { FORMI(16) },
   "andi",    { TargetReg,SourceReg1,Immediate16 },  { FORMI(17) },
   "ori",     { TargetReg,SourceReg1,Immediate16 },  { FORMI(18) },
@@ -71,7 +81,7 @@ mnemonic mnemonics[] = {
 };
 const int mnemonic_cnt = sizeof(mnemonics) / sizeof(mnemonics[0]);
 
-const char* cpu_copyright = "vasm hans cpu backend 1.0 (c)2024 by Yannik Stamm";
+const char* cpu_copyright = "vasm hans cpu backend 1.1 (c)2024 by Yannik Stamm";
 const char* cpuname = "hans";
 int bytespertaddr = 1;
 
@@ -125,24 +135,22 @@ static int parse_reg(char** start, int regtype)
 static void resolve_high_low_label_reference
         (operand* operand, char* lastSymbolOfName)
 {
-    operand->isLowLabel = 0;
-    operand->isHighLabel = 0;
-    operand->isHighAlgebraicLabel = 0;
+    operand->labelType = DefaultLabel;
     if (*lastSymbolOfName != '@') return;
 
     if (*(lastSymbolOfName + 1) == 'l' || *(lastSymbolOfName + 1) == 'L')
     {
-        operand->isLowLabel = 1;
+        operand->labelType = LowLabel;
     }
     else if (*(lastSymbolOfName + 1) == 'h' || *(lastSymbolOfName + 1) == 'H')
     {
         if (*(lastSymbolOfName + 2) == 'a' || *(lastSymbolOfName + 2) == 'A')
         {
-            operand->isHighAlgebraicLabel = 1;
+            operand->labelType = HighAlgebraicLabel;
         }
         else
         {
-            operand->isHighLabel = 1;
+            operand->labelType = HighLabel;
         }
     }
 
@@ -181,6 +189,16 @@ int parse_operand(char* start, int len, operand* operand, int requiredOperandTyp
         operand->exp = parse_expr(&start);
         resolve_high_low_label_reference(operand, start);
         return PO_MATCH;
+    case Immediate16Plus1:
+        if (*start == '#')
+            start = skip(start + 1);  /* skip optional '#' */
+        operand->exp = make_expr(ADD, number_expr(1), parse_expr(&start));
+        return PO_MATCH;
+    case Immediate16Minus1:
+        if (*start == '#')
+            start = skip(start + 1);  /* skip optional '#' */
+        operand->exp = make_expr(ADD, number_expr(-1), parse_expr(&start));
+        return PO_MATCH;
     }
     
     return PO_NOMATCH;
@@ -202,11 +220,11 @@ size_t instruction_size(instruction* ip, section* sec, taddr pc)
 /*Handles low and high labels*/
 static uint32_t add_immediate(uint32_t opCode, taddr immediateValue, operand* operand)
 {
-    if (operand->isHighLabel)
+    if (operand->labelType == HighLabel)
     {
         opCode |= (immediateValue & 0xffff0000) >> 16;
     }
-    else if (operand->isHighAlgebraicLabel)
+    else if (operand->labelType == HighAlgebraicLabel)
     {
         uint16_t higherHalf = (immediateValue & 0xffff0000) >> 16;
         uint16_t lowerHalf = immediateValue & 0x0000ffff;
@@ -274,17 +292,27 @@ dblock* eval_instruction
         case SourceFloatReg2:
             opCode |= (operand->reg & 31) << 11;
             break;
+        case Immediate16Minus1:
+            if (strcmp(mnemonic->name, "cgei") == 0 && immediateValue < -0x8000 || immediateValue > 0x7FFF)
+                cpu_error(4, immediateValue + 1, "[-32767:32768]", mnemonic->name);
+            if (strcmp(mnemonic->name, "cgeui") == 0 && immediateValue < 0x0000 || immediateValue > 0xFFFF)
+                cpu_error(4, immediateValue + 1, "[1:65536]", mnemonic->name);
+        case Immediate16Plus1:
+            if (strcmp(mnemonic->name, "clei") == 0 && immediateValue < -0x8000 || immediateValue > 0x7FFF)
+                cpu_error(4, immediateValue - 1, "[-32769:32766]", mnemonic->name);
+            if (strcmp(mnemonic->name, "cleui") == 0 && immediateValue < -0x0000 || immediateValue > 0xFFFF)
+                cpu_error(4, immediateValue - 1, "[-1:65534]", mnemonic->name);
         case Immediate16:
             if (baseOfImmediate != NULL)
             {
                 rlist* newReloc;
                 /* external label or label from a different section needs reloc */
                 int mask;
-                if (operand->isHighLabel)
+                if (operand->labelType == HighLabel)
                 {
                     mask = 0xFFFF0000;
                 }
-                else if (operand->isHighAlgebraicLabel)
+                else if (operand->labelType == HighAlgebraicLabel)
                 {
                     rlist* reloc;
                     mask = 0xFFFF0000;
@@ -293,7 +321,7 @@ dblock* eval_instruction
                         baseOfImmediate, immediateValue, REL_ABS, 16, 16, 0);
                     ((nreloc*)reloc->reloc)->mask = 0x8000;
                 }
-                else if (operand->isLowLabel)
+                else if (operand->labelType == LowLabel)
                 {
                     mask = 0xFFFF;
                 }
@@ -304,9 +332,11 @@ dblock* eval_instruction
                     baseOfImmediate, immediateValue, REL_ABS, 16, 16, 0);
                 ((nreloc*)newReloc->reloc)->mask = mask;
             }
-            /*Only throw warning if not explicitly marked as @l, and if immediate out of range of 16 Bit signed/unsigned int*/
-            if (!operand->isLowLabel && (immediateValue < -0x8000 || immediateValue > 0xFFFF))
+            /*Only throw warning if immediate out of range of 16 Bit signed/unsigned int*/
+            if (immediateValue < -0x8000 || immediateValue > 0xFFFF)
                 cpu_error(1, immediateValue);
+
+
             opCode = add_immediate(opCode, immediateValue, operand);
             break;
         case Immediate16Label:
@@ -339,7 +369,6 @@ dblock* eval_instruction
                     /* external label or label from a different section needs reloc */
                     rlist* reloc = add_extnreloc(&dataBlock->relocs,
                         baseOfImmediate, immediateValue, REL_PC, 6, 26, 0);
-                    ((nreloc*)reloc->reloc)->mask = 67108863;
                 }
             }
             immediateValue -= programCounter + 1;

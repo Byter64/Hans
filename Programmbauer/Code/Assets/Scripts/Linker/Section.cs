@@ -7,7 +7,7 @@ using UnityEngine;
 namespace Linker
 {
     [DebuggerDisplay("{name}, Adress = {StartAdress}")]
-    public struct Section
+    public class Section
     {
         public int StartAdress { get; private set; }
         public string name;
@@ -15,6 +15,7 @@ namespace Linker
         public byte[] data { get; set; }
         public List<Relocation> relocations;
         public List<Symbol> symbols;
+        public ObjectFileData fileData;
 
         public Section(string name, string dataAsText, List<Relocation> relocations, List<Symbol> symbols)
         {
@@ -58,16 +59,6 @@ namespace Linker
             }
 
             return data;
-        }
-
-        public static bool operator ==(Section left, Section right)
-        {
-            return left.name == right.name;
-        }
-
-        public static bool operator !=(Section left, Section right)
-        {
-            return !(left == right);
         }
     }
 }
