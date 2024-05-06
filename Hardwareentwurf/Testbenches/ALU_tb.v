@@ -431,16 +431,6 @@ initial begin
     if(Ergebnis != 32'b01000101100100001010001011010001)//4628,352
         $display("Floats multiplizieren funktioniert nicht: \n Faktor1:  %f \n Faktor2:  %f \n Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b01000101100100001010001011010001);    
     
-    //Sqrt.s-Befehl testen
-    Daten1 = 32'b01000000000110010101010101010101;        //2,39583325386   
-    FunktionsCode = FloatQuadratwurzel;
-    StartSignal = 1;
-    #(Cycle)
-    StartSignal = 0;
-    wait(HatFertigGerechnet) #(Cycle)
-    if(Ergebnis != 32'b00111111110001100001111111100010)  //1,5478479427450230002776786742845
-        $display("Float Quadratwurzel funktioniert nicht (zurzeit nicht supported): \n Radikand: %f Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b00111111110001100001111111100010);
-    
     //Div.s-Befehl testen
     Daten1 = 32'b01000010001101011000000100000110;      // 45,376
     Daten2 = 32'b01000010110011000000000000000000;      //102,000
@@ -451,6 +441,17 @@ initial begin
     wait(HatFertigGerechnet) #(Cycle)
     if(Ergebnis != 32'b00111110111000111100010100001101)  //0.4448627531528472900390625
         $display("Floats dividieren funktioniert nicht: \n Divisor:  %b \n Dividend: %b \n Ergebnis: %b \n Erwartet: %b\n", Daten1, Daten2, Ergebnis, 32'b00111110111000111100010100001101);
+
+    //Sqrt.s-Befehl testen
+    Daten1 = 32'b01000000000110010101010101010101;        //2,39583325386   
+    FunktionsCode = FloatQuadratwurzel;
+    StartSignal = 1;
+    #(Cycle)
+    StartSignal = 0;
+    wait(HatFertigGerechnet) #(Cycle)
+    if(Ergebnis != 32'b00111111110001100001111111100001)  //1,5478479427450230002776786742845
+        $display("Float Quadratwurzel funktioniert nicht (zurzeit nicht supported): \n Radikand: %f Ergebnis: %f \n Erwartet: %f\n", Daten1, Daten2, Ergebnis, 32'b00111111110001100001111111100001);
+    
     #(Cycle*5) $display("End of simulation");
     $finish;
 end

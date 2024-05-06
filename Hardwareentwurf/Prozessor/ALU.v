@@ -12,6 +12,13 @@
 `include "../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/single_to_int.v"
 `include "../Prozessor/ALUModule/verilog-math-master_FLOAT_/components/single_to_unsigned_int.v"
 
+`include "../Prozessor/ALUModule/sbd_sqrt_fp/trunk/sbd_sqrt_fp.v"
+`include "../Prozessor/ALUModule/sbd_sqrt_fp/trunk/sbd_adsu.v"
+`include "../Prozessor/ALUModule/sbd_sqrt_fp/trunk/sbd_shifter_left2.v"
+`include "../Prozessor/ALUModule/sbd_sqrt_fp/trunk/sbd_shifter_left3_right2.v"
+`include "../Prozessor/ALUModule/sbd_sqrt_fp/trunk/sbd_sqrt_fp_calc_mant.v"
+`include "../Prozessor/ALUModule/sbd_sqrt_fp/trunk/sbd_sqrt_fp_state_mach.v"
+
 
 module ALU (
     input[31:0] Daten1,
@@ -145,10 +152,20 @@ mul FloatMultiplizierer(
     .mul_z(MultiplikationFloatErgebnis)
 );
 
-sqrt FloatWurzeler(
-    .clk(Clock),
-    .sqrt_a(Daten1),
-    .sqrt_z(WurzelFloatErgebnis)
+wire FloatWurzelerReady; // Sollte immer der fall sein
+wire FloatWurzelerVal;
+assign FloatWurzelerVal = StartSignal && FunktionsCode == FloatQuadratwurzel;
+wire FloatWurzelerFertig;
+reg FloatWurzelerValErg = 1'b1;
+sbd_sqrt_fp FloatWurzeler(
+    .CLK(Clock),
+    .D_IN(Daten1),
+    .D_OUT(WurzelFloatErgebnis),
+    .VAL_IN(FloatWurzelerVal), // Assert VAL_IN to signal a valid input value
+    .VAL_OUT(FloatWurzelerFertig), // VAL_OUT is asserted when the output is valid.  VAL_OUT will remain asserted and D_OUT will persist until VAL_OUT and RDY_OUT have both been asserted for one clock cycle.
+    .RDY_IN(FloatWurzelerReady), // module is ready to accept input
+    .RDY_OUT(FloatWurzelerValErg) // when asserted, downstream logic is ready to accept output of module
+
 );
 
 div FloatDividierer(
@@ -218,7 +235,7 @@ assign Ergebnis =   FunktionsCode[5:0] == IntQuadratwurzel      ? WurzelErgebnis
                     FunktionsCode[5:0] == FloatAddition         ? AdditionFloatErgebnis :
                     FunktionsCode[5:0] == FloatSubtraktion      ? AdditionFloatErgebnis :
                     FunktionsCode[5:0] == FloatMultiplikation   ? MultiplikationFloatErgebnis :
-                    //FunktionsCode[5:0] == FloatQuadratwurzel  ? WurzelFloatErgebnis :
+                    FunktionsCode[5:0] == FloatQuadratwurzel    ? WurzelFloatErgebnis :
                     FunktionsCode[5:0] == FloatDivision         ? DivisionFloatErgebnis :
                     FunktionsCode[5:0] == FloatGleichheit       ? {31'b0, FloatGleichheitErgebnis} :
                     FunktionsCode[5:0] == FloatUngleichheit     ? {31'b0, ~FloatGleichheitErgebnis} :
@@ -230,6 +247,7 @@ assign Ergebnis =   FunktionsCode[5:0] == IntQuadratwurzel      ? WurzelErgebnis
 
 assign HatFertigGerechnet = (FunktionsCode == IntDivision || FunktionsCode == IntModulo)?(DivModFertig):
                             (FunktionsCode == IntQuadratwurzel)?(WurzelFertig):
+                            (FunktionsCode == FloatQuadratwurzel)?FloatWurzelerFertig:
                             (TakteBisFertig == 0);
 
 assign IntWurzelReset = (FunktionsCode == IntQuadratwurzel & StartSignal) | Reset;
@@ -263,10 +281,6 @@ always @(posedge Clock) begin
             //Mul.s
             FloatMultiplikation    : begin 
                 TakteBisFertig <= 9;
-            end
-            //Sqrt.s
-            FloatQuadratwurzel    : begin 
-                TakteBisFertig <= 10;
             end
             //Div.s
             FloatDivision    : begin 
