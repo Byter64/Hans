@@ -451,9 +451,9 @@ always @(posedge RAMClock) begin
             if(CPUDatenAdresse[29] == 1 && CPUSchreibeDaten) begin
                 ledReg <= Buttons;
             end
-            if(btn[1])begin
+            /*if(btn[1])begin
                 zustand <= DEBUG;
-            end
+            end */
         end 
     endcase
 end
