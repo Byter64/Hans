@@ -213,107 +213,126 @@ HDMI_test_DDR hdmi_test_ddr(
 `endif 
 /////////////////////////////////////////////////////////////////
 //Knöpfe 
-reg [20:0] KnopfdruckTimer0 = 21'b0;
-reg [20:0] KnopfdruckTimer1 = 21'b0;
-reg [20:0] KnopfdruckTimer2 = 21'b0;
-reg [20:0] KnopfdruckTimer3 = 21'b0;
-reg [20:0] KnopfdruckTimer4 = 21'b0;
-reg [20:0] KnopfdruckTimer5 = 21'b0;
-reg [20:0] KnopfdruckTimer6 = 21'b0;
+reg [19:0] KnopfdruckTimer0 = 20'b0;
+reg [19:0] KnopfdruckTimer1 = 20'b0;
+reg [19:0] KnopfdruckTimer2 = 20'b0;
+reg [19:0] KnopfdruckTimer3 = 20'b0;
+reg [19:0] KnopfdruckTimer4 = 20'b0;
+reg [19:0] KnopfdruckTimer5 = 20'b0;
+reg [19:0] KnopfdruckTimer6 = 20'b0;
 reg[6:0] Buttons = 7'b0;
 
-always @(posedge CPUClock) begin
-    if(KnopfdruckTimer0 == 0 && (Buttons[0]!=btn[0])) begin
-        Buttons[0] = ~Buttons[0];
+always @(posedge clk_25mhz) begin
+    if(KnopfdruckTimer0 == 0 && (btn[0]==1)) begin
+        Buttons[0] = 1;
         KnopfdruckTimer0 = 1;
     end
     else if(KnopfdruckTimer0!=0)begin
         KnopfdruckTimer0 <= KnopfdruckTimer0 + 1;
+    end else begin
+        Buttons[0] = 0;
     end
-    if(KnopfdruckTimer1 == 0 && (Buttons[1]!=btn[1])) begin
-        Buttons[1] = ~Buttons[1];
+    if(KnopfdruckTimer1 == 0 && (btn[1]==1)) begin
+        Buttons[1] = 1;
         KnopfdruckTimer1 = 1;
     end
     else if(KnopfdruckTimer1!=0)begin
         KnopfdruckTimer1 <= KnopfdruckTimer1 + 1;
+    end else begin
+        Buttons[1] = 0;
     end
-    if(KnopfdruckTimer2 == 0 && (Buttons[2]!=btn[2])) begin
-        Buttons[2] = ~Buttons[2];
+    if(KnopfdruckTimer2 == 0 && (btn[2]==1)) begin
+        Buttons[2] = 1;
         KnopfdruckTimer2 = 1;
     end
     else if(KnopfdruckTimer2!=0)begin
         KnopfdruckTimer2 <= KnopfdruckTimer2 + 1;
+    end  else begin
+        Buttons[2] = 0;
     end
-    if(KnopfdruckTimer3 == 0 && (Buttons[3]!=btn[3])) begin
-        Buttons[3] = ~Buttons[3];
+    if(KnopfdruckTimer3 == 0 && (btn[3]==1)) begin
+        Buttons[3] = 1;
         KnopfdruckTimer3 = 1;
     end
     else if(KnopfdruckTimer3!=0)begin
         KnopfdruckTimer3 <= KnopfdruckTimer3 + 1;
+    end else begin
+        Buttons[3] = 0;
     end
-    if(KnopfdruckTimer4 == 0 && (Buttons[4]!=btn[4])) begin
-        Buttons[4] = ~Buttons[4];
+    if(KnopfdruckTimer4 == 0 && (btn[4] == 1)) begin
+        Buttons[4] = 1;
         KnopfdruckTimer4 = 1;
     end
     else if(KnopfdruckTimer4!=0)begin
         KnopfdruckTimer4 <= KnopfdruckTimer4 + 1;
+    end else begin
+        Buttons[4] = 0;
     end
-    if(KnopfdruckTimer5 == 0 && (Buttons[5]!=btn[5])) begin
-        Buttons[5] = ~Buttons[5];
+    if(KnopfdruckTimer5 == 0 && (btn[5]==1)) begin
+        Buttons[5] = 1;
         KnopfdruckTimer5 = 1;
     end
     else if(KnopfdruckTimer5!=0)begin
         KnopfdruckTimer5 <= KnopfdruckTimer5 + 1;
+    end else begin
+        Buttons[5] = 0;
     end
-    if(KnopfdruckTimer6 == 0 && (Buttons[6]!=btn[6])) begin
-        Buttons[6] = ~Buttons[6];
+    if(KnopfdruckTimer6 == 0 && (btn[6]==1)) begin
+        Buttons[6] = 1;
         KnopfdruckTimer6 = 1;
     end
     else if(KnopfdruckTimer6!=0)begin
         KnopfdruckTimer6 <= KnopfdruckTimer6 + 1;
+    end else begin
+        Buttons[6] = 0;
     end
 end
 
-
+reg[5:0] aktuelleInstruktion = 6'b0;
+always @(posedge CPUClock) begin
+    if(CPUInstruktionGeladen) begin
+        aktuelleInstruktion <= CPUInstruktion[31:26];
+    end
+end
 
 //Input Zuweisungen CPU
-assign CPUDatenRein = (CPUInstruktion[31:26] == 111000 && CPUDatenAdresse[30] == 1) ? {25'b0,Buttons} : RAMDatenRaus;
-assign CPUInstruktion = RAMDatenRaus;
-assign CPUInstruktionGeladen = RAMDatenBereit;
-assign CPUDatenGeladen = RAMDatenBereit;
-assign CPUDatenGespeichert =  CPUDatenAdresse[31:29] > 0 ? 1 :RAMDatenGeschrieben;
-assign CPUClock = clocks[3];
+assign CPUDatenRein             = (aktuelleInstruktion == 6'b111000)?{24'b0,Buttons}:RAMDatenRaus;
+assign CPUInstruktion           = RAMDatenRaus;
+assign CPUInstruktionGeladen    = RAMDatenBereit && CPULeseInstruktion;
+assign CPUDatenGeladen          = CPUDatenAdresse[31:29] > 0 ? 1 : RAMDatenBereit;
+assign CPUDatenGespeichert      =  CPUDatenAdresse[31:29] > 0 ? 1 :RAMDatenGeschrieben;
+assign CPUClock                 = clocks[3];
 //Inputs Zuweisung InstruktionsRAM
-assign RAMLesenAn       = (zustand < RAMLADENBEENDEN) ? 1 : (CPULeseInstruktion || CPULeseDaten);
-assign RAMSchreibenAn   = (zustand < RAMLADENBEENDEN) ? loaderSchreibeDaten
-                            : CPUDatenAdresse[31:29] > 0 ? 0 : CPUSchreibeDaten;
-assign RAMDatenRein     = (zustand < RAMLADENBEENDEN) ? loaderDaten : CPUDatenRaus;
-assign RAMAdresse       = (zustand < RAMLADENBEENDEN) ? loaderRAMAdresse
-                            : CPULeseInstruktion ? CPUInstruktionAdresse 
-                            : CPUDatenAdresse;
-assign RAMClock = CPUClock;
+assign RAMLesenAn               = (zustand < RAMLADENBEENDEN) ? 1 : (CPULeseInstruktion || CPULeseDaten);
+assign RAMSchreibenAn           = (zustand < RAMLADENBEENDEN) ? loaderSchreibeDaten
+                                    : CPUDatenAdresse[31:29] > 0 ? 0 : CPUSchreibeDaten;
+assign RAMDatenRein             = (zustand < RAMLADENBEENDEN) ? loaderDaten : CPUDatenRaus;
+assign RAMAdresse               = (zustand < RAMLADENBEENDEN) ? loaderRAMAdresse
+                                    : CPULeseInstruktion ? CPUInstruktionAdresse 
+                                    : CPUDatenAdresse;
+assign RAMClock                 = CPUClock;
 
 //Inputs Zuweisung SDKarte
-    assign SDAdresse = loaderAdresse;
-    assign SDLesen = loaderLesen;
-    assign SDClock = CPUClock;
+    assign SDAdresse            = loaderAdresse;
+    assign SDLesen              = loaderLesen;
+    assign SDClock              = CPUClock;
 
 //Inputs Zuweisung Loader
-    assign loaderDaten = SDDaten;
-    assign loaderRAMAdresse = loaderAdresse - 2;
+    assign loaderDaten          = SDDaten;
+    assign loaderRAMAdresse     = loaderAdresse - 2;
 `ifdef SYNTHESIS
 //Inputs Zuweisung Bildpuffer
-    assign BPClock = CPUClock;
-    assign BildpufferX = CPUDatenAdresse[15:8];
-    assign BildpufferY = CPUDatenAdresse[7:0];
-    assign BildpufferColor = CPUDatenRaus[7:0];
-    assign BildpufferWrite = (CPUDatenAdresse[31] == 1) ? CPUSchreibeDaten : 0; 
-    assign BildpufferXData = HDMIX;
-    assign BildpufferYData = HDMIY;
+    assign BPClock              = CPUClock;
+    assign BildpufferX          = CPUDatenAdresse[7:0];
+    assign BildpufferY          = CPUDatenAdresse[15:8];
+    assign BildpufferColor      = CPUDatenRaus[7:0];
+    assign BildpufferWrite      = (CPUDatenAdresse[31] == 1) ? CPUSchreibeDaten : 0; 
+    assign BildpufferXData      = HDMIX;
+    assign BildpufferYData      = HDMIY;
 
 //Inputs Zuweisung HDMI
-    assign HDMIPixelData = BildpufferPixelData;
-    assign HDMIClock = clocks[2];
+    assign HDMIPixelData        = BildpufferPixelData;
+    assign HDMIClock            = clocks[2];
 `endif
 localparam RESET = 4'd0;
 localparam GROESSELADEN = 4'd1;
@@ -449,7 +468,7 @@ always @(posedge RAMClock) begin
         LAEUFT: begin
             loaderReset <= 0;
             if(CPUDatenAdresse[29] == 1 && CPUSchreibeDaten) begin
-                ledReg <= Buttons;
+                ledReg <= CPUDatenRaus[7:0];
             end
             /*if(btn[1])begin
                 zustand <= DEBUG;

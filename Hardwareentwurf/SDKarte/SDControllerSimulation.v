@@ -56,7 +56,7 @@ initial begin
     daten[15] <= 8'h01;
     
     daten[16] <= 8'hD8;
-    daten[17] <= 8'h41;
+    daten[17] <= 8'h42;
     daten[18] <= 8'h00;
     daten[19] <= 8'h1E;
 
