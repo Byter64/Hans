@@ -26,6 +26,7 @@ reg[6:0] btn = 6'b0;
     #1 clk_25mhz = ~clk_25mhz;
  end
  integer idx = 0;
+ integer counter = 0;
  initial begin
   $dumpvars(0, main_tb);
     for (idx = 0; idx < 256; idx = idx + 1) $dumpvars(0, main.ram.Daten[idx]);
@@ -34,9 +35,13 @@ reg[6:0] btn = 6'b0;
     clk_25mhz = 0;
 
 
-  #25000
+  #30000
   btn[6:0] = 7'b0101100;
-  #25000
+  for(counter = 0;counter <2**7;counter = counter + 1) begin
+    #10btn=counter;
+  end
+  btn=0;
+  #20000
   $display("End of simulation");
   $finish;
  end

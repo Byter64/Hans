@@ -296,7 +296,7 @@ always @(posedge CPUClock) begin
 end
 
 //Input Zuweisungen CPU
-assign CPUDatenRein             = (aktuelleInstruktion == 6'b111000)?{24'b0,Buttons}:RAMDatenRaus;
+assign CPUDatenRein             = (aktuelleInstruktion == 6'b111000 && CPUDatenAdresse[30])?{24'b0,Buttons}:RAMDatenRaus;
 assign CPUInstruktion           = RAMDatenRaus;
 assign CPUInstruktionGeladen    = RAMDatenBereit && CPULeseInstruktion;
 assign CPUDatenGeladen          = CPUDatenAdresse[31:29] > 0 ? 1 : RAMDatenBereit;
