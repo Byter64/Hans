@@ -39,7 +39,7 @@ public class Assembler : MonoBehaviour
     {
         try
         {
-            string[] allFilePaths = Directory.GetFiles(directory);
+            string[] allFilePaths = Directory.GetFiles(directory, "*", SearchOption.AllDirectories);
             IEnumerable<string> assemblyFilePaths = allFilePaths.Where(x => x.EndsWith(".asm"));
             if (assemblyFilePaths.Count() == 0) { return; }
 
