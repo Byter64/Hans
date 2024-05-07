@@ -36,6 +36,7 @@ module Steuerung (
     
     localparam WRITEBACK_STORE2 = 4'b1000;
     localparam WRITEBACK_LOAD2 = 4'b1001;
+    localparam WRITEBACK_WRITELOAD = 4'b1011;
 
     reg [3:0] current_state;
     reg [3:0] next_state;
@@ -96,15 +97,18 @@ module Steuerung (
             end
             WRITEBACK_LOAD: begin
                 if (DatenGeladen)
-                    next_state <= FETCH;
+                    next_state <= WRITEBACK_WRITELOAD;
                 else
                     next_state <= WRITEBACK_LOAD2;
             end
             WRITEBACK_LOAD2: begin
                 if (DatenGeladen)
-                    next_state <= FETCH;
+                    next_state <= WRITEBACK_WRITELOAD;
                 else
                     next_state <= WRITEBACK_LOAD2;
+            end
+            WRITEBACK_WRITELOAD: begin
+                next_state <= FETCH;
             end
             WRITEBACK_DEFAULT:
                 next_state <= FETCH;
@@ -116,7 +120,7 @@ module Steuerung (
     assign LoadBefehlSignal         = current_state == FETCH;
     assign DekodierSignal           = current_state == DECODE;
     assign ALUStartSignal           = current_state == ALU1;
-    assign RegisterSchreibSignal    = (current_state == ALU1 && JALBefehl) || current_state == WRITEBACK_DEFAULT;
+    assign RegisterSchreibSignal    = (current_state == ALU1 && JALBefehl) || current_state == WRITEBACK_DEFAULT || current_state == WRITEBACK_LOAD || current_state == WRITEBACK_WRITELOAD;
     assign PCSignal                 = current_state > ALU && current_state < WRITEBACK_STORE2; //In einen Writeback Zuständen //Darf nur 1 Takt oben sein
     assign StoreDatenSignal         = current_state == WRITEBACK_STORE || current_state == WRITEBACK_STORE2;
     assign LoadDatenSignal          = current_state == WRITEBACK_LOAD  || current_state == WRITEBACK_LOAD2;
