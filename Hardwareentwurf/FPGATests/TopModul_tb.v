@@ -34,14 +34,18 @@ reg[6:0] btn = 6'b0;
     for (idx = 0; idx < 64;  idx = idx + 1) $dumpvars(0, main.CPU.Register.registers[idx][31:0]);
     clk_25mhz = 0;
 
-
+  btn[0]=1;
   #30000
-  btn[6:0] = 7'b0101100;
-  for(counter = 0;counter <2**7;counter = counter + 1) begin
-    #10btn=counter;
+  btn[6:0] = 7'b0101101;
+  for(counter = 0;counter <2**6;counter = counter + 1) begin
+    #10btn[6:1]=counter;
   end
-  btn=0;
-  #20000
+  btn[6:1]=0;
+  #30000
+  btn[0] = 0;
+  #2000
+  btn[0] = 1;
+  #3000
   $display("End of simulation");
   $finish;
  end
