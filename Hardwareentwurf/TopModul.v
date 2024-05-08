@@ -223,15 +223,6 @@ reg [19:0] KnopfdruckTimer6 = 20'b0;
 reg[6:0] Buttons = 7'b0;
 
 always @(posedge clk_25mhz) begin
-    if(KnopfdruckTimer0 == 0 && (btn[0]==1)) begin
-        Buttons[0] = 1;
-        KnopfdruckTimer0 = 1;
-    end
-    else if(KnopfdruckTimer0!=0)begin
-        KnopfdruckTimer0 <= KnopfdruckTimer0 + 1;
-    end else begin
-        Buttons[0] = 0;
-    end
     if(KnopfdruckTimer1 == 0 && (btn[1]==1)) begin
         Buttons[1] = 1;
         KnopfdruckTimer1 = 1;
@@ -296,7 +287,7 @@ always @(posedge CPUClock) begin
 end
 
 //Input Zuweisungen CPU
-assign CPUDatenRein             = (aktuelleInstruktion == 6'b111000 && CPUDatenAdresse[30])?{24'b0,Buttons}:RAMDatenRaus;
+assign CPUDatenRein             = (aktuelleInstruktion == 6'b111000 && CPUDatenAdresse[30])?{26'b0,Buttons[6:1]}:RAMDatenRaus;
 assign CPUInstruktion           = RAMDatenRaus;
 assign CPUInstruktionGeladen    = RAMDatenBereit && CPULeseInstruktion;
 assign CPUDatenGeladen          = CPUDatenAdresse[31:29] > 0 ? 1 : RAMDatenBereit;
@@ -364,7 +355,7 @@ always @(posedge RAMClock) begin
 
             resetTimer <= resetTimer - 1;
 
-            if(resetTimer == 0) begin
+            if(resetTimer == 0 && !btn[0]) begin
                 globalerReset <= 0;
                 zustand <= GROESSELADEN;
             end
@@ -470,9 +461,11 @@ always @(posedge RAMClock) begin
             if(CPUDatenAdresse[29] == 1 && CPUSchreibeDaten) begin
                 ledReg <= CPUDatenRaus[7:0];
             end
-            /*if(btn[1])begin
-                zustand <= DEBUG;
-            end */
+            if(!btn[0])begin
+                globalerReset <= 1;
+                loaderReset <= 1;
+                zustand <= RESET;
+            end
         end 
     endcase
 end
