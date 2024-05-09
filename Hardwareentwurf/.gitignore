@@ -1,0 +1,4 @@
+*.out
+*.vcd
+*.history
+*.json
