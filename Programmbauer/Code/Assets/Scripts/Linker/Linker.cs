@@ -10,11 +10,11 @@ namespace Linker
 {
     public class Linker : MonoBehaviour
     {
-        private const string resultFileNameBinary = "program.bin";
-        private const string resultFileNameHex = "program.txt";
+        private const string resultFileNameBinary = "programm.bin";
+        private const string resultFileNameHex = "programm.txt";
         private const string firstSectionName = "Start";
 
-        private string[] lennyFaces = { "(▀̿Ĺ̯▀̿ ̿)", "ʕ•ᴥ•ʔ", "(づ｡◕‿‿◕｡)づ", "(ง'̀-'́)ง", 
+        private string[] lennyFaces = { "ʕ•ᴥ•ʔ", 
             "(☞ﾟヮﾟ)☞ ☜(ﾟヮﾟ☜)", "♪~ ᕕ(ᐛ)ᕗ", "(~˘▾˘)~", "（╯°□°）╯︵( .o.)", "ᕙ(⇀‸↼‶)ᕗ", "ᕦ(ò_óˇ)ᕤ" };
         public void Link(string path, string pathForResult)
         {
