@@ -1,6 +1,7 @@
 .section Start
 
 Addi R31, R0, 65535 ;Stapelzeiger
+Addis R31, R31, 65535@ha
 Addi R30, R0, 0 ;Rücksprungadresse
 Addi R29, R0, 1 ;Bildpufferadresse
 Slli R29, R29, 31
