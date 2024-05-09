@@ -1,0 +1,14 @@
+Arbeitsteilung:
+1. Bildpuffer löschen (Y)
+2. Rechteck zeichnen
+3. Steuerung
+4. Gegner-KI
+5. Balllogik (T)
+6. Punkte
+7. Spielablauf
+
+Globale Register:
+R31 - Stapelzeiger (wächst nach unten, zeigt auf die nächste freie Adresse)
+R30 - Rücksprungzeiger
+R29 - Bildpufferadrese
+R28 - Knopfadresse

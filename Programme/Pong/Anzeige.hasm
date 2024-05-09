@@ -1,0 +1,82 @@
+.section Anzeige
+
+HintergrundFarbe: .int 255
+
+BildpufferLoeschen:
+;Gerettete Register: R5, R6, R7, R8, R9, R30
+Subi R31, R31, 6
+Store R31, R30, 6
+Store R31, R9, 5
+Store R31, R8, 4
+Store R31, R7, 3
+Store R31, R6, 2
+Store R31, R5, 1
+
+Addi R5, R0, 0
+Addi R6, R0, 0
+Addi R7, R0, Bildschirmbreite
+Addi R8, R0, Bildschirmhoehe
+Load R9, R0, HintergrundFarbe
+Jal R30, RechteckZeichnen
+
+Load R30, R31, 6
+Load R9, R31, 5
+Load R8, R31, 4
+Load R7, R31, 3
+Load R6, R31, 2
+Load R5, R31, 1
+Addi R31, R31, 6
+Jreg R30
+
+
+;Parameter:
+;R5 == Links
+;R6 == Oben
+;R7 == Breite
+;R8 == Hoehe
+;R9 == Farbe
+RechteckZeichnen:
+;Gerettete Register: R1, R2, R3, R4, R30
+Subi R31, R31, 5
+Store R31, R30, 5
+Store R31, R4, 4
+Store R31, R3, 3
+Store R31, R2, 2
+Store R31, R1, 1
+
+Add R1, R5, R7; R1 ist rechte Rechtecksseite
+Add R4, R6, R8; R4 ist die untere Rechtecksseite
+Slli R4, R4, 8; Schiebe Unten auf die Y Bits
+
+Slli R2, R6, 8
+Add R2, R5, R2 ;R2 ist die Pixeladresse
+
+SpaltenZeichnen:
+	ZeileZeichnen:
+		Add R3, R2, R29
+		Store R3, R9, 0
+
+		Addi R2, R2, 1
+		Andi R3, R2, 255
+		ce R3, R3, R1 ;X Position == Rechts
+		bez R3, ZeileZeichnen
+
+	;Ziehe Rechts wieder ab und setze dadurch X auf 0
+	Sub R2, R2, R1
+	Addi R2, R2, 256
+
+	ce R3, R2, R4 ;Pixeladresse == Bildschirmhoehe
+	Add R2, R2, R5 ;Setze X wieder auf Links
+bez R3, SpaltenZeichnen
+
+Load R30, R31, 5
+Load R4, R31, 4
+Load R3, R31, 3
+Load R2, R31, 2
+Load R1, R31, 1
+Addi R31, R31, 5
+Jreg R30
+
+;Gibt einen Zeiger zu einem Rechteck
+;Rückgabe: R1 - Zeiger auf Rechteck
+RechteckZeigerErstellen:

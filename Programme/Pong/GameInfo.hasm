@@ -1,5 +1,7 @@
 .section GameInfo
 
+.set Bildschirmbreite, 160
+.set Bildschirmhoehe, 120
 .set Spielbreite, 140
 .set Spielhoehe, 100
 .set SpielVersatzX, 10
