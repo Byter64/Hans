@@ -12,6 +12,8 @@ public class Assembler : MonoBehaviour
     public static Assembler Instance { get; private set; }
     public const string nameOfOutputDirectory = "ObjectFiles";
 
+    private const string assemblyFileEnding = ".hasm";
+
     [SerializeField]
     private string pathToAssemblerWindows;
     [SerializeField]
@@ -40,7 +42,7 @@ public class Assembler : MonoBehaviour
         try
         {
             string[] allFilePaths = Directory.GetFiles(directory, "*", SearchOption.AllDirectories);
-            IEnumerable<string> assemblyFilePaths = allFilePaths.Where(x => x.EndsWith(".asm"));
+            IEnumerable<string> assemblyFilePaths = allFilePaths.Where(x => x.EndsWith(assemblyFileEnding));
             if (assemblyFilePaths.Count() == 0) { return; }
 
             string outputDirectory = assemblyFilePaths.FirstOrDefault();
