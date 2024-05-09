@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Button text="Assemble" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Assemble" style="position: absolute; height: 139px; width: 281px; top: 300px; left: 80px; font-size: 30px;" />
-    <ui:Button text="Link" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Link" style="position: absolute; height: 139px; width: 281px; top: 550px; left: 80px; font-size: 30px;" />
+    <ui:Button text="Assemblieren" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Assemble" style="position: absolute; height: 139px; width: 281px; top: 300px; left: 80px; font-size: 30px;" />
+    <ui:Button text="Linken" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Link" style="position: absolute; height: 139px; width: 281px; top: 550px; left: 80px; font-size: 30px;" />
     <ui:VisualElement name="Log" style="flex-grow: 1; position: absolute; height: 690px; width: 673px; top: 202px; left: 1080px; background-image: url(&apos;project://database/Assets/Graphics/Test/WhitePixel.png?fileID=21300000&amp;guid=f3082876d22c852449f7c06371322707&amp;type=3#WhitePixel&apos;);">
         <ui:Label tabindex="-1" text="Log" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Header" style="-unity-background-image-tint-color: rgb(255, 255, 255); background-image: none; -unity-font-style: bold; font-size: 20px;" />
         <ui:ScrollView scroll-deceleration-rate="0,135" elasticity="0,1" name="ScrollView">
@@ -12,4 +12,6 @@
     <ui:TextField picking-mode="Ignore" label="Projektpfad" value="Absoluten Pfad zu Ordner angeben" name="Projektpfad" style="position: absolute; top: 51px; left: 911px; width: 844px; height: 46px; font-size: 20px;" />
     <ui:TextField picking-mode="Ignore" label="Ergebnispfad" value="Absoluten Pfad zu Ordner angeben" name="Ergebnispfad" style="position: absolute; top: 123px; left: 911px; width: 844px; height: 46px; font-size: 20px;" />
     <ui:Toggle label="Hex statt Binär ausgeben" name="OutputToggle" style="position: absolute; top: 703px; left: 59px; font-size: 20px;" />
+    <ui:Button text="Log leeren" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LogLeeren" style="position: absolute; height: 139px; width: 281px; top: 917px; left: 1465px; font-size: 30px;" />
+    <ui:Toggle label="Log bei jedem Assemblen leeren" name="LogVorAssemblenLeeren" style="position: absolute; top: 967px; left: 1081px; font-size: 20px;" />
 </ui:UXML>

@@ -39,6 +39,11 @@ public class Assembler : MonoBehaviour
 
     public void Assemble(string directory)
     {
+        if(ButtonAllocator.ClearLogBeforeAssemblyToggle.value)
+        {
+            Log.Instance.ClearLog();
+        }
+
         try
         {
             string[] allFilePaths = Directory.GetFiles(directory, "*", SearchOption.AllDirectories);
@@ -74,7 +79,7 @@ public class Assembler : MonoBehaviour
                 assembler.Exited += new EventHandler(PrintRemainingOutput);
 
                 assembler.Start();
-                Log.Instance.Print(assembler.StandardOutput);
+                //Log.Instance.Print(assembler.StandardOutput);
                 assembler.WaitForExit();
 
             }

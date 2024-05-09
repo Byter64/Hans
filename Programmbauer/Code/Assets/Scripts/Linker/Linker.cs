@@ -14,8 +14,7 @@ namespace Linker
         private const string resultFileNameHex = "programm.txt";
         private const string firstSectionName = "Start";
 
-        private string[] lennyFaces = { "ʕ•ᴥ•ʔ", 
-            "(☞ﾟヮﾟ)☞ ☜(ﾟヮﾟ☜)", "♪~ ᕕ(ᐛ)ᕗ", "(~˘▾˘)~", "（╯°□°）╯︵( .o.)", "ᕙ(⇀‸↼‶)ᕗ", "ᕦ(ò_óˇ)ᕤ" };
+        private string[] lennyFaces = { "ʕ•ᴥ•ʔ", "(☞ﾟヮﾟ)☞ ☜(ﾟヮﾟ☜)", "(~˘▾˘)~", "（╯°□°）╯︵( .o.)" };
         public void Link(string path, string pathForResult)
         {
 #if !UNITY_EDITOR

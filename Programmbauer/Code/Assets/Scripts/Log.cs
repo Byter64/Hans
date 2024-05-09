@@ -73,6 +73,14 @@ public class Log : MonoBehaviour
         StartCoroutine(PrintStream(reader));
     }
 
+    public void ClearLog()
+    {
+        StopAllCoroutines();
+		buffer.Clear();
+        logText.text = "";
+		StartCoroutine(PrintLog());
+	}
+
     private IEnumerator PrintStream(StreamReader reader)
     {
         while(reader != null)
