@@ -76,10 +76,9 @@ public class Assembler : MonoBehaviour
                 assembler.StartInfo.RedirectStandardError = true;
                 assembler.EnableRaisingEvents = true;
                 lastAssemblyProcess = assembler;
-                assembler.Exited += new EventHandler(PrintRemainingOutput);
+                assembler.Exited += new EventHandler(PrintProgramOutput);
 
                 assembler.Start();
-                //Log.Instance.Print(assembler.StandardOutput);
                 assembler.WaitForExit();
 
             }
@@ -90,7 +89,7 @@ public class Assembler : MonoBehaviour
         }
     }
 
-    private void PrintRemainingOutput(object sender, EventArgs e)
+    private void PrintProgramOutput(object sender, EventArgs e)
     {
         Log.Instance.Print(lastAssemblyProcess.StandardOutput.ReadToEnd());
         Log.Instance.Print(lastAssemblyProcess.StandardError.ReadToEnd());
