@@ -8,8 +8,37 @@ Slli R29, R29, 31
 Addi R28, R0, 1 ;Knopfadresse
 Slli R28, R28, 30
 
+Add R1, R0, R0
+
 SpielSchleife:
-Jal R30, BildpufferLoeschen
+	Jal R30, BildpufferLoeschen
+
+	Addi R5, R0, 10
+	Addi R6, R0, 10
+	Addi R7, R0, 10
+	Addi R8, R0, 20
+	Addi R9, R0, 0b00000011
+	Jal R30, RechteckZeichnen
+
+	Addi R5, R0, 30
+	Addi R6, R0, 10
+	Addi R7, R0, 100
+	Addi R8, R0, 80
+	Addi R9, R0, 0b00011100
+	Jal R30, RechteckZeichnen
+	
+	Addi R5, R0, 50
+	Addi R6, R0, 50
+	Addi R7, R0, 40
+	Addi R8, R0, 5
+	Addi R9, R0, 0b01101101
+	Jal R30, RechteckZeichnen
+	
+	Addi R1, R1, 1
+	Mod R2, R1, 30
+	Add R2, R2, R29
+	Store R2, R0, 119 << 8
+
 Jmp SpielSchleife
 
 SpielEnde:
