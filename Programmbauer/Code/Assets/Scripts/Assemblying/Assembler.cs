@@ -12,6 +12,8 @@ public class Assembler : MonoBehaviour
     public static Assembler Instance { get; private set; }
     public const string nameOfOutputDirectory = "ObjectFiles";
 
+    private const string assemblyFileEnding = ".hasm";
+
     [SerializeField]
     private string pathToAssemblerWindows;
     [SerializeField]
@@ -40,7 +42,7 @@ public class Assembler : MonoBehaviour
         try
         {
             string[] allFilePaths = Directory.GetFiles(directory, "*", SearchOption.AllDirectories);
-            IEnumerable<string> assemblyFilePaths = allFilePaths.Where(x => x.EndsWith(".asm"));
+            IEnumerable<string> assemblyFilePaths = allFilePaths.Where(x => x.EndsWith(assemblyFileEnding));
             if (assemblyFilePaths.Count() == 0) { return; }
 
             string outputDirectory = assemblyFilePaths.FirstOrDefault();
@@ -58,8 +60,8 @@ public class Assembler : MonoBehaviour
                 string fileName = file.Substring(file.LastIndexOf(Path.DirectorySeparatorChar) + 1);
                 string outputFilePath = outputDirectory + fileName.Remove(fileName.LastIndexOf('.')) + ".out";
                 string fullPathToAssembler = Application.streamingAssetsPath + "/" + pathToAssembler;
-                string arguments = file + " -Fhans -o " + outputFilePath;
-                Log.Instance.Print(fullPathToAssembler + " " + arguments + "\n");
+                string arguments = '"' + file + '"' + " -Fhans -o " + '"' + outputFilePath + '"';
+                Log.Instance.Print('"' + fullPathToAssembler + '"' + " " + arguments + "\n");
 
                 Process assembler = new Process();
                 assembler.StartInfo.FileName = Application.streamingAssetsPath + "/" + pathToAssembler;

@@ -355,7 +355,7 @@ always @(posedge RAMClock) begin
 
             resetTimer <= resetTimer - 1;
 
-            if(resetTimer == 0 && !btn[0]) begin
+            if(resetTimer == 0 && btn[0]) begin
                 globalerReset <= 0;
                 zustand <= GROESSELADEN;
             end
