@@ -230,7 +230,7 @@ end
     assign BPClock               = CPUClock;
  `endif
  // Input/Output for FPGA
- assign led = ledReg;
+ assign led = (zustand != LAEUFT) ? 8'b10101010 : ledReg;
 
  //SDKARTE
  assign sd_d[0] = SDmiso;
