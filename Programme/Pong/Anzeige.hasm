@@ -1,6 +1,6 @@
 .section Anzeige
 
-HintergrundFarbe: .int 255
+HintergrundFarbe: .int 0
 
 BildpufferLoeschen:
 ;Gerettete Register: R5, R6, R7, R8, R9, R30
@@ -76,7 +76,3 @@ Load R2, R31, 2
 Load R1, R31, 1
 Addi R31, R31, 5
 Jreg R30
-
-;Gibt einen Zeiger zu einem Rechteck
-;Rückgabe: R1 - Zeiger auf Rechteck
-RechteckZeigerErstellen:

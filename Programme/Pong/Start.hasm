@@ -3,10 +3,10 @@
 Addi R31, R0, 65535 ;Stapelzeiger
 Addis R31, R31, 65535@ha
 Addi R30, R0, 0 ;Rücksprungadresse
-Addi R29, R0, 1 ;Bildpufferadresse
-Slli R29, R29, 31
-Addi R28, R0, 1 ;Knopfadresse
-Slli R28, R28, 30
+Addi R29, R0, 0b110 ;Bildpufferadresse
+Slli R29, R29, 24
+Addi R28, R0, 0b1000 ;Knopfadresse
+Slli R28, R28, 24
 
 Add R1, R0, R0
 
@@ -37,7 +37,28 @@ SpielSchleife:
 	Addi R1, R1, 1
 	Mod R2, R1, 30
 	Add R2, R2, R29
-	Store R2, R0, 119 << 8
+	Addi R3, R0, 255
+	Store R2, R3, 119 << 8
+	
+	Jal R30, BallAktualisieren
+	Jal R30, BallZeichnen
+	
+	;Bildpuffer wechseln
+	Addis R3, R0, 0b11100000000
+	Store R3, R0, 0
+	
+	;Wechsel die Bildpufferadresse in R31
+	Addi R3, R0, 0b101
+	Slli R3, R3, 24
+	ce R3, R3, R29; Aktueller Bildpuffer == Bildpuffer 1
+	bnez R3, Bildpuffer2Setzen
+	Addi R29, R0, 0b101
+	Slli R29, R29, 24
+	Jmp SpielSchleife
+	
+	Bildpuffer2Setzen:
+	Addi R29, R0, 0b110
+	Slli R29, R29, 24
 
 Jmp SpielSchleife
 
