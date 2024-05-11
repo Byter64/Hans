@@ -1,0 +1,60 @@
+.section Start
+;Dieses Programm schreibt ein Schachbrettmuster auf den Bildschirm, welches flackert
+
+Addi R31, R0, 0b101 ;Bildpuffer
+Slli R31, R31, 24
+Addi R30, R0, 0b10 ;LEDs fuer Y Pos
+Slli R30, R30, 24
+
+Addi R1, R0, 255 ; Farbe Weiss
+Addi R2, R0, 0 ; Pixelposition
+Schleife:
+	Add R3, R2, R31
+	Store R3, R1, 0
+	Store R30, R2, 0 ;Gib die Y Koordinate auf den LEDs aus
+	
+	Addi R2, R2, 1
+	
+	;Setze x auf 0, wenn Y == 161 ist
+	Andi R3, R2, 255
+	cei R3, R3, 161
+	bez R3, BeendeProgramm
+	Addi R2, R2, 256
+	Andi R2, R2, 0xFF00 ;Weil Andi faelschlicherweise vorzeichenexpandiert wird, klappt das hier
+	
+	
+	BeendeProgramm:
+	;Wenn Y == 160, dann hoer auf
+	Addi R3, R0, 0b1010000000000000@l
+	Addis R3, R3, 0b1010000000000000@ha
+	Ce R3, R2, R3
+	bnez R3, Tod
+	
+	Addi R3, R0, 100000@l
+	Addis R3, R3, 100000@ha
+	Verzoegerung:
+	Subi R3, R3, 1
+	bnez R3, Verzoegerung
+	
+	
+	;Bildpuffer wechseln
+	Addis R3, R0, 0b11100000000
+	Store R3, R0, 0
+	
+	;Wechsel die Bildpufferadresse in R31
+	Addi R3, R0, 0b101
+	Slli R3, R3, 24
+	ce R3, R3, R31; Aktueller Bildpuffer == Bildpuffer 1
+	bnez R3, Bildpuffer2Setzen
+	Addi R31, R0, 0b101
+	Slli R31, R31, 24
+	Jmp Schleife
+	
+	Bildpuffer2Setzen:
+	Addi R31, R0, 0b110
+	Slli R31, R31, 24
+	
+Jmp Schleife
+
+Tod:
+Jmp Tod
