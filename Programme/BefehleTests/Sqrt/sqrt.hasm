@@ -1,0 +1,10 @@
+.section Start
+Addi R1, R0, 51
+Sqrt R3, R1
+
+Addi R31, R0, 1
+Slli R31, R31, 24
+
+Store R31, R3, 0 
+Ende:
+Jmp Ende

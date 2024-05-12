@@ -1,0 +1,14 @@
+.section start
+
+Addi R30, R0, 8
+Slli R30, R30, 24
+
+Addi R31, R0, 1
+Slli R31, R31, 24
+
+Addi R3, R0, 0
+
+Schleife:
+Load R3, R30, 0
+Store R31, R3, 0 
+jmp Schleife
