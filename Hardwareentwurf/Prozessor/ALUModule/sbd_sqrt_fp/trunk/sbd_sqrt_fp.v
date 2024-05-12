@@ -139,7 +139,7 @@ begin:single
 
       assign exp_final = exp_adj & {8{non_zero_exp}};
 
-      always @ (raw_data_reg, non_zero_exp)
+      always @*
       begin:mant_adj_mux
 	 if(raw_data_reg[23]) mant_adj = { 1'b0, non_zero_exp, raw_data_reg[22:1] };
 	 else mant_adj = { non_zero_exp, raw_data_reg[22:0] };
@@ -192,7 +192,7 @@ begin:double
 
       assign exp_final = exp_adj & {11{non_zero_exp}};
 
-      always @ (raw_data_reg, non_zero_exp)
+      always @*
       begin:mant_adj_mux
 	 if(raw_data_reg[52]) mant_adj = { 1'b0, non_zero_exp, raw_data_reg[51:1] };
 	 else mant_adj = { non_zero_exp, raw_data_reg[51:0] };

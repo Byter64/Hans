@@ -47,7 +47,7 @@ begin:shiftreg
    else if(SHIFT | LOAD) readData <= writeData;
 end
 
-always @ (readData, SIN, PIN, LOAD)
+always @*
 begin:shiftmux
    if(LOAD) writeData = PIN;
    else writeData = { readData[bitlength-3:0], SIN };

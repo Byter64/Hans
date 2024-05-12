@@ -47,7 +47,7 @@ begin:shiftreg
    else if(SHIFT | LOAD) readData <= writeData;
 end
 
-always @ (sel, readData, SINLSB, SINMSB, PIN)
+always @*
 begin:loadmux
    casez(sel)
       2'b00: writeData = { readData[bitlength-4:0], SINLSB };

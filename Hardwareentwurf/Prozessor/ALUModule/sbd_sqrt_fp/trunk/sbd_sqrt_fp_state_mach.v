@@ -79,7 +79,7 @@ begin:stateReg
    currentState <= nextState;
 end
 
-always @ (countValue, begPulse)
+always @*
 begin:termassign
    if((countValue == termval) && ~begPulse) terminate = 1;
    else terminate = 0;
