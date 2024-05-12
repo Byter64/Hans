@@ -1,0 +1,64 @@
+.section Spieler
+
+.set SpielerSchlaegerBreite, 2
+.set SpielerSchlaegerHoehe, 10
+.set SpielerGeschw, 1
+.set SpielerFarbe, 0b10111111
+SpielerPosX: .int 20
+SpielerPosY: .int 60 - (SpielerSchlaegerHoehe / 2)
+
+
+SpielerAktualisieren:
+	Subi R31, R31, 2
+	Store R31, R1, 1
+	Store R31, R2, 2
+	
+	;Register retten
+	
+	;Hole Knoepfe
+	Load R1, R28, 0
+	
+	;Ist oben gedrueckt?
+	Andi R2, R1, 0b10
+	bez R2, SpielerUntenPruefen
+	Load R2, R0, SpielerPosY
+	Subi R2, R2, SpielerGeschw
+	Store R0, R2, SpielerPosY
+	
+	SpielerUntenPruefen:
+	Andi R2, R1, 0b100
+	bez R2, SpielerAktualisierenEnde
+	Load R2, R0, SpielerPosY
+	Addi R2, R2, SpielerGeschw
+	Store R0, R2, SpielerPosY
+	
+	SpielerAktualisierenEnde:
+	Load R1, R31, 1
+	Load R2, R31, 2
+	Addi R31, R31, 2
+	Jreg 30
+
+SpielerZeichnen:
+	Subi R31, R31, 6
+	Store R31, R5, 1
+	Store R31, R6, 2
+	Store R31, R7, 3
+	Store R31, R8, 4
+	Store R31, R9, 5
+	Store R31, R30, 6
+	
+	Load R5, R0, SpielerPosX
+	Load R6, R0, SpielerPosY
+	Addi R7, R0, SpielerSchlaegerBreite
+	Addi R8, R0, SpielerSchlaegerHoehe
+	Addi R9, R0, SpielerFarbe
+	Jal R30, RechteckZeichnen
+	
+	Load R5, R31, 1
+	Load R6, R31, 2
+	Load R7, R31, 3
+	Load R8, R31, 4
+	Load R9, R31, 5
+	Load R30, R31, 6
+	Addi R31, R31, 6
+Jreg R30

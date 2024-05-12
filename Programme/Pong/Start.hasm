@@ -20,8 +20,11 @@ SpielSchleife:
 	Addi R3, R0, 255
 	Store R2, R3, 119 << 8
 	
+	Jal R30, SpielerAktualisieren
 	Jal R30, BallAktualisieren
+	
 	Jal R30, BallZeichnen
+	Jal R30, SpielerZeichnen
 	
 	;Bildpuffer wechseln
 	BildpufferWechseln:
