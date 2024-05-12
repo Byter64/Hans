@@ -11,31 +11,11 @@ Slli R28, R28, 24
 Add R1, R0, R0
 
 SpielSchleife:
-	Jal R30, BildpufferLoeschen
-
-	Addi R5, R0, 10
-	Addi R6, R0, 10
-	Addi R7, R0, 10
-	Addi R8, R0, 20
-	Addi R9, R0, 0b00000011
-	Jal R30, RechteckZeichnen
-
-	Addi R5, R0, 30
-	Addi R6, R0, 10
-	Addi R7, R0, 100
-	Addi R8, R0, 80
-	Addi R9, R0, 0b00011100
-	Jal R30, RechteckZeichnen
+	Jal R30, BildZuruecksetzen
 	
-	Addi R5, R0, 50
-	Addi R6, R0, 50
-	Addi R7, R0, 40
-	Addi R8, R0, 5
-	Addi R9, R0, 0b01101101
-	Jal R30, RechteckZeichnen
-	
+	;Bildratentest
 	Addi R1, R1, 1
-	Mod R2, R1, 30
+	Modi R2, R1, 30
 	Add R2, R2, R29
 	Addi R3, R0, 255
 	Store R2, R3, 119 << 8

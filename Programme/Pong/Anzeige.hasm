@@ -1,8 +1,9 @@
 .section Anzeige
 
-HintergrundFarbe: .int 0
+HintergrundFarbe: .int 2
+RandFarbe: .int 0b10010010
 
-BildpufferLoeschen:
+BildZuruecksetzen:
 ;Gerettete Register: R5, R6, R7, R8, R9, R30
 Subi R31, R31, 6
 Store R31, R30, 6
@@ -12,11 +13,44 @@ Store R31, R7, 3
 Store R31, R6, 2
 Store R31, R5, 1
 
+;Zeichne Spielbereich
+Addi R5, R0, SpielRandLinks
+Addi R6, R0, SpielRandOben
+Addi R7, R0, Spielbreite
+Addi R8, R0, Spielhoehe
+Load R9, R0, HintergrundFarbe
+Jal R30, RechteckZeichnen
+
+;Zeichne Rand Oben
 Addi R5, R0, 0
 Addi R6, R0, 0
 Addi R7, R0, Bildschirmbreite
-Addi R8, R0, Bildschirmhoehe
-Load R9, R0, HintergrundFarbe
+Addi R8, R0, SpielVersatzY
+Load R9, R0, RandFarbe
+Jal R30, RechteckZeichnen
+
+;Zeichne Rand Unten
+Addi R5, R0, 0
+Addi R6, R0, SpielRandUnten
+Addi R7, R0, Bildschirmbreite
+Addi R8, R0, RandHoeheUnten
+Load R9, R0, RandFarbe
+Jal R30, RechteckZeichnen
+
+;Zeichne Rand Links
+Addi R5, R0, 0
+Addi R6, R0, SpielVersatzY
+Addi R7, R0, SpielRandLinks
+Addi R8, R0, Spielhoehe
+Load R9, R0, RandFarbe
+Jal R30, RechteckZeichnen
+
+;Zeichne Rand Rechts
+Addi R5, R0, SpielRandRechts
+Addi R6, R0, SpielVersatzY
+Addi R7, R0, RandBreiteRechts
+Addi R8, R0, Spielhoehe
+Load R9, R0, RandFarbe
 Jal R30, RechteckZeichnen
 
 Load R30, R31, 6

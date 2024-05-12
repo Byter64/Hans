@@ -10,3 +10,5 @@
 .set SpielRandLinks, SpielVersatzX
 .set SpielRandUnten, Spielhoehe + SpielVersatzY
 .set SpielRandOben, SpielVersatzY
+.set RandHoeheUnten, Bildschirmhoehe - SpielRandUnten
+.set RandBreiteRechts, Bildschirmbreite - SpielRandRechts
