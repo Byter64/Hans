@@ -1,0 +1,13 @@
+.section Start
+Subi R1, R0, -2
+Subi R2, R0, 38
+Div R3, R2, R1 ;-19
+
+Divi R3, R3, -2 ;-19/-2 = 9 R:1
+Modi R3, R3, 6  ; 9%6   = 3
+Addi R31, R0, 1
+Slli R31, R31, 24
+
+Store R31, R3, 0 
+Ende:
+Jmp Ende

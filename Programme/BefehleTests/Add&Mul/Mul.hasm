@@ -1,0 +1,12 @@
+.section Start
+Addi R1, R0, 1
+Addi R2, R0, -2
+Mul R3, R1, R2
+Muli R3, R3, -7
+
+Addi R31, R0, 1
+Slli R31, R31, 24
+
+Store R31, R3, 0 
+Ende:
+Jmp Ende

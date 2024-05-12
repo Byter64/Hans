@@ -1,0 +1,14 @@
+.section Start
+Addi R1, R0, 3 ; 0000 0011
+Addi R2, R0, 2 ; 0000 0010
+Sla R3, R1, R2 ; 0000 1100 
+Srai R1, R1, 1 ; 0000 0001
+Sra R3, R3, R1 ; 0000 0110
+SRLI R3, R3, 2 ; 0000 0001
+
+Addi R31, R0, 1
+Slli R31, R31, 24
+
+Store R31, R3, 0 
+Ende:
+Jmp Ende
