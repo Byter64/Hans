@@ -52,7 +52,7 @@ end
  assign RAMLesenAn           = (zustand < RAMLADENBEENDEN) ? 1
                              : (CPULeseInstruktion || CPULeseDaten);
  assign CPUDatenGeladen      = SonderBefehl > 0 ? 1 : RAMDatenBereit;
- assign CPUDatenRein         = (aktuelleInstruktion == 6'b111000 && SonderBefehl == LadeKnoepfe && CPULeseDaten)?{26'b0,Buttons[6:1]}:RAMDatenRaus;
+ assign CPUDatenRein         = (aktuelleInstruktion == 6'b111000 && SonderBefehl == LadeKnoepfe)?{26'b0,Buttons[6:1]}:RAMDatenRaus;
 
  //Schreiben
  assign RAMSchreibenAn       = (zustand < RAMLADENBEENDEN) ? loaderSchreibeDaten
