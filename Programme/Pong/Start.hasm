@@ -44,6 +44,7 @@ SpielSchleife:
 	Jal R30, BallZeichnen
 	
 	;Bildpuffer wechseln
+	BildpufferWechseln:
 	Addis R3, R0, 0b11100000000
 	Store R3, R0, 0
 	

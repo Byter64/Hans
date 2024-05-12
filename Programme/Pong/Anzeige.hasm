@@ -51,6 +51,7 @@ Slli R4, R4, 8; Schiebe Unten auf die Y Bits
 Slli R2, R6, 8
 Add R2, R5, R2 ;R2 ist die Pixeladresse
 
+;Diese Funktion hängt sich auf, wenn Links + Breite > 255 ist
 SpaltenZeichnen:
 	ZeileZeichnen:
 		Add R3, R2, R29

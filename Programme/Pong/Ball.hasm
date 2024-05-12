@@ -19,44 +19,51 @@ BallAktualisieren:
 	Add R1, R1, R2
 	
 	;Ist der Ball am rechten Rand?
-	cgei R3, R1, SpielRandRechts - BallGroesse
-	bez R3, VerarbeiteYKoordinate
-	Addi R1, R0, SpielRandRechts - BallGroesse
+	Addi R3, R0, SpielRandRechts
+	Subi R3, R3, BallGroesse
+	cge R3, R1, R3 ; X Koord == SpielRandRechts - BallGroesse
+	bez R3, PruefeLinkenRand
+	Addi R1, R0, SpielRandRechts
+	Subi R1, R1, BallGroesse
 	Sub R2, R0, R2
 	Store R0, R2, BallGeschwX
 	
+	PruefeLinkenRand:
 	;Ist der Ball am linken Rand?
 	clei R3, R1, SpielRandLinks
-	bez R3, VerarbeiteYKoordinate
+	bez R3, SpeicherXKoordinate
 	Addi R1, R0, SpielRandLinks
 	Sub R2, R0, R2
 	Store R0, R2, BallGeschwX
 	
-	;Speicher die X Position
+	SpeicherXKoordinate:
 	Store R0, R1, BallPositionX
 	
-	
-	VerarbeiteYKoordinate:
 	Load R1, R0, BallPositionY
 	Load R2, R0, BallGeschwY
 	Add R1, R1, R2
 	
-	;Ist der Ball am unteren Rand?
-	cgei R3, R1, SpielRandUnten - BallGroesse
-	bez R3, BallAktualisierenEnde
-	Addi R1, R0, SpielRandUnten - BallGroesse
+	;Ist der Ball am unten Rand?
+	Addi R3, R0, SpielRandUnten
+	Subi R3, R3, BallGroesse
+	cge R3, R1, R3 ; Y Koord == SpielRandUnten - BallGroesse
+	bez R3, PruefeOberenRand
+	Addi R1, R0, SpielRandUnten
+	Subi R1, R1, BallGroesse
 	Sub R2, R0, R2
-	Store R0, R2, BallGeschwX
+	Store R0, R2, BallGeschwY
 	
+	PruefeOberenRand:
 	;Ist der Ball am oberen Rand?
 	clei R3, R1, SpielRandOben
-	bez R3, BallAktualisierenEnde
+	bez R3, SpeicherYKoordinate
 	Addi R1, R0, SpielRandOben
 	Sub R2, R0, R2
 	Store R0, R2, BallGeschwY
 	
-	;Speicher die Y Position
+	SpeicherYKoordinate:
 	Store R0, R1, BallPositionY
+	
 	
 	BallAktualisierenEnde:
 	Load R1, R31, 1
