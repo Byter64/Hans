@@ -51,29 +51,33 @@ Y	SRAI
 	CGEUI
 	CLUI
 	CLEUI
-	ADDIS
-	ANDI
-	ORI
-	XORI
-	XNORI
+P	ADDIS
+Y	ANDI
+Y	ORI
+Y	XORI
+Y	XNORI
 Y	SLLI
 Y	SRLI
 	IToF
 	UIToF
 	FToI
 	FToUI
-	Load
+P	Load
 	Load.s
-	Store
+P	Store
 	Store.s
-	JREG
-	BEZ
-	BNEZ
-	JAL
+P	JREG
+P	BEZ
+P	BNEZ
+P	JAL
 Y	JMP
 Y   BeschreibeLED1-4
 Y 	BeschreibeBP1
 Y 	BeschreibeBP2
 Y 	WechselBP
- 	LadeKnoepfe 
-29/78	
+Y 	LadeKnoepfe 
+Befehle:78
+Y: 34
+P: 7
+Y= Test geschrieben
+P= In einem Programm funktioniert es
