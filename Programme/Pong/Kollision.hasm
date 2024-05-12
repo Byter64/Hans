@@ -1,0 +1,88 @@
+.section Kollision
+
+;Rueckgabe:
+;R1 == Ist Kollidiert? (0 falls nicht, 1 falls ja)
+TesteSpielerBallKollision:
+	Subi R31, R31, 9
+	Store R31, R2, 1
+	Store R31, R3, 2
+	Store R31, R4, 3
+	Store R31, R5, 4
+	Store R31, R6, 5
+	Store R31, R7, 6
+	Store R31, R8, 7
+	Store R31, R9, 8
+	Store R31, R30, 9
+	
+	Load R2, R0, SpielerPosX
+	Load R3, R0, SpielerPosY
+	Load R4, R0, SpielerSchlaegerBreite
+	Load R5, R0, SpielerSchlaegerHoehe
+	Load R6, R0, BallPositionX
+	Load R7, R0, BallPositionY
+	Addi R8, R0, BallGroesse
+	Addi R9, R0, BallGroesse
+	Jal 30, TesteKollision ;Beschreibt R1
+
+	Load R2, R31, 1
+	Load R3, R31, 2
+	Load R4, R31, 3
+	Load R5, R31, 4
+	Load R6, R31, 5
+	Load R7, R31, 6
+	Load R8, R31, 7
+	Load R9, R31, 8
+	Load R30, R31, 9
+	Addi R31, R31, 9
+Jreg R30
+
+
+;Parameter:
+;R2 == Recht1 links
+;R3 == Recht1 oben
+;R4 == Recht1 breite
+;R5 == Recht1 hoehe
+;R6 == Recht2 links
+;R7 == Recht2 oben
+;R8 == Recht2 breite
+;R9 == Recht2 hoehe
+;Rueckgabe:
+;R1 == Ist Kollidiert?  (0 falls nicht, 1 falls ja)
+TesteKollision:
+	Subi R31, R31, 1
+	Store R31, R10, 1
+	
+	Addi R1, R0, 0
+	
+	;recht1.links >= recht2.links + recht2.breite?
+	Add R10, R6, R8
+	cge R10, R2, R10
+	bnez R10, TesteKollisionEnde
+	
+	Addi R1, R1, 2
+	
+	;recht1.links + recht1.breite <= recht2.links?
+	Add R10, R2, R4
+	cle R10, R10, R6
+	bnez R10, TesteKollisionEnde
+	
+	Addi R1, R1, 4
+	
+	;recht1.oben >= recht2.oben + recht2.hoehe?
+	Add R10, R7, R9
+	cge R10, R3, R10
+	bnez R10, TesteKollisionEnde
+	
+	Addi R1, R1, 8
+	
+	;recht1.oben + recht1.hoehe <= recht2.oben?
+	Add R10, R3, R5
+	cle R10, R10, R7
+	bnez R10, TesteKollisionEnde
+
+
+	Addi R1, R0, 1
+	TesteKollisionEnde:
+	Load R10, R31, 1
+	Addi R31, R31, 1
+Jreg R30

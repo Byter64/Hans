@@ -3,7 +3,7 @@
 .set SpielerSchlaegerBreite, 2
 .set SpielerSchlaegerHoehe, 10
 .set SpielerGeschw, 1
-.set SpielerFarbe, 0b10111111
+.set SpielerFarbe, 0b11111110
 SpielerPosX: .int 20
 SpielerPosY: .int 60 - (SpielerSchlaegerHoehe / 2)
 
@@ -13,20 +13,18 @@ SpielerAktualisieren:
 	Store R31, R1, 1
 	Store R31, R2, 2
 	
-	;Register retten
-	
 	;Hole Knoepfe
 	Load R1, R28, 0
 	
 	;Ist oben gedrueckt?
-	Andi R2, R1, 0b10
+	Andi R2, R1, 0b100
 	bez R2, SpielerUntenPruefen
 	Load R2, R0, SpielerPosY
 	Subi R2, R2, SpielerGeschw
 	Store R0, R2, SpielerPosY
 	
 	SpielerUntenPruefen:
-	Andi R2, R1, 0b100
+	Andi R2, R1, 0b1000
 	bez R2, SpielerAktualisierenEnde
 	Load R2, R0, SpielerPosY
 	Addi R2, R2, SpielerGeschw

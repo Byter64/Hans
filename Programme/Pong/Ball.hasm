@@ -5,7 +5,7 @@ BallPositionY: .int 60
 BallGeschwX: .int 1
 BallGeschwY: .int 1
 
-.set BallGroesse, 2
+.set BallGroesse, 3
 .set BallFarbe, 255
 
 BallAktualisieren:

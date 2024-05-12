@@ -8,20 +8,24 @@ Slli R29, R29, 24
 Addi R28, R0, 0b1000 ;Knopfadresse
 Slli R28, R28, 24
 
-Add R1, R0, R0
+Add R27, R0, R0
 
 SpielSchleife:
 	Jal R30, BildZuruecksetzen
 	
 	;Bildratentest
-	Addi R1, R1, 1
-	Modi R2, R1, 30
+	Addi R27, R27, 1
+	Modi R2, R27, 30
 	Add R2, R2, R29
 	Addi R3, R0, 255
 	Store R2, R3, 119 << 8
 	
 	Jal R30, SpielerAktualisieren
 	Jal R30, BallAktualisieren
+	
+	Jal R30, TesteSpielerBallKollision; Beschreibt R1
+	Addis R3, R0, 0b100000000
+	Store R3, R1, 0
 	
 	Jal R30, BallZeichnen
 	Jal R30, SpielerZeichnen
