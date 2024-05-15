@@ -1,11 +1,12 @@
 .section Start
 
-ADDI R1, R0, 1
-SLLI R1, R1, 29 ; Store LED
-ADDI R2, R0, 1
-SLLI R2, R2, 30 ; Load Buttons
-ADDI R3, R0, 0 ; Speicher Knopfe
-Loop:
-LOAD R3, R2, 0
-STORE R1, R3, 0 
-jmp Loop 
+addi R1, R0, 0b00000001
+slli R1, R1, 24
+addi R2, R0, 0b00000010
+slli R2, R2, 24
+
+schleife:
+	load R3, R1, 0
+	store R2, R3, 0
+
+jmp schleife
