@@ -30,6 +30,14 @@ SpielSchleife:
 	Jal R30, BallZeichnen
 	Jal R30, SpielerZeichnen
 	
+	Addi R2, R0, 0
+	Addi R3, R0, 0
+	Addi R4, R0, 255
+	Load R5, R0, SpielerPosX
+	Jal R30, ZahlZeichnen
+	
+	
+	
 	;Bildpuffer wechseln
 	BildpufferWechseln:
 	Addis R3, R0, 0b11100000000

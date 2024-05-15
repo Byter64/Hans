@@ -25,10 +25,24 @@ SpielerAktualisieren:
 	
 	SpielerUntenPruefen:
 	Andi R2, R1, 0b1000
-	bez R2, SpielerAktualisierenEnde
+	bez R2, SpielerLinksPruefen
 	Load R2, R0, SpielerPosY
 	Addi R2, R2, SpielerGeschw
 	Store R0, R2, SpielerPosY
+	
+	SpielerLinksPruefen:
+	Andi R2, R1, 0b10000
+	bez R2, SpielerRechtsPruefen
+	Load R2, R0, SpielerPosX
+	Subi R2, R2, SpielerGeschw
+	Store R0, R2, SpielerPosX
+	
+	SpielerRechtsPruefen:
+	Andi R2, R1, 0b100000
+	bez R2, SpielerAktualisierenEnde
+	Load R2, R0, SpielerPosX
+	Addi R2, R2, SpielerGeschw
+	Store R0, R2, SpielerPosX
 	
 	SpielerAktualisierenEnde:
 	Load R1, R31, 1
