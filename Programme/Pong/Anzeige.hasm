@@ -119,111 +119,84 @@ Jreg R30
 ;R4 == Farbe
 ;R5 == Zahl
 ZahlZeichnen:
-	Subi R31, R31, 6
+	Subi R31, R31, 5
 	Store R31, R2, 1
 	Store R31, R5, 2
 	Store R31, R6, 3
 	Store R31, R7, 4
-	Store R31, R8, 5
-	Store R31, R30, 6
+	Store R31, R30, 5
 	
-	Addi R7, R0, 0
+	Addi R6, R0, 0 ; Die "Stapelgroesse"
 	
-	ZiffernMerken:
-		Modi R6, R5, 10
+	ZiffernAufschreiben:
+		cgei R7, R5, 10 
+		bez R7, PruefeObNull; while (R5 >= 10)
+		
+		Modi R7, R5, 10; R7 := R5 % 10
 		Subi R31, R31, 1
-		Store R31, R6, 1
+		Store R31, R7, 1; Stapel.push(R7)
+		Addi R6, R6, 1
 		
-		Divi R8, R5, 10
-		bez R8, PruefeObNull
-		
-		Add R5, R8, R0
-		Addi R7, R7, 1
-	Jmp ZiffernMerken
+		Divi R5, R5, 10; R5 := Floor(R5 / 10)
+	Jmp ZiffernAufschreiben
 	
-	PruefeObNull:
-	bez R7, LeereZahlZeichnen
+		Subi R31, R31, 1
+		Store R31, R5, 1; Stapel.push(R5)
+		Addi R6, R6, 1
 	
 	ZiffernZeichnen:
-		Load R6, R31, 1
+		cnei R7, R6, 0
+		bez R7, ZahlZeichnenEnde
 		
-		bnez R6, ZeichneZifferEins
-		Jal R30, NullZeichnen
+		Load R7, R31, 1; R7:= Stapel.pop()
+		Addi R31, R31, 1
+		Subi R6, R6, 1
+		
+		Muli R7, R7, 2; Versatz berechnen
+		Addi R7, R7, ZiffernZeichnenSprungTabelle
+		Jreg R7
+		
+		ZiffernZeichnenSprungTabelle:
+		Jal R30, NullZeichnen ; R7 == 0
 		Jmp NachZifferZeichnen
 		
-		ZeichneZifferEins:
-	;	Subi R6, R6, 1
-	;	bnez R6, ZeichneZifferZwei
-	;	Jal R30, EinsZeichnen
-	;	Jmp NachZifferZeichnen
+		Jal R30, EinsZeichnen ; R7 == 1
+		Jmp NachZifferZeichnen
 		
-		ZeichneZifferZwei:
-	;	Subi R6, R6, 1
-	;	bnez R6, ZeichneZifferDrei
-	;	Jal R30, ZweiZeichnen
-	;	Jmp NachZifferZeichnen
-	;	
-	;	ZeichneZifferDrei:
-	;	Subi R6, R6, 1
-	;	bnez R6, ZeichneZifferVier
-	;	Jal R30, DreiZeichnen
-	;	Jmp NachZifferZeichnen
-	;	
-	;	ZeichneZifferVier:
-	;	Subi R6, R6, 1
-	;	bnez R6, ZeichneZifferFuenf
-	;	Jal R30, VierZeichnen
-	;	Jmp NachZifferZeichnen
-	;	
-	;	ZeichneZifferFuenf:
-	;	Subi R6, R6, 1
-	;	bnez R6, ZeichneZifferSechs
-	;	Jal R30, FuenfZeichnen
-	;	Jmp NachZifferZeichnen
-	;	
-	;	ZeichneZifferSechs:
-	;	Subi R6, R6, 1
-	;	bnez R6, ZeichneZifferSieben
-	;	Jal R30, SechsZeichnen
-	;	Jmp NachZifferZeichnen
-	;	
-	;	ZeichneZifferSieben:
-	;	Subi R6, R6, 1
-	;	bnez R6, ZeichneZifferAcht
-	;	Jal R30, SiebenZeichnen
-	;	Jmp NachZifferZeichnen
-	;	
-	;	ZeichneZifferAcht:
-	;	Subi R6, R6, 1
-	;	bnez R6, ZeichneZifferNeun
-	;	Jal R30, AchtZeichnen
-	;	Jmp NachZifferZeichnen
-	;	
-	;	ZeichneZifferNeun:
-	;	Subi R6, R6, 1
-	;	bnez R6, NachZifferZeichnen
-	;	Jal R30, NeunZeichnen
-	;	Jmp NachZifferZeichnen
-	;	
-	;	
+		Jal R30, ZweiZeichnen ; R7 == 2
+		Jmp NachZifferZeichnen
+		
+		Jal R30, DreiZeichnen ; R7 == 3
+		Jmp NachZifferZeichnen
+		
+		Jal R30, VierZeichnen ; R7 == 4
+		Jmp NachZifferZeichnen
+		
+		Jal R30, FuenfZeichnen ; R7 == 5
+		Jmp NachZifferZeichnen
+		
+		Jal R30, SechsZeichnen ; R7 == 6
+		Jmp NachZifferZeichnen
+		
+		Jal R30, SiebenZeichnen ; R7 == 7
+		Jmp NachZifferZeichnen
+		
+		Jal R30, AchtZeichnen ; R7 == 8
+		Jmp NachZifferZeichnen
+		
+		Jal R30, NeunZeichnen ; R7 == 9
+		
 		NachZifferZeichnen:
-		Addi R2, R2, 4
-		Addi R31, R31, 1
-		Subi R7, R7, 1
-	Bnez R7, ZiffernZeichnen
-	Jmp ZahlZeichnenEnde
-	
-	LeereZahlZeichnen:
-	Jal R30, NullZeichnen
+		Addi R2, R2, 4;Verschiebe die X Position der naechsten Ziffer
+	Jmp ZiffernZeichnen
 	
 	ZahlZeichnenEnde:
 	Load R2, R31 , 1
 	Load R5, R31 , 2
 	Load R6, R31 , 3
 	Load R7, R31 , 4
-	Load R8, R31 , 5
-	Load R30, R31 , 6
-	Addi R31, R31, 6
+	Load R30, R31 , 5
+	Addi R31, R31, 5
 Jreg 30
 
 ;Zahlen
