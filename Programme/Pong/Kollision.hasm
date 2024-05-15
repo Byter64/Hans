@@ -16,8 +16,8 @@ TesteSpielerBallKollision:
 	
 	Load R2, R0, SpielerPosX
 	Load R3, R0, SpielerPosY
-	Load R4, R0, SpielerSchlaegerBreite
-	Load R5, R0, SpielerSchlaegerHoehe
+	Addi R4, R0, SpielerSchlaegerBreite
+	Addi R5, R0, SpielerSchlaegerHoehe
 	Load R6, R0, BallPositionX
 	Load R7, R0, BallPositionY
 	Addi R8, R0, BallGroesse
@@ -49,8 +49,9 @@ Jreg R30
 ;Rueckgabe:
 ;R1 == Ist Kollidiert?  (0 falls nicht, 1 falls ja)
 TesteKollision:
-	Subi R31, R31, 1
+	Subi R31, R31, 2
 	Store R31, R10, 1
+	Store R31, R30, 2
 	
 	Addi R1, R0, 0
 	
@@ -59,21 +60,18 @@ TesteKollision:
 	cge R10, R2, R10
 	bnez R10, TesteKollisionEnde
 	
-	Addi R1, R1, 2
 	
 	;recht1.links + recht1.breite <= recht2.links?
 	Add R10, R2, R4
 	cle R10, R10, R6
 	bnez R10, TesteKollisionEnde
 	
-	Addi R1, R1, 4
 	
 	;recht1.oben >= recht2.oben + recht2.hoehe?
 	Add R10, R7, R9
 	cge R10, R3, R10
 	bnez R10, TesteKollisionEnde
 	
-	Addi R1, R1, 8
 	
 	;recht1.oben + recht1.hoehe <= recht2.oben?
 	Add R10, R3, R5
@@ -84,5 +82,6 @@ TesteKollision:
 	Addi R1, R0, 1
 	TesteKollisionEnde:
 	Load R10, R31, 1
-	Addi R31, R31, 1
+	Load R30, R31, 2
+	Addi R31, R31, 2
 Jreg R30

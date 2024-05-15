@@ -24,18 +24,9 @@ SpielSchleife:
 	Jal R30, BallAktualisieren
 	
 	Jal R30, TesteSpielerBallKollision; Beschreibt R1
-	Addis R3, R0, 0b100000000
-	Store R3, R1, 0
 	
 	Jal R30, BallZeichnen
 	Jal R30, SpielerZeichnen
-	
-	Addi R2, R0, 0
-	Addi R3, R0, 0
-	Addi R4, R0, 255
-	Load R5, R0, SpielerPosX
-	Jal R30, ZahlZeichnen
-	
 	
 	
 	;Bildpuffer wechseln
