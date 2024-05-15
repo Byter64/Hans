@@ -130,7 +130,7 @@ ZahlZeichnen:
 	
 	ZiffernAufschreiben:
 		cgei R7, R5, 10 
-		bez R7, PruefeObNull; while (R5 >= 10)
+		bez R7, LetzteZifferAufschreiben; while (R5 >= 10)
 		
 		Modi R7, R5, 10; R7 := R5 % 10
 		Subi R31, R31, 1
@@ -140,9 +140,10 @@ ZahlZeichnen:
 		Divi R5, R5, 10; R5 := Floor(R5 / 10)
 	Jmp ZiffernAufschreiben
 	
-		Subi R31, R31, 1
-		Store R31, R5, 1; Stapel.push(R5)
-		Addi R6, R6, 1
+	LetzteZifferAufschreiben:
+	Subi R31, R31, 1
+	Store R31, R5, 1; Stapel.push(R5)
+	Addi R6, R6, 1
 	
 	ZiffernZeichnen:
 		cnei R7, R6, 0
@@ -153,7 +154,7 @@ ZahlZeichnen:
 		Subi R6, R6, 1
 		
 		Muli R7, R7, 2; Versatz berechnen
-		Addi R7, R7, ZiffernZeichnenSprungTabelle
+		Addi R7, R7, ZiffernZeichnenSprungTabelle - 1
 		Jreg R7
 		
 		ZiffernZeichnenSprungTabelle:
