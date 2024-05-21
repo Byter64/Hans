@@ -73,24 +73,60 @@ BallAktualisieren:
 Jreg R30;
 
 BallKollisionenBearbeiten:
-	Subi R31, R31, 3
+	Subi R31, R31, 10
 	Store R31, R1, 1
 	Store R31, R2, 2
-	Store R31, R30, 3
+	Store R31, R3, 3
+	Store R31, R4, 4
+	Store R31, R5, 5
+	Store R31, R6, 6
+	Store R31, R7, 7
+	Store R31, R8, 8
+	Store R31, R9, 9
+	Store R31, R30, 10
 	
-	Jal R30, TesteSpielerBallKollision; Beschreibt R1
-	bez R1, BallKollisionenBearbeitenEnde
+	;Pruefe Spieler mit Ball
+	Load R2, R0, SpielerPosX
+	Load R3, R0, SpielerPosY
+	Addi R4, R0, SpielerSchlaegerBreite
+	Addi R5, R0, SpielerSchlaegerHoehe
+	Load R6, R0, BallPositionX
+	Load R7, R0, BallPositionY
+	Addi R8, R0, BallGroesse
+	Addi R9, R0, BallGroesse
+	Jal 30, TesteKollision ;Beschreibt R1
+	
+	bez R1, BallKollisionenBearbeitenLinkerRand
 	Load R1, R0, BallGeschwX
 	cgei R2, R1, 0
-	bnez R2, BallKollisionenBearbeitenEnde
+	bnez R2, BallKollisionenBearbeitenLinkerRand
 	Sub R1, R0, R1
 	Store R0, R1, BallGeschwX
+	
+	BallKollisionenBearbeitenLinkerRand:
+	Addi R2, R0, 0
+	Addi R3, R0, 0
+	Addi R4, R0, SpielRandLinks
+	Addi R5, R0, Bildschirmhoehe
+	Jal 30, TesteKollision ;Beschreibt R1
+	
+	bez R1, BallKollisionenBearbeitenEnde
+	Load R1, R0, PunkteGegner
+	Addi R1, R1, 1
+	Store R0, R1, PunkteGegner
 	
 	BallKollisionenBearbeitenEnde:
 	Load R1, R31, 1
 	Load R2, R31, 2
-	Load R30, R31, 3
-	Addi R31, R31, 3
+	Load R3, R31, 3
+	Load R4, R31, 4
+	Load R5, R31, 5
+	Load R6, R31, 6
+	Load R7, R31, 7
+	Load R8, R31, 8
+	Load R9, R31, 9
+	Load R30, R31, 10
+	Addi R31, R31, 10
 Jreg R30
 
 BallZeichnen:
