@@ -7,13 +7,11 @@ Addi R29, R0, 0b110 ;Bildpufferadresse
 Slli R29, R29, 24
 Addi R28, R0, 0b1000 ;Knopfadresse
 Slli R28, R28, 24
-Addi R27, R0, 0 ;Punkte Spieler 2
-Addi R26, R0, 0 ;Punkte Spieler 1
 
 .set Spielstart, 0
 .set Spielspiel, 1
 .set Spielende, 2
-Addi R25, R0, Spielspiel ;Spielzustand
+Addi R27, R0, Spielspiel ;Spielzustand
 
 Add R24, R0, R0
 ;R2 und R3 sind temporaere Register
@@ -27,7 +25,7 @@ SpielSchleife:
 	Addi R3, R0, 255
 	Store R2, R3, 119 << 8
 	
-	cei R2, R25, Spielspiel ;Spielzustand == Spielspiel
+	cei R2, R27, Spielspiel ;Spielzustand == Spielspiel
 	bez R2, SpielZeichnen
 	
 	Jal R30, SpielerAktualisieren
@@ -38,6 +36,7 @@ SpielSchleife:
 	SpielZeichnen:
 	Jal R30, BallZeichnen
 	Jal R30, SpielerZeichnen
+	Jal R30, PunkteZeichnen
 	
 	
 	;Bildpuffer wechseln

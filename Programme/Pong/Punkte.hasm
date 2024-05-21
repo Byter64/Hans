@@ -1,0 +1,45 @@
+.section Punkte
+
+.set PunkteFarbe, 255
+.set PunkteXPos, 70
+.set PunkteYPos, 4
+
+PunkteSpieler: .int 0
+PunkteGegner: .int 0
+
+PunkteZeichnen:
+	Subi R31, R31, 5
+	Store R31, R2, 1
+	Store R31, R3, 2
+	Store R31, R4, 3
+	Store R31, R5, 4
+	Store R31, R30, 5
+	
+	;Zeichne Spieler Punkte
+	Addi R2, R0, PunkteXPos
+	Addi R3, R0, PunkteYPos
+	Addi R4, R0, PunkteFarbe
+	Load R5, R0, PunkteSpieler
+	Jal R30, ZahlZeichnen
+	
+	;Zeichne Doppelpunkt
+	Addi R2, R2, 9
+	Slli R5, R3, 8
+	Add R5, R5, R2
+	Add R5, R5, R29
+	
+	Store R5, R4, 1 << 8
+	Store R5, R4, 3 << 8
+	
+	;Zeichne Gegner Punkte
+	Addi R2, R2, 3
+	Load R5, R0, PunkteGegner
+	Jal R30, ZahlZeichnen
+	
+	Load R2, R31, 1
+	Load R3, R31, 2
+	Load R4, R31, 3
+	Load R5, R31, 4
+	Load R30, R31, 5
+	Addi R31, R31, 5
+Jreg R30 
