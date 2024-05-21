@@ -43,7 +43,7 @@ BallAktualisieren:
 	Load R2, R0, BallGeschwY
 	Add R1, R1, R2
 	
-	;Ist der Ball am unten Rand?
+	;Ist der Ball am unteren Rand?
 	Addi R3, R0, SpielRandUnten
 	Subi R3, R3, BallGroesse
 	cge R3, R1, R3 ; Y Koord == SpielRandUnten - BallGroesse
@@ -71,6 +71,27 @@ BallAktualisieren:
 	Load R3, R31, 3
 	Addi R31, R31, 3
 Jreg R30;
+
+BallKollisionenBearbeiten:
+	Subi R31, R31, 3
+	Load R31, R1, 1
+	Load R31, R2, 2
+	Load R31, R30, 3
+	
+	Jal R30, TesteSpielerBallKollision; Beschreibt R1
+	bez R1, BallAktualisierenEnde
+	Load R1, R0, BallGeschwX
+	cgei R2, R1, 0
+	bnez R2, BallKollisionenBearbeitenEnde
+	Sub R1, R0, R1
+	Store R0, R1, BallGeschwX
+	
+	BallKollisionenBearbeitenEnde:
+	Store R1, R31, 1
+	Store R2, R31, 2
+	Store R30, R31, 3
+	Addi R31, R31, 3
+Jreg R30
 
 BallZeichnen:
 	Subi R31, R31, 6

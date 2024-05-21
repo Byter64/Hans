@@ -10,10 +10,10 @@ Slli R28, R28, 24
 Addi R27, R0, 0 ;Punkte Spieler 2
 Addi R26, R0, 0 ;Punkte Spieler 1
 
-Addi R25, R0, 0 ;Spielzustand
 .set Spielstart, 0
 .set Spielspiel, 1
 .set Spielende, 2
+Addi R25, R0, Spielspiel ;Spielzustand
 
 Add R24, R0, R0
 ;R2 und R3 sind temporaere Register
@@ -33,7 +33,7 @@ SpielSchleife:
 	Jal R30, SpielerAktualisieren
 	Jal R30, BallAktualisieren
 	
-	Jal R30, TesteSpielerBallKollision; Beschreibt R1
+	Jal R30, BallKollisionenBearbeiten
 	
 	SpielZeichnen:
 	Jal R30, BallZeichnen
