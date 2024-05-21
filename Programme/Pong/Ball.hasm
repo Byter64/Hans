@@ -111,9 +111,7 @@ BallKollisionenBearbeiten:
 	Jal 30, TesteKollision ;Beschreibt R1
 	
 	bez R1, BallKollisionenBearbeitenEnde
-	Load R1, R0, PunkteGegner
-	Addi R1, R1, 1
-	Store R0, R1, PunkteGegner
+	Jal R30, GegnerPunktGeben
 	
 	BallKollisionenBearbeitenEnde:
 	Load R1, R31, 1

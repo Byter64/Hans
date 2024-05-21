@@ -1,0 +1,73 @@
+.section Spiel
+
+.set Bildschirmbreite, 160
+.set Bildschirmhoehe, 120
+.set Spielbreite, 140
+.set Spielhoehe, 100
+.set SpielVersatzX, 10
+.set SpielVersatzY, 10
+.set SpielRandRechts, Spielbreite + SpielVersatzX
+.set SpielRandLinks, SpielVersatzX
+.set SpielRandUnten, Spielhoehe + SpielVersatzY
+.set SpielRandOben, SpielVersatzY
+.set RandHoeheUnten, Bildschirmhoehe - SpielRandUnten
+.set RandBreiteRechts, Bildschirmbreite - SpielRandRechts
+
+.set Spielstart, 0
+.set Spielspiel, 1
+.set Spielende, 2
+
+GegnerPunktGeben:
+	Subi R31, R31, 1
+	Store R31, R1, 1
+	
+	Load R1, R0, PunkteGegner
+	Addi R1, R1, 1
+	Store R0, R1, PunkteGegner
+	Addi R27, R0, Spielende
+	
+	Load R1, R31, 1
+	Addi R31, R31, 1
+Jreg R30
+
+SpielstartSchleife:
+	
+	
+	
+Jreg R30
+
+;R2 und R3 sind temporaere Register
+SpielspielSchleife:
+	Subi R31, R31, 3
+	Store R31, R2, 1
+	Store R31, R3, 2
+	Store R31, R30, 3
+	
+	;Bildratentest
+	Addi R24, R24, 1
+	Modi R2, R24, 30
+	Add R2, R2, R29
+	Addi R3, R0, 255
+	Store R2, R3, 119 << 8
+	
+	Jal R30, SpielerAktualisieren
+	Jal R30, BallAktualisieren
+	
+	Jal R30, BallKollisionenBearbeiten
+	
+	SpielZeichnen:
+	Jal R30, BallZeichnen
+	Jal R30, SpielerZeichnen
+	Jal R30, PunkteZeichnen
+	
+	Load R2, R31, 1
+	Load R3, R31, 2
+	Load R30, R31, 3
+	Addi R31, R31, 3
+Jreg R30
+
+SpielendeSchleife:
+	
+	
+	
+Jreg R30
