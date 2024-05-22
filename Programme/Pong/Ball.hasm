@@ -8,6 +8,18 @@ BallGeschwY: .int 1
 .set BallGroesse, 3
 .set BallFarbe, 255
 
+BallZuruecksetzen:
+	Subi R31, R31, 1
+	Store R31, R2, 1
+	
+	Addi R2, R0, 60
+	Store R0, R2, BallPositionX
+	Store R0, R2, BallPositionY
+	
+	Load R2, R31, 1
+	Addi R31, R31, 1
+Jreg R30
+
 BallAktualisieren:
 	Subi R31, R31, 3
 	Store R31, R1, 1

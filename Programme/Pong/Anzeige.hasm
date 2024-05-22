@@ -201,7 +201,7 @@ ZahlZeichnen:
 Jreg 30
 
 ;Zahlen
-;Alle Zahlen haben eine Groesse von 3x4 Pixeln
+;Alle Zahlen haben eine Groesse von 3x5 Pixeln
 
 ;Parameter:
 ;R2 == Links

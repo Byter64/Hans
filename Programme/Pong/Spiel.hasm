@@ -30,10 +30,31 @@ GegnerPunktGeben:
 	Addi R31, R31, 1
 Jreg R30
 
+SpielstartTimer: .int 30
 SpielstartSchleife:
+	Subi R31, R31, 2
+	Store R31, R2, 1
+	Store R31, R30, 2
 	
+	Jal R30, BallZuruecksetzen
+	Jal R30, SpielerAktualisieren
 	
+	Load R2, R0, SpielstartTimer
+	Subi R2, R2, 1
+	Store R0, R2, SpielstartTimer
+	bnez R2, SpielstartZeichnen
+	Addi R27, R27, Spielspiel
+	Addi R2, R0, 30
+	Store R0, R2, SpielstartTimer
 	
+	SpielstartZeichnen:
+	Jal R30, BallZeichnen
+	Jal R30, SpielerZeichnen
+	Jal R30, PunkteZeichnen
+	
+	Load R2, R31, 1
+	Load R30, R31, 2
+	Addi R31, R31, 2
 Jreg R30
 
 ;R2 und R3 sind temporaere Register
@@ -66,8 +87,38 @@ SpielspielSchleife:
 	Addi R31, R31, 3
 Jreg R30
 
+
+SpielendeTimer: .int 128
 SpielendeSchleife:
+	Subi R31, R31, 3
+	Store R31, R2, 1
+	Store R31, R3, 2
+	Store R31, R30, 3
+	
+	;Den Timer verringern
+	Load R2, R0, SpielendeTimer
+	Subi R2, R2, 1
+	Store R0, R2, SpielendeTimer
 	
 	
+	SpielendeSpielzeichnen:
+	Jal R30, BallZeichnen
+	Jal R30, SpielerZeichnen
 	
+	Andi R3, R2, 0b10000
+	bez R3, PruefeObSpielTimerNull
+	Jal R30, PunkteZeichnen
+	
+	;Falls Timer == 0, setze ihn zurueck und starte Spiel neu
+	PruefeObSpielTimerNull:
+	bnez R2, SpielendeSchleifeEnde
+	Addi R27, R0, Spielstart
+	Addi R2, R0, 192
+	Store R0, R2, SpielendeTimer
+	
+	SpielendeSchleifeEnde:
+	Load R2, R31, 1
+	Load R3, R31, 2
+	Load R30, R31, 3
+	Addi R31, R31, 3
 Jreg R30
