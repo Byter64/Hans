@@ -9,9 +9,10 @@ SpielerPosY: .int 60 - (SpielerSchlaegerHoehe / 2)
 
 
 SpielerAktualisieren:
-	Subi R31, R31, 2
+	Subi R31, R31, 3
 	Store R31, R1, 1
 	Store R31, R2, 2
+	Store R31, R3, 3
 	
 	;Hole Knoepfe
 	Load R1, R28, 0
@@ -20,6 +21,9 @@ SpielerAktualisieren:
 	Andi R2, R1, 0b100
 	bez R2, SpielerUntenPruefen
 	Load R2, R0, SpielerPosY
+	Addi R3, R0, SpielRandOben + 1
+	Cle R3, R2, R3
+	bnez R3, SpielerUntenPruefen
 	Subi R2, R2, SpielerGeschw
 	Store R0, R2, SpielerPosY
 	
@@ -27,6 +31,10 @@ SpielerAktualisieren:
 	Andi R2, R1, 0b1000
 	bez R2, SpielerLinksPruefen
 	Load R2, R0, SpielerPosY
+	Addi R3, R0, SpielRandUnten
+	Subi R3, R3, SpielerSchlaegerHoehe + 1
+	Cge R3, R2, R3
+	bnez R3, SpielerLinksPruefen
 	Addi R2, R2, SpielerGeschw
 	Store R0, R2, SpielerPosY
 	
@@ -34,6 +42,9 @@ SpielerAktualisieren:
 	Andi R2, R1, 0b10000
 	bez R2, SpielerRechtsPruefen
 	Load R2, R0, SpielerPosX
+	Addi R3, R0, SpielRandLinks + 1
+	Cle R3, R2, R3
+	bnez R3, SpielerRechtsPruefen
 	Subi R2, R2, SpielerGeschw
 	Store R0, R2, SpielerPosX
 	
@@ -41,13 +52,18 @@ SpielerAktualisieren:
 	Andi R2, R1, 0b100000
 	bez R2, SpielerAktualisierenEnde
 	Load R2, R0, SpielerPosX
+	Addi R3, R0, SpielRandRechts
+	Subi R3, R3, SpielerSchlaegerBreite + 1
+	Cg R3, R2, R3
+	bnez R3, SpielerAktualisierenEnde
 	Addi R2, R2, SpielerGeschw
 	Store R0, R2, SpielerPosX
 	
 	SpielerAktualisierenEnde:
 	Load R1, R31, 1
 	Load R2, R31, 2
-	Addi R31, R31, 2
+	Load R3, R31, 3
+	Addi R31, R31, 3
 	Jreg 30
 
 SpielerZeichnen:
