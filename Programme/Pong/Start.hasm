@@ -9,7 +9,7 @@ Addi R28, R0, 0b1000 ;Knopfadresse
 Slli R28, R28, 24
 
 ;Zustaende sind in Spiel.hasm
-Addi R27, R0, Spielspiel ;Spielzustand
+Addi R27, R0, Spielstart ;Spielzustand
 Add R24, R0, R0 ;Bildratentest
 
 ;R2 und R3 sind temporaere Register
