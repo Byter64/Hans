@@ -108,9 +108,23 @@ BallKollisionenBearbeiten:
 	Addi R9, R0, BallGroesse
 	Jal 30, TesteKollision ;Beschreibt R1
 	
-	bez R1, BallKollisionenBearbeitenLinkerRand
+	bez R1, BallKollisionenBearbeitenGegner
 	Load R1, R0, BallGeschwX
 	cgei R2, R1, 0
+	bnez R2, BallKollisionenBearbeitenGegner
+	Sub R1, R0, R1
+	Store R0, R1, BallGeschwX
+	
+	BallKollisionenBearbeitenGegner:
+	Addi R2, R0, GegnerPosX
+	Load R3, R0, GegnerPosY
+	Addi R4, R0, GegnerSchlaegerBreite
+	Addi R5, R0, GegnerSchlaegerHoehe
+	Jal 30, TesteKollision ;Beschreibt R1
+	
+	bez R1, BallKollisionenBearbeitenLinkerRand
+	Load R1, R0, BallGeschwX
+	clei R2, R1, 0
 	bnez R2, BallKollisionenBearbeitenLinkerRand
 	Sub R1, R0, R1
 	Store R0, R1, BallGeschwX
@@ -122,8 +136,18 @@ BallKollisionenBearbeiten:
 	Addi R5, R0, Bildschirmhoehe
 	Jal 30, TesteKollision ;Beschreibt R1
 	
-	bez R1, BallKollisionenBearbeitenEnde
+	bez R1, BallKollisionenBearbeitenRechterRand
 	Jal R30, GegnerPunktGeben
+	
+	BallKollisionenBearbeitenRechterRand:
+	Addi R2, R0, SpielRandRechts
+	Addi R3, R0, 0
+	Addi R4, R0, RandBreiteRechts
+	Addi R5, R0, Bildschirmhoehe
+	Jal 30, TesteKollision ;Beschreibt R1
+	
+	bez R1, BallKollisionenBearbeitenEnde
+	Jal R30, SpielerPunktGeben
 	
 	BallKollisionenBearbeitenEnde:
 	Load R1, R31, 1

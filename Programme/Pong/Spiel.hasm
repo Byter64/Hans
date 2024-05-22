@@ -30,6 +30,19 @@ GegnerPunktGeben:
 	Addi R31, R31, 1
 Jreg R30
 
+SpielerPunktGeben:
+	Subi R31, R31, 1
+	Store R31, R1, 1
+	
+	Load R1, R0, PunkteSpieler
+	Addi R1, R1, 1
+	Store R0, R1, PunkteSpieler
+	Addi R27, R0, Spielende
+	
+	Load R1, R31, 1
+	Addi R31, R31, 1
+Jreg R30
+
 SpielstartTimer: .int 30
 SpielstartSchleife:
 	Subi R31, R31, 2
