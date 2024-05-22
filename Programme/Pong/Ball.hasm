@@ -2,8 +2,8 @@
 
 BallPositionX: .int 60
 BallPositionY: .int 60
-BallGeschwX: .int 1
-BallGeschwY: .int 1
+BallGeschwX: .int 2
+BallGeschwY: .int 2
 
 .set BallGroesse, 3
 .set BallFarbe, 255

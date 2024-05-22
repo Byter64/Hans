@@ -73,12 +73,14 @@ SpielspielSchleife:
 	
 	Jal R30, SpielerAktualisieren
 	Jal R30, BallAktualisieren
+	Jal R30, GegnerAktualisieren
 	
 	Jal R30, BallKollisionenBearbeiten
 	
 	SpielZeichnen:
 	Jal R30, BallZeichnen
 	Jal R30, SpielerZeichnen
+	Jal R30, GegnerZeichnen
 	Jal R30, PunkteZeichnen
 	
 	Load R2, R31, 1

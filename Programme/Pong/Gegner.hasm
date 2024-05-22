@@ -1,0 +1,89 @@
+.section Gegner
+
+.set GegnerSchlaegerBreite, 2
+.set GegnerSchlaegerHoehe, 10
+.set GegnerGeschw, 1
+.set GegnerFarbe, 0b11111110
+.set GegnerPosX, SpielRandRechts - 10
+GegnerPosY: .int 60 - (GegnerSchlaegerHoehe / 2)
+
+
+GegnerAktualisieren:
+	Subi R31, R31, 10
+	Store R31, R1, 1
+	Store R31, R2, 2
+	Store R31, R3, 3
+	Store R31, R4, 4
+	Store R31, R5, 5
+	Store R31, R6, 6
+	Store R31, R7, 7
+	Store R31, R8, 8
+	Store R31, R9, 9
+	Store R31, R30, 10
+
+	;Lade Ball Y
+	Addi R2, R0, 1
+	Load R3, R0, GegnerPosY 
+	Addi R4, R0, 1
+	Addi R5, R0, GegnerSchlaegerHoehe
+	
+	Addi R6, R0, 1
+	Load R7, R0, BallPositionY 
+	Addi R8, R0, 1
+	Addi R9, R0, BallGroesse
+	
+	Jal R30, TesteKollision
+	
+	BNEZ R1, GegnerAktualisierenEnde
+	
+	CL R1, R3, R7; Gegner < Ball -> Gegner ueber Ball
+	BEZ R1, BewegeGegnerNachOben
+	;Ist oben gedrueckt?
+	BewegeGegnerNachUnten:
+		Addi R3, R3, GegnerGeschw
+		jmp EndeGegnerBewegung
+
+	BewegeGegnerNachOben:
+		Subi R3, R3, GegnerGeschw
+
+	EndeGegnerBewegung:
+	Store R0, R3, GegnerPosY	
+	
+	GegnerAktualisierenEnde:
+	Load R1, R31, 1
+	Load R2, R31, 2
+	Load R3, R31, 3
+	Load R4, R31, 4
+	Load R5, R31, 5
+	Load R6, R31, 6
+	Load R7, R31, 7
+	Load R8, R31, 8
+	Load R9, R31, 9
+	Load R30, R31, 10
+	Addi R31, R31, 10
+	Jreg 30
+
+GegnerZeichnen:
+	Subi R31, R31, 6
+	Store R31, R5, 1
+	Store R31, R6, 2
+	Store R31, R7, 3
+	Store R31, R8, 4
+	Store R31, R9, 5
+	Store R31, R30, 6
+	
+	Addi R5, R0, GegnerPosX
+	Load R6, R0, GegnerPosY
+	Addi R7, R0, GegnerSchlaegerBreite
+	Addi R8, R0, GegnerSchlaegerHoehe
+	Addi R9, R0, GegnerFarbe
+	Jal R30, RechteckZeichnen
+	
+	Load R5, R31, 1
+	Load R6, R31, 2
+	Load R7, R31, 3
+	Load R8, R31, 4
+	Load R9, R31, 5
+	Load R30, R31, 6
+	Addi R31, R31, 6
+Jreg R30
