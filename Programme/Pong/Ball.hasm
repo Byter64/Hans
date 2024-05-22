@@ -10,13 +10,19 @@ BallGeschwY: .int 2
 
 BallZuruecksetzen:
 	Subi R31, R31, 1
-	Store R31, R2, 1
+	Store R31, R1, 1
 	
-	Addi R2, R0, 60
-	Store R0, R2, BallPositionX
+	Jal R30, ZufallsZahlErzeugen
+	Modi R1, R1, 20
+	Addi R1, R1, 70
+	Store R0, R1, BallPositionX
+	
+	Jal R30, ZufallsZahlErzeugen
+	Modi R1, R1, 40
+	Addi R1, R1, 40
 	Store R0, R2, BallPositionY
 	
-	Load R2, R31, 1
+	Load R1, R31, 1
 	Addi R31, R31, 1
 Jreg R30
 
