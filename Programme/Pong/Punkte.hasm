@@ -20,7 +20,7 @@ PunkteZeichnen:
 	Addi R3, R0, PunkteYPos
 	Addi R4, R0, PunkteFarbe
 	Load R5, R0, PunkteSpieler
-	Jal R30, ZahlZeichnen
+	Jal R30, ZahlZeichnenRechts
 	
 	;Zeichne Doppelpunkt
 	Addi R2, R2, 9

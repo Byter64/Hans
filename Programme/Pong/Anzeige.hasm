@@ -1,7 +1,7 @@
 .section Anzeige
 
-HintergrundFarbe: .int 2
-RandFarbe: .int 0b10010010
+HintergrundFarbe: .int 0b11111111
+RandFarbe: .int 0b11000001
 
 BildZuruecksetzen:
 	;Gerettete Register: R5, R6, R7, R8, R9, R30
@@ -460,3 +460,38 @@ NeunZeichnen:
 	Load R5, R31, 1
 	Addi R31, R31, 1
 Jreg R30
+
+
+;Funktioniert nur fuer positive Ints!!!
+;Parameter:
+;R2 == Links
+;R3 == Oben
+;R4 == Farbe
+;R5 == Zahl
+ZahlZeichnenRechts:
+	Subi R31, R31, 5
+	Store R31, R2, 1
+	Store R31, R5, 2
+	Store R31, R6, 3
+	Store R31, R7, 4
+	Store R31, R30, 5
+	
+	Add R6, R5, R0 
+	LinksShiftPunkteX:
+		cgei R7, R6, 10 
+		bez R7, EndeZahlZeichnenRechts; while (R6 >= 10)
+		Subi R2, R2, 4
+		Divi R6, R6, 10; R6 := Floor(R6 / 10)
+	Jmp LinksShiftPunkteX
+
+	EndeZahlZeichnenRechts:
+
+	Jal R30, ZahlZeichnen
+	
+	Load R2, R31 , 1
+	Load R5, R31 , 2
+	Load R6, R31 , 3
+	Load R7, R31 , 4
+	Load R30, R31 , 5
+	Addi R31, R31, 5
+Jreg 30

@@ -3,7 +3,7 @@
 .set GegnerSchlaegerBreite, 2
 .set GegnerSchlaegerHoehe, 10
 .set GegnerGeschw, 1
-.set GegnerFarbe, 0b11111110
+.set GegnerFarbe, 0b00001001
 .set GegnerPosX, 150 - 10
 GegnerPosY: .int 60 - (GegnerSchlaegerHoehe / 2)
 
