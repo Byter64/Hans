@@ -12,30 +12,13 @@ ZufallsZahlErzeugen:
 	Store R31, R2, 2
 	Store R31, R3, 3
 	Store R31, R4, 4
-	
-	Load R1, R0, ZufallStapelWert
-	Addi R1, R1, 1
-	Cei R2, R1, ZufallMaxStapelWert
-	bez R2, ZufallBerechneZahl
-	Addi R1, R0, 0
-	Store R0, R1, ZufallStapelWert
-	
-	ZufallBerechneZahl:
-	Sub R2, R31, R1
-	Load R2, R31, 0
-	
-	Addi R4, R4, 7
-	
-	ZufallErzeugeZahl:
-		Load R3, R2, 0
-		Andi R3, R3, 0b1111
-		Slli R1, R1, 4
-		Or R1, R1, R3
-		
-		Subi R4, R4, 1
-		bez R4, ZufallsZahlErzeugenEnde
-		Jmp ZufallErzeugeZahl
-	ZufallsZahlErzeugenEnde:
+	Load R1, R0, PunkteGegner
+	Load R2, R0, PunkteSpieler
+	Addi R1, R1, 12345
+	Muli R1, R1, 21316
+	Xor R1, R1, R2
+	Mul R1, R1, R2
+	Xor R1, R1, R3
 	
 	Load R2, R31, 2
 	Load R3, R31, 3
