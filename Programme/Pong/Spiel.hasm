@@ -17,6 +17,8 @@
 .set Spielspiel, 1
 .set Spielende, 2
 
+Gewinner: .int 0
+
 GegnerPunktGeben:
 	Subi R31, R31, 1
 	Store R31, R1, 1
@@ -26,6 +28,9 @@ GegnerPunktGeben:
 	Store R0, R1, PunkteGegner
 	Addi R27, R0, Spielende
 	
+	Addi R1, R0, -40 ;Versatz von der Mitte
+	Store R0, R1, Gewinner
+
 	Load R1, R31, 1
 	Addi R31, R31, 1
 Jreg R30
@@ -38,6 +43,9 @@ SpielerPunktGeben:
 	Addi R1, R1, 1
 	Store R0, R1, PunkteSpieler
 	Addi R27, R0, Spielende
+	
+	Addi R1, R0, 40 ; Versatz von der Mitte
+	Store R0, R1, Gewinner
 	
 	Load R1, R31, 1
 	Addi R31, R31, 1
