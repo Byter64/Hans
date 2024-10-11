@@ -7,10 +7,11 @@ ZufallStapelWert: .int 0
 ;Rueckgabe:
 ;R1 == Zufallige Zahl
 ZufallsZahlErzeugen:
-	Subi R31, R31, 3
+	Subi R31, R31, 4
 	Store R31, R1, 1
 	Store R31, R2, 2
 	Store R31, R3, 3
+	Store R31, R4, 4
 	
 	Load R1, R0, ZufallStapelWert
 	Addi R1, R1, 1
@@ -36,8 +37,8 @@ ZufallsZahlErzeugen:
 		Jmp ZufallErzeugeZahl
 	ZufallsZahlErzeugenEnde:
 	
-	Load R1, R31, 1
 	Load R2, R31, 2
 	Load R3, R31, 3
-	Addi R31, R31, 3
+	Load R4, R31, 4
+	Addi R31, R31, 4
 Jreg R30

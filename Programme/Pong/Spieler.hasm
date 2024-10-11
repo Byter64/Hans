@@ -3,7 +3,7 @@
 .set SpielerSchlaegerBreite, 2
 .set SpielerSchlaegerHoehe, 10
 .set SpielerGeschw, 1
-.set SpielerFarbe, 0b00001011
+.set SpielerFarbe, 0b01011011
 SpielerPosX: .int 20
 SpielerPosY: .int 60 - (SpielerSchlaegerHoehe / 2)
 

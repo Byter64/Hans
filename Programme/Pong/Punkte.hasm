@@ -23,7 +23,7 @@ PunkteZeichnen:
 	Jal R30, ZahlZeichnenRechts
 	
 	;Zeichne Doppelpunkt
-	Addi R2, R2, 9
+	Addi R2, R2, 5
 	Slli R5, R3, 8
 	Add R5, R5, R2
 	Add R5, R5, R29
