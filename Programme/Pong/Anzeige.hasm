@@ -1,31 +1,65 @@
 .section Anzeige
 
-HintergrundFarbe: .int 255
+HintergrundFarbe: .int 0b11111111
+RandFarbe: .int 0b11000001
 
-BildpufferLoeschen:
-;Gerettete Register: R5, R6, R7, R8, R9, R30
-Subi R31, R31, 6
-Store R31, R30, 6
-Store R31, R9, 5
-Store R31, R8, 4
-Store R31, R7, 3
-Store R31, R6, 2
-Store R31, R5, 1
-
-Addi R5, R0, 0
-Addi R6, R0, 0
-Addi R7, R0, Bildschirmbreite
-Addi R8, R0, Bildschirmhoehe
-Load R9, R0, HintergrundFarbe
-Jal R30, RechteckZeichnen
-
-Load R30, R31, 6
-Load R9, R31, 5
-Load R8, R31, 4
-Load R7, R31, 3
-Load R6, R31, 2
-Load R5, R31, 1
-Addi R31, R31, 6
+BildZuruecksetzen:
+	;Gerettete Register: R5, R6, R7, R8, R9, R30
+	Subi R31, R31, 6
+	Store R31, R30, 6
+	Store R31, R9, 5
+	Store R31, R8, 4
+	Store R31, R7, 3
+	Store R31, R6, 2
+	Store R31, R5, 1
+	
+	;Zeichne Spielbereich
+	Addi R5, R0, SpielRandLinks
+	Addi R6, R0, SpielRandOben
+	Addi R7, R0, Spielbreite
+	Addi R8, R0, Spielhoehe
+	Load R9, R0, HintergrundFarbe
+	Jal R30, RechteckZeichnen
+	
+	;Zeichne Rand Oben
+	Addi R5, R0, 0
+	Addi R6, R0, 0
+	Addi R7, R0, Bildschirmbreite
+	Addi R8, R0, SpielVersatzY
+	Load R9, R0, RandFarbe
+	Jal R30, RechteckZeichnen
+	
+	;Zeichne Rand Unten
+	Addi R5, R0, 0
+	Addi R6, R0, SpielRandUnten
+	Addi R7, R0, Bildschirmbreite
+	Addi R8, R0, RandHoeheUnten
+	Load R9, R0, RandFarbe
+	Jal R30, RechteckZeichnen
+	
+	;Zeichne Rand Links
+	Addi R5, R0, 0
+	Addi R6, R0, SpielVersatzY
+	Addi R7, R0, SpielRandLinks
+	Addi R8, R0, Spielhoehe
+	Load R9, R0, RandFarbe
+	Jal R30, RechteckZeichnen
+	
+	;Zeichne Rand Rechts
+	Addi R5, R0, SpielRandRechts
+	Addi R6, R0, SpielVersatzY
+	Addi R7, R0, RandBreiteRechts
+	Addi R8, R0, Spielhoehe
+	Load R9, R0, RandFarbe
+	Jal R30, RechteckZeichnen
+	
+	Load R30, R31, 6
+	Load R9, R31, 5
+	Load R8, R31, 4
+	Load R7, R31, 3
+	Load R6, R31, 2
+	Load R5, R31, 1
+	Addi R31, R31, 6
 Jreg R30
 
 
@@ -36,47 +70,428 @@ Jreg R30
 ;R8 == Hoehe
 ;R9 == Farbe
 RechteckZeichnen:
-;Gerettete Register: R1, R2, R3, R4, R30
-Subi R31, R31, 5
-Store R31, R30, 5
-Store R31, R4, 4
-Store R31, R3, 3
-Store R31, R2, 2
-Store R31, R1, 1
-
-Add R1, R5, R7; R1 ist rechte Rechtecksseite
-Add R4, R6, R8; R4 ist die untere Rechtecksseite
-Slli R4, R4, 8; Schiebe Unten auf die Y Bits
-
-Slli R2, R6, 8
-Add R2, R5, R2 ;R2 ist die Pixeladresse
-
-SpaltenZeichnen:
-	ZeileZeichnen:
-		Add R3, R2, R29
-		Store R3, R9, 0
-
-		Addi R2, R2, 1
-		Andi R3, R2, 255
-		ce R3, R3, R1 ;X Position == Rechts
-		bez R3, ZeileZeichnen
-
-	;Ziehe Rechts wieder ab und setze dadurch X auf 0
-	Sub R2, R2, R1
-	Addi R2, R2, 256
-
-	ce R3, R2, R4 ;Pixeladresse == Bildschirmhoehe
-	Add R2, R2, R5 ;Setze X wieder auf Links
-bez R3, SpaltenZeichnen
-
-Load R30, R31, 5
-Load R4, R31, 4
-Load R3, R31, 3
-Load R2, R31, 2
-Load R1, R31, 1
-Addi R31, R31, 5
+	;Gerettete Register: R1, R2, R3, R4, R30
+	Subi R31, R31, 5
+	Store R31, R30, 5
+	Store R31, R4, 4
+	Store R31, R3, 3
+	Store R31, R2, 2
+	Store R31, R1, 1
+	
+	Add R1, R5, R7; R1 ist rechte Rechtecksseite
+	Add R4, R6, R8; R4 ist die untere Rechtecksseite
+	Slli R4, R4, 8; Schiebe Unten auf die Y Bits
+	
+	Slli R2, R6, 8
+	Add R2, R5, R2 ;R2 ist die Pixeladresse
+	
+	;Diese Funktion hängt sich auf, wenn Links + Breite > 255 ist
+	SpaltenZeichnen:
+		ZeileZeichnen:
+			Add R3, R2, R29
+			Store R3, R9, 0
+	
+			Addi R2, R2, 1
+			Andi R3, R2, 255
+			ce R3, R3, R1 ;X Position == Rechts
+			bez R3, ZeileZeichnen
+	
+		;Ziehe Rechts wieder ab und setze dadurch X auf 0
+		Sub R2, R2, R1
+		Addi R2, R2, 256
+	
+		ce R3, R2, R4 ;Pixeladresse == Bildschirmhoehe
+		Add R2, R2, R5 ;Setze X wieder auf Links
+	bez R3, SpaltenZeichnen
+	
+	Load R30, R31, 5
+	Load R4, R31, 4
+	Load R3, R31, 3
+	Load R2, R31, 2
+	Load R1, R31, 1
+	Addi R31, R31, 5
 Jreg R30
 
-;Gibt einen Zeiger zu einem Rechteck
-;Rückgabe: R1 - Zeiger auf Rechteck
-RechteckZeigerErstellen:
+;Funktioniert nur fuer positive Ints!!!
+;Parameter:
+;R2 == Links
+;R3 == Oben
+;R4 == Farbe
+;R5 == Zahl
+ZahlZeichnen:
+	Subi R31, R31, 5
+	Store R31, R2, 1
+	Store R31, R5, 2
+	Store R31, R6, 3
+	Store R31, R7, 4
+	Store R31, R30, 5
+	
+	Addi R6, R0, 0 ; Die "Stapelgroesse"
+	
+	ZiffernAufschreiben:
+		cgei R7, R5, 10 
+		bez R7, LetzteZifferAufschreiben; while (R5 >= 10)
+		
+		Modi R7, R5, 10; R7 := R5 % 10
+		Subi R31, R31, 1
+		Store R31, R7, 1; Stapel.push(R7)
+		Addi R6, R6, 1
+		
+		Divi R5, R5, 10; R5 := Floor(R5 / 10)
+	Jmp ZiffernAufschreiben
+	
+	LetzteZifferAufschreiben:
+	Subi R31, R31, 1
+	Store R31, R5, 1; Stapel.push(R5)
+	Addi R6, R6, 1
+	
+	ZiffernZeichnen:
+		cnei R7, R6, 0
+		bez R7, ZahlZeichnenEnde
+		
+		Load R7, R31, 1; R7:= Stapel.pop()
+		Addi R31, R31, 1
+		Subi R6, R6, 1
+		
+		Muli R7, R7, 2; Versatz berechnen
+		Addi R7, R7, ZiffernZeichnenSprungTabelle - 1
+		Jreg R7
+		
+		ZiffernZeichnenSprungTabelle:
+		Jal R30, NullZeichnen ; R7 == 0
+		Jmp NachZifferZeichnen
+		
+		Jal R30, EinsZeichnen ; R7 == 1
+		Jmp NachZifferZeichnen
+		
+		Jal R30, ZweiZeichnen ; R7 == 2
+		Jmp NachZifferZeichnen
+		
+		Jal R30, DreiZeichnen ; R7 == 3
+		Jmp NachZifferZeichnen
+		
+		Jal R30, VierZeichnen ; R7 == 4
+		Jmp NachZifferZeichnen
+		
+		Jal R30, FuenfZeichnen ; R7 == 5
+		Jmp NachZifferZeichnen
+		
+		Jal R30, SechsZeichnen ; R7 == 6
+		Jmp NachZifferZeichnen
+		
+		Jal R30, SiebenZeichnen ; R7 == 7
+		Jmp NachZifferZeichnen
+		
+		Jal R30, AchtZeichnen ; R7 == 8
+		Jmp NachZifferZeichnen
+		
+		Jal R30, NeunZeichnen ; R7 == 9
+		
+		NachZifferZeichnen:
+		Addi R2, R2, 4;Verschiebe die X Position der naechsten Ziffer
+	Jmp ZiffernZeichnen
+	
+	ZahlZeichnenEnde:
+	Load R2, R31 , 1
+	Load R5, R31 , 2
+	Load R6, R31 , 3
+	Load R7, R31 , 4
+	Load R30, R31 , 5
+	Addi R31, R31, 5
+Jreg 30
+
+;Zahlen
+;Alle Zahlen haben eine Groesse von 3x5 Pixeln
+
+;Parameter:
+;R2 == Links
+;R3 == Oben
+;R4 == Farbe
+NullZeichnen:
+	Subi R31, R31, 1
+	Store R31, R5, 1
+	
+	Slli R5, R3, 8
+	Add R5, R5, R2
+	Add R5, R5, R29
+	
+	Store R5, R4, 0
+	Store R5, R4, 1
+	Store R5, R4, 2
+	Store R5, R4, 0 + (1 << 8)
+	Store R5, R4, 2 + (1 << 8)
+	Store R5, R4, 0 + (2 << 8)
+	Store R5, R4, 2 + (2 << 8)
+	Store R5, R4, 0 + (3 << 8)
+	Store R5, R4, 1 + (3 << 8)
+	Store R5, R4, 2 + (3 << 8)
+	
+	Load R5, R31, 1
+	Addi R31, R31, 1
+Jreg R30
+
+;Parameter:
+;R2 == Links
+;R3 == Oben
+;R4 == Farbe
+EinsZeichnen:
+	Subi R31, R31, 1
+	Store R31, R5, 1
+	
+	Slli R5, R3, 8
+	Add R5, R5, R2
+	Add R5, R5, R29
+	
+	Store R5, R4, 0
+	Store R5, R4, 1
+	Store R5, R4, 1 + (1 << 8)
+	Store R5, R4, 1 + (2 << 8)
+	Store R5, R4, 1 + (3 << 8)
+	
+	Load R5, R31, 1
+	Addi R31, R31, 1
+Jreg R30
+
+;Parameter:
+;R2 == Links
+;R3 == Oben
+;R4 == Farbe
+ZweiZeichnen:
+	Subi R31, R31, 1
+	Store R31, R5, 1
+	
+	Slli R5, R3, 8
+	Add R5, R5, R2
+	Add R5, R5, R29
+	
+	Store R5, R4, 0
+	Store R5, R4, 1
+	Store R5, R4, 2
+	Store R5, R4, 2 + (1 << 8)
+	Store R5, R4, 0 + (2 << 8)
+	Store R5, R4, 1 + (2 << 8)
+	Store R5, R4, 0 + (3 << 8)
+	Store R5, R4, 1 + (3 << 8)
+	Store R5, R4, 2 + (3 << 8)
+	
+	Load R5, R31, 1
+	Addi R31, R31, 1
+Jreg R30
+
+;Parameter:
+;R2 == Links
+;R3 == Oben
+;R4 == Farbe
+DreiZeichnen:
+	Subi R31, R31, 1
+	Store R31, R5, 1
+	
+	Slli R5, R3, 8
+	Add R5, R5, R2
+	Add R5, R5, R29
+	
+	Store R5, R4, 0
+	Store R5, R4, 1
+	Store R5, R4, 2
+	Store R5, R4, 1 + (1 << 8)
+	Store R5, R4, 2 + (1 << 8)
+	Store R5, R4, 2 + (2 << 8)
+	Store R5, R4, 0 + (3 << 8)
+	Store R5, R4, 1 + (3 << 8)
+	Store R5, R4, 2 + (3 << 8)
+	
+	Load R5, R31, 1
+	Addi R31, R31, 1
+Jreg R30
+
+;Parameter:
+;R2 == Links
+;R3 == Oben
+;R4 == Farbe
+VierZeichnen:
+	Subi R31, R31, 1
+	Store R31, R5, 1
+	
+	Slli R5, R3, 8
+	Add R5, R5, R2
+	Add R5, R5, R29
+	
+	Store R5, R4, 0
+	Store R5, R4, 2
+	Store R5, R4, 0 + (1 << 8)
+	Store R5, R4, 2 + (1 << 8)
+	Store R5, R4, 0 + (2 << 8)
+	Store R5, R4, 1 + (2 << 8)
+	Store R5, R4, 2 + (2 << 8)
+	Store R5, R4, 2 + (3 << 8)
+	
+	Load R5, R31, 1
+	Addi R31, R31, 1
+Jreg R30
+
+;Parameter:
+;R2 == Links
+;R3 == Oben
+;R4 == Farbe
+FuenfZeichnen:
+	Subi R31, R31, 1
+	Store R31, R5, 1
+	
+	Slli R5, R3, 8
+	Add R5, R5, R2
+	Add R5, R5, R29
+	
+	Store R5, R4, 0
+	Store R5, R4, 1
+	Store R5, R4, 2
+	Store R5, R4, 0 + (1 << 8)
+	Store R5, R4, 1 + (1 << 8)
+	Store R5, R4, 2 + (2 << 8)
+	Store R5, R4, 0 + (3 << 8)
+	Store R5, R4, 1 + (3 << 8)
+	Store R5, R4, 2 + (3 << 8)
+	
+	Load R5, R31, 1
+	Addi R31, R31, 1
+Jreg R30
+
+;Parameter:
+;R2 == Links
+;R3 == Oben
+;R4 == Farbe
+SechsZeichnen:
+	Subi R31, R31, 1
+	Store R31, R5, 1
+	
+	Slli R5, R3, 8
+	Add R5, R5, R2
+	Add R5, R5, R29
+	
+	Store R5, R4, 0
+	Store R5, R4, 1
+	Store R5, R4, 2
+	Store R5, R4, 0 + (1 << 8)
+	Store R5, R4, 0 + (2 << 8)
+	Store R5, R4, 1 + (2 << 8)
+	Store R5, R4, 2 + (2 << 8)
+	Store R5, R4, 0 + (3 << 8)
+	Store R5, R4, 1 + (3 << 8)
+	Store R5, R4, 2 + (3 << 8)
+	
+	Load R5, R31, 1
+	Addi R31, R31, 1
+Jreg R30
+
+;Parameter:
+;R2 == Links
+;R3 == Oben
+;R4 == Farbe
+SiebenZeichnen:
+	Subi R31, R31, 1
+	Store R31, R5, 1
+	
+	Slli R5, R3, 8
+	Add R5, R5, R2
+	Add R5, R5, R29
+	
+	Store R5, R4, 0
+	Store R5, R4, 1
+	Store R5, R4, 2
+	Store R5, R4, 2 + (1 << 8)
+	Store R5, R4, 1 + (2 << 8)
+	Store R5, R4, 2 + (2 << 8)
+	Store R5, R4, 2 + (3 << 8)
+	
+	Load R5, R31, 1
+	Addi R31, R31, 1
+Jreg R30
+
+;Parameter:
+;R2 == Links
+;R3 == Oben
+;R4 == Farbe
+AchtZeichnen:
+	Subi R31, R31, 1
+	Store R31, R5, 1
+	
+	Slli R5, R3, 8
+	Add R5, R5, R2
+	Add R5, R5, R29
+	
+	Store R5, R4, 0
+	Store R5, R4, 1
+	Store R5, R4, 2
+	Store R5, R4, 0 + (1 << 8)
+	Store R5, R4, 1 + (1 << 8)
+	Store R5, R4, 2 + (1 << 8)
+	Store R5, R4, 0 + (2 << 8)
+	Store R5, R4, 2 + (2 << 8)
+	Store R5, R4, 0 + (3 << 8)
+	Store R5, R4, 1 + (3 << 8)
+	Store R5, R4, 2 + (3 << 8)
+	
+	Load R5, R31, 1
+	Addi R31, R31, 1
+Jreg R30
+
+;Parameter:
+;R2 == Links
+;R3 == Oben
+;R4 == Farbe
+NeunZeichnen:
+	Subi R31, R31, 1
+	Store R31, R5, 1
+	
+	Slli R5, R3, 8
+	Add R5, R5, R2
+	Add R5, R5, R29
+	
+	Store R5, R4, 0
+	Store R5, R4, 1
+	Store R5, R4, 2
+	Store R5, R4, 0 + (1 << 8)
+	Store R5, R4, 1 + (1 << 8)
+	Store R5, R4, 2 + (1 << 8)
+	Store R5, R4, 2 + (2 << 8)
+	Store R5, R4, 0 + (3 << 8)
+	Store R5, R4, 1 + (3 << 8)
+	Store R5, R4, 2 + (3 << 8)
+	
+	Load R5, R31, 1
+	Addi R31, R31, 1
+Jreg R30
+
+
+;Funktioniert nur fuer positive Ints!!!
+;Parameter:
+;R2 == Links
+;R3 == Oben
+;R4 == Farbe
+;R5 == Zahl
+ZahlZeichnenRechts:
+	Subi R31, R31, 5
+	Store R31, R2, 1
+	Store R31, R5, 2
+	Store R31, R6, 3
+	Store R31, R7, 4
+	Store R31, R30, 5
+	
+	Add R6, R5, R0 
+	LinksShiftPunkteX:
+		cgei R7, R6, 10 
+		bez R7, EndeZahlZeichnenRechts; while (R6 >= 10)
+		Subi R2, R2, 4
+		Divi R6, R6, 10; R6 := Floor(R6 / 10)
+	Jmp LinksShiftPunkteX
+
+	EndeZahlZeichnenRechts:
+
+	Jal R30, ZahlZeichnen
+	
+	Load R2, R31 , 1
+	Load R5, R31 , 2
+	Load R6, R31 , 3
+	Load R7, R31 , 4
+	Load R30, R31 , 5
+	Addi R31, R31, 5
+Jreg 30

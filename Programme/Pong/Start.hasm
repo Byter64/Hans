@@ -3,43 +3,54 @@
 Addi R31, R0, 65535 ;Stapelzeiger
 Addis R31, R31, 65535@ha
 Addi R30, R0, 0 ;Rücksprungadresse
-Addi R29, R0, 1 ;Bildpufferadresse
-Slli R29, R29, 31
-Addi R28, R0, 1 ;Knopfadresse
-Slli R28, R28, 30
+Addi R29, R0, 0b110 ;Bildpufferadresse
+Slli R29, R29, 24
+Addi R28, R0, 0b1000 ;Knopfadresse
+Slli R28, R28, 24
 
-Add R1, R0, R0
+;Zustaende sind in Spiel.hasm
+Addi R27, R0, Spielstart ;Spielzustand
+Add R24, R0, R0 ;Bildratentest
 
-SpielSchleife:
-	Jal R30, BildpufferLoeschen
-
-	Addi R5, R0, 10
-	Addi R6, R0, 10
-	Addi R7, R0, 10
-	Addi R8, R0, 20
-	Addi R9, R0, 0b00000011
-	Jal R30, RechteckZeichnen
-
-	Addi R5, R0, 30
-	Addi R6, R0, 10
-	Addi R7, R0, 100
-	Addi R8, R0, 80
-	Addi R9, R0, 0b00011100
-	Jal R30, RechteckZeichnen
+;R2 und R3 sind temporaere Register
+Schleife:
+	Jal R30, BildZuruecksetzen
 	
-	Addi R5, R0, 50
-	Addi R6, R0, 50
-	Addi R7, R0, 40
-	Addi R8, R0, 5
-	Addi R9, R0, 0b01101101
-	Jal R30, RechteckZeichnen
+	;Bildratentest
 	
-	Addi R1, R1, 1
-	Mod R2, R1, 30
-	Add R2, R2, R29
-	Store R2, R0, 119 << 8
+	
+	Muli R2, R27, 2
+	Addi R2, R2, SchleifeSprungtabelle - 1
+	Jreg R2
+	
+	SchleifeSprungtabelle:
+	Jal R30, SpielstartSchleife
+	Jmp BildpufferWechseln
+	
+	Jal R30, SpielspielSchleife
+	Jmp BildpufferWechseln
+	
+	Jal R30, SpielendeSchleife
+	
+	;Bildpuffer wechseln
+	BildpufferWechseln:
+	Addis R3, R0, 0b11100000000
+	Store R3, R0, 0
+	
+	;Wechsel die Bildpufferadresse in R29
+	Addi R3, R0, 0b101
+	Slli R3, R3, 24
+	ce R3, R3, R29; Aktueller Bildpuffer == Bildpuffer 1
+	bnez R3, Bildpuffer2Setzen
+	Addi R29, R0, 0b101
+	Slli R29, R29, 24
+	Jmp Schleife
+	
+	Bildpuffer2Setzen:
+	Addi R29, R0, 0b110
+	Slli R29, R29, 24
 
-Jmp SpielSchleife
+Jmp Schleife
 
 SpielEnde:
 Jmp SpielEnde

@@ -1,0 +1,13 @@
+.section Rechteck
+
+;struct Rechteck
+;{
+;	int links,     int oben,     int breite,     int hoehe
+;	int linksAlt,  int obenAlt,  int breiteAlt,  int hoeheAlt
+;	int linksAlt2, int obenAlt2, int breiteAlt2, int hoeheAlt2
+;}
+
+ErstelleRechteck:
+
+
+Jreg 30

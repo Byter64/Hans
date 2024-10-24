@@ -1,0 +1,50 @@
+.section Kollision
+
+;Parameter:
+;R2 == Recht1 links
+;R3 == Recht1 oben
+;R4 == Recht1 breite
+;R5 == Recht1 hoehe
+;R6 == Recht2 links
+;R7 == Recht2 oben
+;R8 == Recht2 breite
+;R9 == Recht2 hoehe
+;Rueckgabe:
+;R1 == Ist Kollidiert?  (0 falls nicht, 1 falls ja)
+TesteKollision:
+	Subi R31, R31, 2
+	Store R31, R10, 1
+	Store R31, R30, 2
+	
+	Addi R1, R0, 0
+	
+	;recht1.links >= recht2.links + recht2.breite?
+	Add R10, R6, R8
+	cge R10, R2, R10
+	bnez R10, TesteKollisionEnde
+	
+	
+	;recht1.links + recht1.breite <= recht2.links?
+	Add R10, R2, R4
+	cle R10, R10, R6
+	bnez R10, TesteKollisionEnde
+	
+	
+	;recht1.oben >= recht2.oben + recht2.hoehe?
+	Add R10, R7, R9
+	cge R10, R3, R10
+	bnez R10, TesteKollisionEnde
+	
+	
+	;recht1.oben + recht1.hoehe <= recht2.oben?
+	Add R10, R3, R5
+	cle R10, R10, R7
+	bnez R10, TesteKollisionEnde
+
+
+	Addi R1, R0, 1
+	TesteKollisionEnde:
+	Load R10, R31, 1
+	Load R30, R31, 2
+	Addi R31, R31, 2
+Jreg R30
