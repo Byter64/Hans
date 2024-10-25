@@ -12,3 +12,4 @@ R31 - Stapelzeiger (wächst nach unten, zeigt auf die nächste freie Adresse)
 R30 - Rücksprungzeiger
 R29 - Bildpufferadrese
 R28 - Knopfadresse
+R27 - Spielzustand
